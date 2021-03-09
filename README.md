@@ -8,7 +8,7 @@ Vi skal altså lage en god og brukervennlig app som fremviser Luftkvalitet i Osl
 
 Vi består av:
 - Birgitte Rygg
-- Bjørn Vittorio B irkelund-Rospigliosi
+- Bjørn Vittorio Birkelund-Rospigliosi
 - Børge Bjørnstadjordet
 - Elias Eide Skotte
 - Jonas Longva Pettersen
