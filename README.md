@@ -14,4 +14,4 @@ Vi består av:
 - Jonas Longva Pettersen
 - Rie Nyhus
 
-Bjørn testing changes
+WOOOOOOOO NEW CHANGES
