@@ -10,27 +10,29 @@
         android:id="@+id/textView"
         android:layout_width="263dp"
         android:layout_height="201dp"
-        android:text="TextView"
         android:background="@drawable/textview_border"
+        android:text="TextView"
+        android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.527" />
+        app:layout_constraintVertical_bias="0.766" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="263dp"
         android:layout_height="201dp"
-        android:layout_marginBottom="264dp"
-        android:text="TextView"
+        android:layout_marginBottom="172dp"
         android:background="@drawable/textview_border"
+        android:gravity="center"
+        android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button2"
         android:layout_width="369dp"
         android:layout_height="63dp"
         android:backgroundTint="@color/gray"
