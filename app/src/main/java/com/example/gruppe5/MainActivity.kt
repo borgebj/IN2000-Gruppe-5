@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         println("Tester ein gong til")
 
         println("Børge")
+        println("Brge test 2")
 
         println("Elias")
 
