@@ -35,11 +35,9 @@ class MainActivity : AppCompatActivity() {
         println("Jonas er allergisk mot fisk")
         println("heeeelt ærlig")
 
-        println("--------------------")
 
         println("Elias")
         println("Test borge elias")
-        println("test2 borge")
 
         println("Rie test")
         println("Rie tester en gang til")
