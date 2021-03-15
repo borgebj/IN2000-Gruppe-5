@@ -13,3 +13,5 @@ Vi består av:
 - Elias Eide Skotte
 - Jonas Longva Pettersen
 - Rie Nyhus
+
+Bjørn testing changes
