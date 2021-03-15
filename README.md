@@ -13,5 +13,3 @@ Vi består av:
 - Elias Eide Skotte
 - Jonas Longva Pettersen
 - Rie Nyhus
-
-WOOOOOOOO NEW CHANGES
