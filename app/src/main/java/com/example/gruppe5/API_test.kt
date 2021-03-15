@@ -24,7 +24,13 @@ class API_test : AppCompatActivity() {
         text_to = findViewById(R.id.textView2)
     }
 
+    // henter JSON/XML via KHTTP -> til String
+    fun getData(del: String): String {
+        val full = "$baseURL$del"
+        return khttp.get(full).text
+    }
+
     fun hentInfo() {
-        
+
     }
 }
