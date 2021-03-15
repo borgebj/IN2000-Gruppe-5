@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         println("--------------------")
 
         println("Elias")
-        
+        println("Test borge elias")
 
 
         // gaar til API_test-siden
