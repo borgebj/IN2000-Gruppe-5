@@ -35,5 +35,6 @@ class API_test : AppCompatActivity() {
         text_en.text = "Test 1"
         text_to.text = "Test 2"
         println("nytest")
+        println("nytest")
     }
 }
