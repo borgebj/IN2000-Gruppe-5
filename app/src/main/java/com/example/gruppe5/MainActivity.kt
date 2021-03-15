@@ -42,6 +42,7 @@ class MainActivity : AppCompatActivity() {
         println("test2 borge")
 
         println("Rie test")
+        println("Rie test2")
 
 
         // gaar til API_test-siden

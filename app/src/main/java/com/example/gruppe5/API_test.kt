@@ -32,9 +32,9 @@ class API_test : AppCompatActivity() {
     }
 
     fun hentInfo() {
-        println(baseURL)
-        println(text_to)
-        //TEST
-        //test elias
+        text_en.text = "Test 1"
+        text_to.text = "Test 2"
+        println("nytest")
+        println("nytest")
     }
 }
