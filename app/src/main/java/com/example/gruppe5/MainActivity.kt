@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity() {
 
         println("Elias")
 
+        println("Rie")
+
         println("--------------------")
 
 
