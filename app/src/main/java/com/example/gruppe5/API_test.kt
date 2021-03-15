@@ -34,5 +34,6 @@ class API_test : AppCompatActivity() {
     fun hentInfo() {
         println(baseURL)
         println(text_to)
+        //TEST
     }
 }
