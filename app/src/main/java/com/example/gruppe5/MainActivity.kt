@@ -24,15 +24,20 @@ class MainActivity : AppCompatActivity() {
     fun main() {
         println("--------------------")
         println("Committ her: Navn")
+        println("Birgitte")
 
         println("Børge")
 
         println("Elias")
 
-        println("Rie")
+        println("Jonas er allergisk mot fisk")
+        println("heeeelt ærlig")
 
         println("--------------------")
 
+        println("Elias")
+        println("Test borge elias")
+        println("test2 borge")
 
 
         // gaar til API_test-siden
