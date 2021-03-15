@@ -39,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         println("Test borge elias")
         println("test2 borge")
 
+        println("Rie test")
+
 
         // gaar til API_test-siden
         videre.setOnClickListener {
