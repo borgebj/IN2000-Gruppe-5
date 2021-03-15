@@ -31,6 +31,7 @@ class MainActivity : AppCompatActivity() {
         println("Elias")
 
         println("Jonas er allergisk mot fisk")
+        println("heeeelt ærlig")
 
         println("--------------------")
 
