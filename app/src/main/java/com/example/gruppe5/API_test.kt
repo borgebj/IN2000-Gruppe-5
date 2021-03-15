@@ -9,6 +9,7 @@ class API_test : AppCompatActivity() {
 
     lateinit var text_en: TextView
     lateinit var text_to: TextView
+    val baseURL: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
