@@ -25,9 +25,10 @@ class MainActivity : AppCompatActivity() {
         println("--------------------")
         println("Committ her: Rie")
 
-
+        println("Børge")
 
         println("--------------------")
+
 
         // gaar til API_test-siden
         videre.setOnClickListener {
