@@ -9,7 +9,7 @@ class API_test : AppCompatActivity() {
 
     lateinit var text_en: TextView
     lateinit var text_to: TextView
-    val baseURL: String = " https://api.met.no/weatherapi/airqualityforecast/0.1"
+    val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
