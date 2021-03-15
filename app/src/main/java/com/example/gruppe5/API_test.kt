@@ -34,5 +34,6 @@ class API_test : AppCompatActivity() {
     fun hentInfo() {
         text_en.text = "Test 1"
         text_to.text = "Test 2"
+        println("nytest")
     }
 }
