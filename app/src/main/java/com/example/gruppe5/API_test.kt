@@ -32,6 +32,6 @@ class API_test : AppCompatActivity() {
     }
 
     fun hentInfo() {
-
+        //TEST
     }
 }
