@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     fun main() {
         println("--------------------")
         println("Committ her: Navn")
+        println("Birgitte")
 
         println("Børge")
 
