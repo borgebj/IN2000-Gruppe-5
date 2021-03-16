@@ -34,7 +34,7 @@ android {
 
 dependencies {
 
-    // GSON, coroutine og KHTTP
+    // GSON, khttp og coroutine brukt for API-fetching
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
     implementation 'com.google.code.gson:gson:2.8.6'
