@@ -2,13 +2,20 @@ package com.example.gruppe5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
+import android.widget.Button
+import android.widget.ListView
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class API_test : AppCompatActivity() {
 
-    lateinit var text_en: TextView
-    lateinit var text_to: TextView
+    lateinit var listView: ListView
+    lateinit var button: Button
+    val gson = Gson()
+    var stasjoner: MutableList<Stasjon> = mutableListOf()
     val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1"
 
 
@@ -21,8 +28,8 @@ class API_test : AppCompatActivity() {
     }
 
     fun assignId() {
-        text_en = findViewById(R.id.textView)
-        text_to = findViewById(R.id.textView2)
+        listView = findViewById(R.id.listView)
+        button = findViewById(R.id.button2)
     }
 
     // henter JSON/XML via KHTTP -> til String
@@ -31,10 +38,19 @@ class API_test : AppCompatActivity() {
         return khttp.get(full).text
     }
 
+
+    // metode som parser fra start-data fra JSON
     fun hentInfo() {
-        text_en.text = "Test 1"
-        text_to.text = "Test 2"
-        println("nytest")
-        println("nytest")
+        //region (coroutine-1) starter en coroutine for aa parse
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = getData("/studier/emner/matnat/ifi/IN2000/v21/obligatoriske-oppgaver/alpakkaland/alpacaparties.json")
+
+            //TODO: Fiks det her idk ass
+            val json: List<Stasjon> = gson.fromJson(response, listOf<Stasjon>())
+            // legger til listene med AlpacaParty inn i den globale listen
+            for (parti in json) {
+                println(parti)
+            }
+        } //endregion
     }
 }

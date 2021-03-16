@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         println("Børge")
         println("Brge test 2")
+        println("Børge test 3z|")
 
         println("Elias")
 
