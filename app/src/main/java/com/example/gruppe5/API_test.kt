@@ -1,10 +1,12 @@
 package com.example.gruppe5
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ListView
+import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +16,6 @@ class API_test : AppCompatActivity() {
 
     lateinit var listView: ListView
     lateinit var button: Button
-    val gson = Gson()
     var stasjoner: MutableList<Stasjon> = mutableListOf()
     val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1"
 
@@ -24,7 +25,10 @@ class API_test : AppCompatActivity() {
         setContentView(R.layout.activity_a_p_i_test)
 
         assignId()
-        hentInfo()
+
+        button.setOnClickListener {
+            hentInfo()
+        }
     }
 
     fun assignId() {
@@ -43,13 +47,14 @@ class API_test : AppCompatActivity() {
     fun hentInfo() {
         //region (coroutine-1) starter en coroutine for aa parse
         CoroutineScope(Dispatchers.IO).launch {
-            val response = getData("/studier/emner/matnat/ifi/IN2000/v21/obligatoriske-oppgaver/alpakkaland/alpacaparties.json")
+            val response = getData("/stations")
+            val gson = Gson()
 
-            //TODO: Fiks det her idk ass
-            val json: List<Stasjon> = gson.fromJson(response, listOf<Stasjon>())
-            // legger til listene med AlpacaParty inn i den globale listen
-            for (parti in json) {
-                println(parti)
+            val listPersonType = object : TypeToken<List<Stasjon>>() {}.type
+            var station: List<Stasjon> = gson.fromJson(response, listPersonType)
+
+            for (hver in station) {
+                Log.d("Stasjon:", hver.toString())
             }
         } //endregion
     }
