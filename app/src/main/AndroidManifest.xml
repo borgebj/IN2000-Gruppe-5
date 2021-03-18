@@ -11,7 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Gruppe5">
-        <activity android:name=".API_test"></activity>
+        <activity android:name=".Profile"></activity>
+        <activity android:name=".InfoPage" />
+        <activity android:name=".Map" />
+        <activity android:name=".HomePage" />
+        <activity android:name=".API_test" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
