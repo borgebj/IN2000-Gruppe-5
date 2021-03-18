@@ -29,20 +29,20 @@ class MainActivity : AppCompatActivity() {
         println("Tester ein gong til")
 
         println("Børge")
+        println("Brge test 2")
+        println("Børge test 3z|")
 
         println("Elias")
 
         println("Jonas er allergisk mot fisk")
         println("heeeelt ærlig")
 
-        println("--------------------")
 
         println("Elias")
         println("Test borge elias")
-        println("test2 borge")
 
         println("Rie test")
-        println("Rie test2")
+        println("Rie tester en gang til")
 
 
         // gaar til API_test-siden
