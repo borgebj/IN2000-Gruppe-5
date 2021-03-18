@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         // gaar til API_test-siden
         videre.setOnClickListener {
-            val intent = Intent(this, API_test::class.java)
+            val intent = Intent(this, MapTest::class.java)
             startActivity(intent)
         }
     }
