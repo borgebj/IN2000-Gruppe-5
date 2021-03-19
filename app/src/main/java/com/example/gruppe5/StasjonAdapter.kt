@@ -29,7 +29,7 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textEn.text = "Name: ${liste[position].name}"
         viewHolder.textTo.text = "eoi: [${liste[position].eoi}]"
-        viewHolder.textTre.text = "Height: ${liste[position].height}"
+        viewHolder.textTre.text = "Height: ${liste[position].latitude}"
         viewHolder.textFire.text = "Longitude: ${liste[position].longitude}"
     }
 

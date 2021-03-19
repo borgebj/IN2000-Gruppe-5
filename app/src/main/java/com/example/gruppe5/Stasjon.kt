@@ -5,6 +5,7 @@ data class Stasjon(
         val eoi: String,
         val height: Double,
         val longitude: Double,
+        val latitude: Double,
         val grunnkrets: Grunnkets,
         val delomrade: Delomrade,
         val kommune: Kommune

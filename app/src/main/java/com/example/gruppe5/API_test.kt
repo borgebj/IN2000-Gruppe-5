@@ -3,6 +3,7 @@ package com.example.gruppe5
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,9 +17,12 @@ import kotlinx.coroutines.withContext
 
 class API_test : AppCompatActivity() {
 
+    // elementer
     lateinit var recycler: RecyclerView
     lateinit var adapter: StasjonAdapter
     lateinit var button: Button
+    lateinit var info: TextView
+
     val gson = Gson()
     var stasjoner: MutableList<Stasjon> = mutableListOf()
     val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1"
@@ -31,7 +35,7 @@ class API_test : AppCompatActivity() {
         assignId()
         addAdapter()
 
-        // naar knappen klikkes
+        // naar knappen klikkes -> stasjoner vises
         button.setOnClickListener {
             hentInfo()
         }
@@ -41,6 +45,7 @@ class API_test : AppCompatActivity() {
     fun assignId() {
         recycler = findViewById(R.id.recycler)
         button = findViewById(R.id.button2)
+        info = findViewById(R.id.api_info)
         recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
 
@@ -70,6 +75,7 @@ class API_test : AppCompatActivity() {
                 stasjoner.add(stasjon)
             }
             withContext(Dispatchers.Main) {
+                info.visibility = TextView.GONE
                 adapter.notifyDataSetChanged()
             }
 
