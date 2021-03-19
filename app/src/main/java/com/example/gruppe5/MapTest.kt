@@ -2,24 +2,24 @@ package com.example.gruppe5
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-
+import android.widget.Button
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class MapTest : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    lateinit var visMarker: Button
+    lateinit var resetCamera: Button
+    lateinit var pluss: Button
+    lateinit var minus: Button
+
 
     // liste med stasjoner og Gson
     var stasjoner: MutableList<Stasjon> = mutableListOf()
@@ -38,13 +38,37 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 6.0f)) // flytter til Norge
+        assignId()
         getInfo()
+        setOnClickers()
 
-        // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
+        // HOWTO: Legge til markoer
+        // 1. val sydney = LatLng(-34.0, 151.0)
+        // 2. mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
+        // brukes for aa sette fokus:
+        // 3. mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    }
 
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+    fun setOnClickers() {
+
+        // onClicker for markører - viser knapper og resetter kamera
+        visMarker.setOnClickListener {
+            CoroutineScope(Dispatchers.Main).launch {
+                addMaps()
+            }
+        }
+        resetCamera.setOnClickListener {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 6.0f)) // flytter til Norge
+        }
+
+        //region [Zoom-knapper]
+        pluss.setOnClickListener {
+            mMap.moveCamera(CameraUpdateFactory.zoomIn())
+        }
+        minus.setOnClickListener {
+            mMap.moveCamera(CameraUpdateFactory.zoomOut())
+        } //endregion
     }
 
     // henter JSON/XML via KHTTP -> til String
@@ -53,16 +77,31 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         return khttp.get(full).text
     }
 
+
+    fun assignId() {
+        visMarker = findViewById(R.id.addButton)
+        resetCamera = findViewById(R.id.resetButton)
+        pluss = findViewById(R.id.pluss)
+        minus = findViewById(R.id.minus)
+    }
+
+
     // metode for Coroutine -> legger til ALLE stasjoner
     suspend fun addMaps() {
 
         // gaar ut av coroutine for aa legge til
         withContext(Dispatchers.Main) {
             for (stasjon in stasjoner) {
-                val lat = stasjon.latitude
-                val lon = stasjon.longitude
+                val lat: Double = stasjon.latitude
+                val lon: Double = stasjon.longitude
                 val location = LatLng(lat, lon)
-                mMap.addMarker(MarkerOptions().position(location).title(stasjon.name))
+                mMap.addMarker(MarkerOptions()
+                        .position(location)
+                        .title(stasjon.name)
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)) // color
+                        .alpha(0.9F) // Opacity
+                        .flat(true) // flattener-marker
+                )
             }
         }
     }
@@ -75,12 +114,11 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
             val rawJSON = getData("/stations")
 
             val collectionType = object : TypeToken<Collection<Stasjon?>?>() {}.type
-            val fake_liste: ArrayList<Stasjon> = gson.fromJson(rawJSON, collectionType)
+            val stasjonArray: ArrayList<Stasjon> = gson.fromJson(rawJSON, collectionType)
 
-            for (stasjon in fake_liste) {
+            for (stasjon in stasjonArray) {
                 stasjoner.add(stasjon)
             }
-            addMaps()
         } //endregion
     }
 }
