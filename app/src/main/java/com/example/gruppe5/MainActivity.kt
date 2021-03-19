@@ -7,48 +7,34 @@ import android.widget.Button
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var videre: Button
+    lateinit var mapTest: Button
+    lateinit var api_test: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         assignId()
-        main()
+        setOnClickers()
     }
 
     fun assignId() {
-        videre = findViewById(R.id.button1)
+        api_test = findViewById(R.id.button1)
+        mapTest = findViewById(R.id.button2)
     }
 
-    fun main() {
-        println("--------------------")
-        println("Committ her: Navn")
-
-        println("Birgitte")
-        println("Tester ein gong til")
-
-        println("Børge")
-        println("Brge test 2")
-        println("Børge test 3z|")
-
-        println("Elias")
-
-        println("Jonas er allergisk mot fisk")
-        println("heeeelt ærlig")
-
-
-        println("Elias")
-        println("Test borge elias")
-
-        println("Rie test")
-        println("Rie tester en gang til")
-
+    // setter onClickers for kart og API_test
+    fun setOnClickers(){
+        // gaar til mapTest-siden
+        mapTest.setOnClickListener {
+            val map = Intent(this, MapTest::class.java)
+            startActivity(map)
+        }
 
         // gaar til API_test-siden
-        videre.setOnClickListener {
-            val intent = Intent(this, MapTest::class.java)
-            startActivity(intent)
+        api_test.setOnClickListener {
+            val api = Intent(this, API_test::class.java)
+            startActivity(api)
         }
     }
 }

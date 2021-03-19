@@ -27,5 +27,19 @@
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/api_info"
+        android:layout_width="317dp"
+        android:layout_height="250dp"
+        android:background="@drawable/textview_border"
+        android:gravity="center"
+        android:text="Denne siden viser en liste over alle stasjoner og relevant info"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
