@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".testFiler.MainTestActivity">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbarMain"/>
 
     <TextView
         android:id="@+id/textView3"
@@ -27,7 +30,7 @@
         android:id="@+id/mainText_en"
         android:layout_width="310dp"
         android:layout_height="141dp"
-        android:text="Denne siden kan bli brukt for testing, eller senere endret til homepagen"
+        android:text="Dette er forsiden for test-filene. Naviger rundt via knappene nedenfor"
         android:textSize="25sp"
         android:gravity="center"
         android:background="@drawable/textview_border"
@@ -41,30 +44,53 @@
         app:layout_constraintVertical_bias="0.4" />
 
     <Button
-        android:id="@+id/button1"
-        android:layout_width="222dp"
-        android:layout_height="41dp"
+        android:id="@+id/api_test_knapp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="185dp"
+        android:layout_marginBottom="70dp"
         android:backgroundTint="@color/gray"
         android:text="API_test"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias="0.728" />
+
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <Button
-        android:id="@+id/button2"
-        android:layout_width="222dp"
-        android:layout_height="41dp"
+        android:id="@+id/xxx_knapp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="185dp"
+        android:layout_marginBottom="115dp"
+        android:backgroundTint="@color/gray"
+        android:text="XXXXXXXXXXXX"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
+        android:id="@+id/fragment_knapp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="185dp"
+        android:layout_marginBottom="115dp"
+        android:backgroundTint="@color/gray"
+        android:text="Fragment test"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <Button
+        android:id="@+id/mapTest_knapp"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="185dp"
+        android:layout_marginBottom="70dp"
         android:backgroundTint="@color/gray"
         android:text="MapTest"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3"
-        app:layout_constraintVertical_bias="0.828" />
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
@@ -88,8 +114,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:navGraph="@navigation/mobile_navigation"
-        />
-
+        app:navGraph="@navigation/mobile_navigation" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

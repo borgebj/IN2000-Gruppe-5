@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ToggleButton
         android:id="@+id/addButton"
         android:layout_width="141dp"
         android:layout_height="38dp"
@@ -26,8 +26,9 @@
         android:layout_centerHorizontal="true"
         android:backgroundTint="@color/gray"
         android:gravity="center_horizontal"
-        android:text="Add stasjoner"
-        android:textSize="11sp"
+        android:textOff="Vis stasjoner"
+        android:textOn="Gjem stasjoner"
+        android:textSize="12sp"
         android:textColor="#ffffff"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
