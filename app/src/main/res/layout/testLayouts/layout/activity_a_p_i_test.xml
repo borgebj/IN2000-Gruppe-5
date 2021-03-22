@@ -4,14 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".API_test">
+    tools:context=".testFiler.API_test">
+
+    <include layout="@layout/toolbar"
+        android:id="@+id/toolbarApi"/>
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="369dp"
-        android:layout_height="63dp"
+        android:layout_width="180dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="185dp"
+        android:layout_marginBottom="70dp"
         android:backgroundTint="@color/gray"
-        android:text="Get info"
+        android:text="Hent stasjoner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="180dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="185dp"
+        android:layout_marginBottom="70dp"
+        android:backgroundTint="@color/gray"
+        android:text="Hent annet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -24,16 +41,15 @@
         android:layout_marginBottom="24dp"
         app:layout_constraintBottom_toTopOf="@+id/button2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/api_info"
         android:layout_width="317dp"
-        android:layout_height="250dp"
-        android:background="@drawable/textview_border"
-        android:gravity="center"
-        android:text="Denne siden viser en liste over alle stasjoner og relevant info"
+        android:layout_height="150dp"
+        android:gravity="center_horizontal"
+        android:text="Denne siden viser en liste over alle stasjoner og relevant info. Mer oversikt på kart-siden"
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"

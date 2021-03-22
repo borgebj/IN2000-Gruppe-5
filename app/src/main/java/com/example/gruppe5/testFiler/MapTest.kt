@@ -1,8 +1,11 @@
-package com.example.gruppe5
+package com.example.gruppe5.testFiler
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ToggleButton
+import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -15,7 +18,7 @@ import kotlinx.coroutines.*
 class MapTest : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
-    lateinit var visMarker: Button
+    lateinit var visMarker: ToggleButton
     lateinit var resetCamera: Button
     lateinit var pluss: Button
     lateinit var minus: Button
@@ -34,14 +37,16 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-    }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        mMap = googleMap
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 6.0f)) // flytter til Norge
         assignId()
         getInfo()
         setOnClickers()
+    }
+
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
         // HOWTO: Legge til markoer
         // 1. val sydney = LatLng(-34.0, 151.0)
@@ -50,16 +55,25 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         // 3. mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
+    fun assignId() {
+        visMarker = findViewById(R.id.addButton)
+        resetCamera = findViewById(R.id.resetButton)
+        pluss = findViewById(R.id.pluss)
+        minus = findViewById(R.id.minus)
+    }
+
     fun setOnClickers() {
 
         // onClicker for markører - viser knapper og resetter kamera
-        visMarker.setOnClickListener {
-            CoroutineScope(Dispatchers.Main).launch {
-                addMaps()
-            }
+        visMarker.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    addMaps()
+                }
+            } else mMap.clear()
         }
         resetCamera.setOnClickListener {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 6.0f)) // flytter til Norge
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
         }
 
         //region [Zoom-knapper]
@@ -71,19 +85,28 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         } //endregion
     }
 
+    // metode som parser fra start-data fra JSON
+    fun getInfo() {
+
+        //region (coroutine-1) starter en coroutine for aa parse
+        CoroutineScope(Dispatchers.IO).launch {
+            val rawJSON = getData("/stations")
+
+            val collectionType = object : TypeToken<Collection<Stasjon?>?>() {}.type
+            val stasjonArray: ArrayList<Stasjon> = gson.fromJson(rawJSON, collectionType)
+
+            for (stasjon in stasjonArray) {
+                stasjoner.add(stasjon)
+            }
+        } //endregion
+    }
+
     // henter JSON/XML via KHTTP -> til String
     fun getData(del: String): String {
         val full = "$baseURL$del"
         return khttp.get(full).text
     }
 
-
-    fun assignId() {
-        visMarker = findViewById(R.id.addButton)
-        resetCamera = findViewById(R.id.resetButton)
-        pluss = findViewById(R.id.pluss)
-        minus = findViewById(R.id.minus)
-    }
 
 
     // metode for Coroutine -> legger til ALLE stasjoner
@@ -104,21 +127,5 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
                 )
             }
         }
-    }
-
-    // metode som parser fra start-data fra JSON
-    fun getInfo() {
-
-        //region (coroutine-1) starter en coroutine for aa parse
-        CoroutineScope(Dispatchers.IO).launch {
-            val rawJSON = getData("/stations")
-
-            val collectionType = object : TypeToken<Collection<Stasjon?>?>() {}.type
-            val stasjonArray: ArrayList<Stasjon> = gson.fromJson(rawJSON, collectionType)
-
-            for (stasjon in stasjonArray) {
-                stasjoner.add(stasjon)
-            }
-        } //endregion
     }
 }
