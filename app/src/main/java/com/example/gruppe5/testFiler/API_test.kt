@@ -1,12 +1,13 @@
-package com.example.gruppe5
+package com.example.gruppe5.testFiler
 
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,8 @@ class API_test : AppCompatActivity() {
     // elementer
     lateinit var recycler: RecyclerView
     lateinit var adapter: StasjonAdapter
-    lateinit var button: Button
+    lateinit var hentStasjoner: Button
+    lateinit var hentAnnet: Button
     lateinit var info: TextView
 
     val gson = Gson()
@@ -31,20 +33,18 @@ class API_test : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_a_p_i_test)
+        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarApi).title = "API_test"
 
         assignId()
         addAdapter()
-
-        // naar knappen klikkes -> stasjoner vises
-        button.setOnClickListener {
-            hentInfo()
-        }
+        setOnClickers()
     }
 
     // assigner ID'er
     fun assignId() {
         recycler = findViewById(R.id.recycler)
-        button = findViewById(R.id.button2)
+        hentStasjoner = findViewById(R.id.button2)
+        hentAnnet = findViewById(R.id.button3)
         info = findViewById(R.id.api_info)
         recycler.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
@@ -55,6 +55,18 @@ class API_test : AppCompatActivity() {
         recycler.adapter = adapter
     }
 
+    // setter onClickListeners til knappene
+    fun setOnClickers() {
+
+        // viser RecyclerView med stasjoner
+        hentStasjoner.setOnClickListener {
+            hentOgVisRecycler()
+        }
+        hentAnnet.setOnClickListener {
+            println(it)
+        }
+    }
+
     // henter JSON/XML via KHTTP -> til String
     fun getData(del: String): String {
         val full = "$baseURL$del"
@@ -62,8 +74,8 @@ class API_test : AppCompatActivity() {
     }
 
 
-    // metode som parser fra start-data fra JSON
-    fun hentInfo() {
+    // metode som parser fra start-data fra JSON, dermed viser RecyclerView
+    fun hentOgVisRecycler() {
         //region (coroutine-1) starter en coroutine for aa parse
         CoroutineScope(Dispatchers.IO).launch {
             val rawJSON = getData("/stations")

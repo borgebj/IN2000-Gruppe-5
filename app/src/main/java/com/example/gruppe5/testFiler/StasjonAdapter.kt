@@ -1,11 +1,12 @@
-package com.example.gruppe5
+package com.example.gruppe5.testFiler
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
 
 class StasjonAdapter(private val liste: MutableList<Stasjon>) :
         RecyclerView.Adapter<StasjonAdapter.ViewHolder>(){

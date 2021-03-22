@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.gruppe5">
-
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -17,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Gruppe5">
-
+        <activity android:name=".testFiler.FragmentTest"></activity>
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -28,16 +27,14 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAhHaXYeCx9t2HSf8KzPNTsMsySKDnELWI" />
-
-        <activity
-            android:name=".MapTest"
-            android:label="@string/title_activity_map_test"></activity>
+            android:value="AIzaSyAhHaXYeCx9t2HSf8KzPNTsMsySKDnELWI" /> <!-- test-filer -->
+        <activity android:name=".testFiler.MainTestActivity" />
+        <activity android:name=".testFiler.API_test" />
+        <activity android:name=".testFiler.MapTest" /> <!-- main-filer -->
         <activity android:name=".Profile" />
         <activity android:name=".InfoPage" />
         <activity android:name=".Map" />
         <activity android:name=".HomePage" />
-        <activity android:name=".API_test" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
