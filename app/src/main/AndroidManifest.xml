@@ -36,7 +36,6 @@
         <activity android:name=".Profile" />
         <activity android:name=".InfoPage" />
         <activity android:name=".Map" />
-        <activity android:name=".MainActivity" />
         <activity android:name=".HomePage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
