@@ -6,6 +6,7 @@
     <color name="red">#FF0000</color>
     <color name="silver">#C0C0C0</color>
     <color name="gray">#808080</color>
+    <color name="light_gray">#e6e6e6</color>
     <color name="olive">#808000</color>
     <color name="purple">#800080</color>
     <color name="maroon">#800000</color>
@@ -14,6 +15,7 @@
     <color name="teal">#008080</color>
     <color name="green">#008000</color>
     <color name="blue">#0000FF</color>
+    <color name="light_blue">#38a2ff</color>
     <color name="navy">#000080</color>
     <color name="black">#000000</color>
     <color name="purple_200">#FFBB86FC</color>
