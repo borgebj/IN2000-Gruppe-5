@@ -71,6 +71,6 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    // for donut chart
+    // for donut-chart
     implementation("app.futured.donut:library:2.1.0")
 }
