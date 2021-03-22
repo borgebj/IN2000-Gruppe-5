@@ -26,7 +26,7 @@ class MainTestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_main)
-        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarMain).title ="Main side"
+        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarMain).title ="Main side"  // endrer tekst paa toolbar
 
         assignId()
         setOnClickers()
