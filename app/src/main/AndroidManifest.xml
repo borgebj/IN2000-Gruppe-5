@@ -30,15 +30,14 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAhHaXYeCx9t2HSf8KzPNTsMsySKDnELWI" />
+
         <!-- test-filer -->
         <activity android:name=".testFiler.MainTestActivity" />
         <activity android:name=".testFiler.API_test" />
         <activity android:name=".testFiler.MapTest" />
-        <activity android:name=".testFiler.FragmentTest"></activity>
+        <activity android:name=".testFiler.FragmentTest" />
+
         <!-- main-filer -->
-        <activity android:name=".Profile" />
-        <activity android:name=".InfoPage" />
-        <activity android:name=".Map" />
         <activity android:name=".HomePage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
