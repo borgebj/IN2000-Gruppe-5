@@ -37,7 +37,6 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarMain).title = "Map-test"
 
         assignId()
         getInfo()

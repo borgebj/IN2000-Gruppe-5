@@ -8,7 +8,6 @@ class FragmentTest : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment_test)
-        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarMain).title = "Fragment-test"
-
+        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarFragment).title = "Fragment-test"
     }
 }

@@ -33,7 +33,7 @@ class API_test : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_a_p_i_test)
-        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarMain).title = "API_test"
+        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarApi).title = "API_test"
 
         assignId()
         addAdapter()
