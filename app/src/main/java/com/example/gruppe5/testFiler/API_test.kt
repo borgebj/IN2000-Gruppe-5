@@ -63,7 +63,7 @@ class API_test : AppCompatActivity() {
             hentOgVisRecycler()
         }
         hentAnnet.setOnClickListener {
-            println(it)
+            info.text = "WIP - Ikke lagt til enda"
         }
     }
 
