@@ -6,10 +6,7 @@ import android.widget.Button
 import android.widget.ToggleButton
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -20,8 +17,6 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     lateinit var visMarker: ToggleButton
     lateinit var resetCamera: Button
-    lateinit var pluss: Button
-    lateinit var minus: Button
 
 
     // liste med stasjoner og Gson
@@ -48,6 +43,11 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         mMap = googleMap
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
+        // legger til allerede-lagde funksjoner fra google-maps
+        mMap.uiSettings.isZoomControlsEnabled = true
+        mMap.uiSettings.isCompassEnabled = true
+        mMap.uiSettings.isZoomGesturesEnabled = true
+
         // HOWTO: Legge til markoer
         // 1. val sydney = LatLng(-34.0, 151.0)
         // 2. mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
@@ -58,8 +58,6 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
     fun assignId() {
         visMarker = findViewById(R.id.addButton)
         resetCamera = findViewById(R.id.resetButton)
-        pluss = findViewById(R.id.pluss)
-        minus = findViewById(R.id.minus)
     }
 
     fun setOnClickers() {
@@ -75,14 +73,6 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         resetCamera.setOnClickListener {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
         }
-
-        //region [Zoom-knapper]
-        pluss.setOnClickListener {
-            mMap.moveCamera(CameraUpdateFactory.zoomIn())
-        }
-        minus.setOnClickListener {
-            mMap.moveCamera(CameraUpdateFactory.zoomOut())
-        } //endregion
     }
 
     // metode som parser fra start-data fra JSON
