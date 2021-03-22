@@ -9,10 +9,11 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.gruppe5.testFiler.MainTestActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
+
 class HomePage : AppCompatActivity() {
 
-    lateinit var tester: Button
     lateinit var navView: BottomNavigationView
+    lateinit var testFilKnapp: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,16 +28,15 @@ class HomePage : AppCompatActivity() {
 
     fun assignId() {
         navView = findViewById(R.id.nav_view)
-        tester = findViewById(R.id.testFiler_knapp)
+        testFilKnapp = findViewById(R.id.testFiler_knapp)
     }
-
     // setter onClickers for kart og API_test
     fun setOnClickers(){
 
-        // gaar til test-filene
-        tester.setOnClickListener {
-            val intent = Intent(this, MainTestActivity::class.java)
-            startActivity(intent)
+        // gaar til map-tester
+        testFilKnapp.setOnClickListener {
+            val map = Intent(this, MainTestActivity::class.java)
+            startActivity(map)
         }
     }
 }

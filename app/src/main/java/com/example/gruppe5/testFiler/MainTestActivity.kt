@@ -5,14 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toolbar
-import androidx.appcompat.app.ActionBar
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.gruppe5.R
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainTestActivity : AppCompatActivity() {
 
@@ -20,7 +13,6 @@ class MainTestActivity : AppCompatActivity() {
     lateinit var apiTest: Button
     lateinit var fragmentTest: Button
     lateinit var xxx: Button
-    lateinit var navView: BottomNavigationView
     lateinit var textView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,12 +23,9 @@ class MainTestActivity : AppCompatActivity() {
         assignId()
         setOnClickers()
 
-        // setter opp navbar
-        navView.setupWithNavController(findNavController(R.id.nav_host_fragment))
     }
 
     fun assignId() {
-        navView = findViewById(R.id.nav_view)
         textView = findViewById(R.id.mainText_en)
         apiTest = findViewById(R.id.api_test_knapp)
         mapTest = findViewById(R.id.mapTest_knapp)

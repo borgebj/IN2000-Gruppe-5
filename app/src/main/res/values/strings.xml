@@ -2,9 +2,14 @@
     <string name="app_name">Gruppe 5</string>
     <string name="title_activity_map_test">Map</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <!-- Navbar -->
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_map">Map</string>
+    <string name="title_info">Info</string>
+    <string name="title_favorites">Favorites</string>
+    <string name="title_profile">Profile</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
