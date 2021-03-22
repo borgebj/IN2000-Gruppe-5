@@ -34,7 +34,7 @@ class MapsFragment : Fragment() {
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
 
-        mMap.addMarker(MarkerOptions().position(LatLng()).title("Marker in Sydney"))
+        mMap.addMarker(MarkerOptions().position(LatLng(59.911491, 10.757933)).title("Oslo"))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {

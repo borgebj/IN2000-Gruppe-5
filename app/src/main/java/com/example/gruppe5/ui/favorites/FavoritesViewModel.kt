@@ -8,7 +8,7 @@ class FavoritesViewModel : ViewModel() {
     // TODO: Implement the ViewModel
 
     private val _text = MutableLiveData<String>().apply {
-        value = "Dette er favoritt-siden"
+        value = "Favoritt-fragment"
     }
     val text: LiveData<String> = _text
 
