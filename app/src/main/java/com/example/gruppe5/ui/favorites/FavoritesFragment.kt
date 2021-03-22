@@ -1,4 +1,4 @@
-package com.example.gruppe5.ui.info
+package com.example.gruppe5.ui.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,15 +10,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.gruppe5.R
 
-class InfoFragment : Fragment() {
-
+class FavoritesFragment : Fragment() {
 
     // globale variabler
-    private lateinit var infoModel: InfoViewModel
+    private lateinit var viewModel: FavoritesViewModel
     lateinit var textView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root: View = inflater.inflate(R.layout.fragment_info, container, false)
+        val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
 
         assignId(root)
 
@@ -27,14 +26,13 @@ class InfoFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        infoModel = ViewModelProvider(this).get(InfoViewModel::class.java)
-        infoModel.text.observe(viewLifecycleOwner, Observer {
+        viewModel = ViewModelProvider(this).get(FavoritesViewModel::class.java)
+        viewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
     }
 
     fun assignId(root: View) {
-        textView = root.findViewById(R.id.text_info)
+        textView = root.findViewById(R.id.text_favorites)
     }
-
 }
