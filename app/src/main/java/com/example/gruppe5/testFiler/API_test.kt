@@ -33,7 +33,6 @@ class API_test : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_a_p_i_test)
-        findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbarApi).title = "API_test"
 
         assignId()
         addAdapter()
@@ -94,17 +93,3 @@ class API_test : AppCompatActivity() {
         } //endregion
     }
 }
-
-/*
-//1 - IDK-ass, brukte stackoverflow
-val listPersonType = object : TypeToken<List<Stasjon>>() {}.type
-val station: List<Stasjon> = gson.fromJson(rawJSON, listPersonType)
-Log.d("1", station.toString())
-
-// 2 - bruke Array-typen til aa hente en Array med stasjoner - litt usikker om riktig eller galt
-val list: Array<Stasjon> = gson.fromJson(rawJSON, Array<Stasjon>::class.java)
-Log.d("2", list.toString())
-
-// 3 - bruke JSONObject og JSONArray
-val root = JSONArray(rawJSON)
-Log.d("3", root.toString())*/

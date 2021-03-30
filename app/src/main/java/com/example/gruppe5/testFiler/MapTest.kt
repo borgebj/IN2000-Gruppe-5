@@ -46,6 +46,7 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         // legger til allerede-lagde funksjoner fra google-maps
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
+        mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomGesturesEnabled = true
 
         // HOWTO: Legge til markoer
@@ -66,7 +67,7 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
         visMarker.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 CoroutineScope(Dispatchers.Main).launch {
-                    addMaps()
+                    addStasjoner()
                 }
             } else mMap.clear()
         }
@@ -100,7 +101,7 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback {
 
 
     // metode for Coroutine -> legger til ALLE stasjoner
-    suspend fun addMaps() {
+    suspend fun addStasjoner() {
 
         // gaar ut av coroutine for aa legge til
         withContext(Dispatchers.Main) {
