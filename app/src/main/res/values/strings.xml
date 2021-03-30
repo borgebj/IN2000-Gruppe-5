@@ -1,7 +1,5 @@
 <resources>
     <string name="app_name">Gruppe 5</string>
-    <string name="title_activity_map_test">Map</string>
-    <string name="title_activity_main">MainActivity</string>
 
     <!-- Navbar -->
     <string name="title_home">Home</string>
@@ -11,5 +9,13 @@
     <string name="title_profile">Profile</string>
 
     <!-- TODO: Remove or change this placeholder text -->
+    <string name="google_maps_key">AIzaSyCR0C0SWNXkZ0tn4NUJFyJHaDWIyBcANIE</string>
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_stasjon_verdier">StasjonVerdier</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>

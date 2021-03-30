@@ -35,7 +35,9 @@
         <activity android:name=".testFiler.MainTestActivity" />
         <activity android:name=".testFiler.API_test" />
         <activity android:name=".testFiler.MapTest" />
-        <activity android:name=".testFiler.FragmentTest" />
+        <activity
+            android:name=".testFiler.StasjonVerdier"
+            android:windowSoftInputMode="adjustResize" />
 
         <!-- main-filer -->
         <activity android:name=".HomePage">
