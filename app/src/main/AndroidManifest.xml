@@ -8,6 +8,7 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+
     <permission
         android:name="com.pkg.map.permission.MAPS_RECEIVE"
         android:protectionLevel="signature" />
@@ -37,9 +38,7 @@
         <activity android:name=".testFiler.MapTest" />
         <activity
             android:name=".testFiler.StasjonVerdier"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- main-filer -->
+            android:windowSoftInputMode="adjustResize" /> <!-- main-filer -->
         <activity android:name=".HomePage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

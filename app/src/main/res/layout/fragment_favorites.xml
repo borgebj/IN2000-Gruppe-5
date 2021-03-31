@@ -5,13 +5,54 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.favorites.FavoritesFragment" >
+    tools:context=".ui.favorites.FavoritesFragment"
+    android:orientation="vertical">
+
+
+    <EditText
+        android:id="@+id/search_bar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center_horizontal"
+        android:hint="Search a city"
+        android:inputType="text"
+        app:layout_constraintTop_toTopOf="@+id/search_but"
+        app:layout_constraintBottom_toBottomOf="@+id/search_but"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/search_but" />
+
+    <ImageButton
+        android:id="@+id/search_but"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_search"
+        android:layout_marginTop="20dp"
+        app:layout_constraintLeft_toRightOf="@+id/search_bar"
+        app:layout_constraintBottom_toTopOf="@+id/text_favorites"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_favorites"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:textSize="40sp"/>
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_bar" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/favorites_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="20dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_favorites" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
