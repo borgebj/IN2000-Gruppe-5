@@ -1,8 +1,10 @@
 package com.example.gruppe5.testFiler
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gruppe5.R
@@ -34,6 +36,7 @@ class StasjonVerdier : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stasjon_verdier)
+        findViewById<RelativeLayout>(R.id.relative).setOnClickListener { closeKeyboard(findViewById(R.id.relative)) }
 
 
         // test-dato og naa-dato
@@ -46,6 +49,12 @@ class StasjonVerdier : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
         // parser
         parseJson(reftime, idag)
+    }
+
+    // lukker "keyboard"-funksjon (etter knappetrykk)
+    private fun closeKeyboard(view: View) {
+        val hide = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        hide.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     fun assignId() {
@@ -69,6 +78,7 @@ class StasjonVerdier : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     fun parseJson(refTime: String, klokkeslett: String) {
         submit.setOnClickListener {
+            closeKeyboard(it)
             if (input.text.toString() != "") stasjon = input.text.toString()
             CoroutineScope(Dispatchers.IO).launch {
 
