@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="true"
+    android:id="@+id/relative">
 
     <include layout="@layout/toolbar"
         android:id="@+id/toolbarMain"/>
@@ -11,16 +12,14 @@
 
     <TextView
         android:id="@+id/verdiBoks"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="200dp"
-        android:width="300dp"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
         android:background="@drawable/textview_border"
         android:textStyle="bold"
         android:textSize="20sp"
         android:gravity="center"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="150dp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"/>
 
     <EditText
         android:id="@+id/verdiInput"
@@ -30,8 +29,8 @@
         android:width="300dp"
         android:hint="EOI"
         android:gravity="center_horizontal"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="350dp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="280dp"/>
 
     <Button
         android:id="@+id/submit"
@@ -40,8 +39,8 @@
         android:text="Submit"
         android:backgroundTint="@color/teal_200"
         android:gravity="center_horizontal"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="400dp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="330dp"/>
 
     <Spinner
         android:id="@+id/spinner"
@@ -49,8 +48,32 @@
         android:layout_height="40dp"
         android:backgroundTint="@color/teal_200"
         android:gravity="center_horizontal"
-        android:layout_marginStart="55dp"
-        android:layout_marginTop="440dp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="370dp"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="480dp"
+        android:text="Kirkeveien : NO0011A"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="510dp"
+        android:text="Sentrum : NO0113A"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="540dp"
+        android:text="Svanvik : NO0047R"
+        android:gravity="center"
+        android:layout_centerHorizontal="true"/>
 
 
 </RelativeLayout>

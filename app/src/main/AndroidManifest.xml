@@ -30,7 +30,9 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAgFli4DphiLkX-67oRoHuLIJfDwZbzHsQ" /> <!-- test-filer -->
+            android:value="@string/google_maps_key" />
+
+        <!-- test-filer -->
         <activity android:name=".testFiler.MainTestActivity" />
         <activity android:name=".testFiler.API_test" />
         <activity android:name=".testFiler.MapTest" />

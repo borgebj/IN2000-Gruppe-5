@@ -9,7 +9,7 @@
     <string name="title_profile">Profile</string>
 
     <!-- google maps key -->
-    <string name="google_maps_key">AIzaSyCR0C0SWNXkZ0tn4NUJFyJHaDWIyBcANIE</string>
+    <string name="google_maps_key">AIzaSyCf95oxW7tH8IQayHgOiYrqhjHUqd-9iIM</string>
 
     <string-array name="spinner">
         <item>no2</item>
