@@ -38,8 +38,10 @@
         <activity android:name=".testFiler.MapTest" />
         <activity
             android:name=".testFiler.StasjonVerdier"
-            android:windowSoftInputMode="adjustResize" /> <!-- main-filer -->
-        <activity android:name=".HomePage">
+            android:windowSoftInputMode="adjustResize" />
+
+        <!-- main-filer -->
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
