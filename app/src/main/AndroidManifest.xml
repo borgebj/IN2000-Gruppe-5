@@ -40,7 +40,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <!-- main-filer -->
-        <activity android:name=".HomePage">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelectedListener {
 
     private lateinit var mMap: GoogleMap
@@ -56,17 +57,11 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
         mMap = googleMap
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
-        // legger til allerede-lagde funksjoner fra google-maps
+        // legger til funksjoner fra google-maps
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomGesturesEnabled = true
-
-        // HOWTO: Legge til markoer
-        // 1. val sydney = LatLng(-34.0, 151.0)
-        // 2. mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        // brukes for aa sette fokus:
-        // 3. mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
     }
 
     fun addSpinnerAdapter() {
@@ -87,11 +82,8 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
 
         // onClicker for markører - viser knapper og resetter kamera
         visMarker.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    addStasjoner()
-                }
-            } else mMap.clear()
+            if (isChecked) addStasjoner()
+            else mMap.clear()
         }
         resetCamera.setOnClickListener {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
@@ -103,10 +95,11 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
 
         //region (coroutine-1) starter en coroutine for aa parse
         CoroutineScope(Dispatchers.IO).launch {
-            val rawJSON = getData("/stations")
+            val stasjonJSON = getData("/stations")
 
+            // oppretter en array med stasjon-objekter fra JSON
             val collectionType = object : TypeToken<Collection<Stasjon?>?>() {}.type
-            val stasjonArray: ArrayList<Stasjon> = gson.fromJson(rawJSON, collectionType)
+            val stasjonArray: ArrayList<Stasjon> = gson.fromJson(stasjonJSON, collectionType)
 
             for (stasjon in stasjonArray) {
                 stasjoner.add(stasjon)
@@ -120,7 +113,7 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
         return khttp.get(full).text
     }
 
-    fun parseJson(eoi : String) {
+    fun parseJson(eoi : String): String {
         var fullString = ""
 
         submit.setOnClickListener {
@@ -163,35 +156,34 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
                             "pm25" -> fullString = "${"%.4f".format(pm25.get("value"))}"
                             "o3" -> fullString = "${"%.4f".format(o3.get("value"))}"
                         }
+                        runBlocking {
+                            println(fullString)
+                            return@runBlocking fullString }
                     }
                 }
             }
         }
+        return ""
     }
 
 
     // metode for Coroutine -> legger til ALLE stasjoner
-    suspend fun addStasjoner() {
+    fun addStasjoner() {
+        for (stasjon in stasjoner) {
+            val lat: Double = stasjon.latitude
+            val lon: Double = stasjon.longitude
+            val location = LatLng(lat, lon)
 
-        // gaar ut av coroutine for aa legge til
-        withContext(Dispatchers.Main) {
-            for (stasjon in stasjoner) {
-                val lat: Double = stasjon.latitude
-                val lon: Double = stasjon.longitude
-                val location = LatLng(lat, lon)
+            //TODO: Få dette til å fungere
+            val verdi = parseJson(stasjon.eoi)
 
-                //TODO: Få dette til å fungere
-                val text = parseJson(stasjon.eoi)
-                println(text)
-
-                mMap.addMarker(MarkerOptions()
-                        .position(location)
-                        .title(stasjon.name+" - "+text)
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)) // color
-                        .alpha(0.9F) // Opacity
-                        .flat(true) // flattener-marker
-                )
-            }
+            mMap.addMarker(MarkerOptions()
+                    .position(location)
+                    .title(stasjon.name+" - "+verdi)
+                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)) // color
+                    .alpha(0.9F) // Opacity
+                    .flat(true) // flattener-marker
+            )
         }
     }
 
