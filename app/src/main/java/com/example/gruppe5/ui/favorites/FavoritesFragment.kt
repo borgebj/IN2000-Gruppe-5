@@ -1,11 +1,12 @@
 package com.example.gruppe5.ui.favorites
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
@@ -40,60 +41,22 @@ class FavoritesFragment : Fragment() {
     var fav_stations: MutableList<Stasjon> = mutableListOf()
     val gson = Gson()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
 
         assignId(root)
         addAdapter()
+        setSearchBut()
 
-        var wanted : String
+        //var wanted : String
 
-        fun getData(): String {
-            return khttp.get(path).text
-        }
 
-        searchBut.setOnClickListener {
 
-            wanted = searchBar.text.toString() // henter det brukeren tastet inn
-            Log.d("WANTED", wanted)
 
-            CoroutineScope(Dispatchers.IO).launch {
-
-                stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toList()
-                    //gson.fromJson(Fuel.get(data).awaitString(), Array<Stasjon>::class.java)//getData(data)
-
-                withContext(Dispatchers.Main){
-                    Log.d("API FETCHING", stasjoner.toString())
-
-                    if (wanted != "") {
-                        var added = false
-                        for (station in stasjoner){
-                            Log.d("I FOR_LOEKKE", station.name)
-
-                            if (station.name.equals(wanted, ignoreCase = true)){
-                                if (station in fav_stations) { // unngaa duplikasjon
-                                    toastMsg("${wanted} is already your favorite city.")
-                                    return@withContext
-                                }
-                                else {
-                                    fav_stations.add(station)
-                                    fav_adapter.notifyDataSetChanged()
-                                    Log.d("FANT STASJON", station.name)
-                                    added = true
-                                }
-                            }
-                        }
-                        if (!added) toastMsg("${wanted} does not exsist.")
-
-                    }
-                    else toastMsg("Enter a city name")
-
-                    searchBar.text.clear()
-                    //searchBar.onEditorAction(EditorInfo.IME_ACTION_DONE) // lukker IKKE tastatur
-                }
-            }
-
-        }
 
         return root
     }
@@ -119,9 +82,62 @@ class FavoritesFragment : Fragment() {
         fav_recycler.adapter = fav_adapter
     }
 
-    fun toastMsg(msg : String){
+    fun toastMsg(msg: String){
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
+
+    fun getData(): String {
+        return khttp.get(path).text
+    }
+
+    fun setSearchBut(){
+        searchBut.setOnClickListener {
+
+            val wanted = searchBar.text.toString() // henter det brukeren tastet inn
+
+            CoroutineScope(Dispatchers.IO).launch {
+
+                stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toList()
+                //gson.fromJson(Fuel.get(data).awaitString(), Array<Stasjon>::class.java)//getData(data)
+
+                withContext(Dispatchers.Main){
+                    Log.d("API FETCHING", stasjoner.toString())
+
+                    if (wanted != "") {
+                        var added = false
+                        for (station in stasjoner){
+                            Log.d("I FOR_LOEKKE", station.name)
+
+                            if (station.name.equals(wanted, ignoreCase = true)){
+                                if (station in fav_stations) { // unngaa duplikater
+                                    toastMsg("${station.name} is already your favorite city.")
+                                    return@withContext
+                                }
+                                else {
+                                    fav_stations.add(station)
+                                    fav_adapter.notifyDataSetChanged()
+                                    Log.d("FANT STASJON", station.name)
+                                    added = true
+                                }
+                            }
+                        }
+                        if (!added) toastMsg("${wanted} does not exsist.")
+
+                    }
+                    else toastMsg("Enter a city name")
+                }
+            }
+            searchBar.text.clear()
+            closeKeyboard(searchBar)
+        }
+    }
+
+    fun closeKeyboard(e : EditText){
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(e.windowToken, 0)
+    }
+
+
 
 
     /*suspend fun getData() : List<Stasjon> { // Fuel. funksjonen funker kun med proxy-serveren. funksjonen settes i onCreateView()
