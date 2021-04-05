@@ -1,13 +1,13 @@
-package com.example.gruppe5.ui.info
+package com.example.gruppe5.ui.settings
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class InfoViewModel : ViewModel() {
+class SettingsViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "Info-fragment"
+        value = "Settings-fragment"
     }
     val text: LiveData<String> = _text
 

@@ -5,10 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.info.InfoFragment" >
+    tools:context=".ui.settings.SettingsFragment" >
 
     <TextView
-        android:id="@+id/text_info"
+        android:id="@+id/text_profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
