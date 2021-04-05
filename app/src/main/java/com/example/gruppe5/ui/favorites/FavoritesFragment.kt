@@ -52,8 +52,8 @@ class FavoritesFragment : Fragment() {
     fun assignId(root: View) {
         textView = root.findViewById(R.id.text_favorites)
         searchBar = root.findViewById(R.id.search_bar)
-        searchBut = root.findViewById(R.id.search_but)
-        recycler = root.findViewById(R.id.favorites_recycler)
+        //searchBut = root.findViewById(R.id.search_but)
+        //recycler = root.findViewById(R.id.favorites_recycler)
     }
 
     fun addAdapter() {
