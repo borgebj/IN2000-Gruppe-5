@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -51,9 +52,6 @@ dependencies {
     implementation ("khttp:khttp:1.0.0"){
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-reflect'
     }
-    // fuel
-    implementation 'com.github.kittinunf.fuel:fuel:2.2.0'
-    implementation 'com.github.kittinunf.fuel:fuel-coroutines:2.2.0'
 
     // for google-maps
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
@@ -78,4 +76,7 @@ dependencies {
     // for donut-chart
     implementation("app.futured.donut:library:2.1.0")
     compileOnly 'com.google.android.wearable:wearable:2.6.0'
+
+    // for navigation
+    apply plugin: "androidx.navigation.safeargs.kotlin"
 }

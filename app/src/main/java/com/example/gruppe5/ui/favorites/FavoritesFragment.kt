@@ -12,13 +12,19 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.testFiler.StasjonAdapter
+import com.example.gruppe5.ui.search.SearchFragment
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 
@@ -31,11 +37,9 @@ class FavoritesFragment : Fragment() {
     lateinit var searchBut: ImageButton
     lateinit var fav_recycler: RecyclerView
     lateinit var fav_adapter: StasjonAdapter // gjenbruker StasjonAdapter fra testFiler
-
     lateinit var stasjoner : List<Stasjon>
 
     private val path: String = "https://api.met.no/weatherapi/airqualityforecast/0.1/stations"
-        //"https://in2000-apiproxy.ifi.uio.no/weatherapi/airqualityforecast/0.1/stations"
 
     // maa beholde denne listen for brukeren paa en eller annen maate -- kanskje Model?????
     var fav_stations: MutableList<Stasjon> = mutableListOf()
@@ -50,13 +54,7 @@ class FavoritesFragment : Fragment() {
 
         assignId(root)
         addAdapter()
-        setSearchBut()
-
-        //var wanted : String
-
-
-
-
+        setSearchFrag(root)
 
         return root
     }
@@ -90,6 +88,34 @@ class FavoritesFragment : Fragment() {
         return khttp.get(path).text
     }
 
+    fun setSearchFrag(root : View){
+        searchBar.setOnClickListener {
+            tilSearch(root)  // navigere til SearchFragment
+        }
+        getDataTilbake()
+    }
+
+    fun tilSearch(root : View){
+
+        root.findNavController().navigate(
+            FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
+    }
+
+    fun getDataTilbake(){
+        //val args: FavoritesFragmentArgs by navArgs()
+        val station: Stasjon? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation //args.favoriteStation
+        if (station != null) {
+            Log.d("DATA FRA SEARCH", station.name)
+
+            fav_stations.add(station!!)
+            fav_adapter.notifyDataSetChanged()
+        }
+        else {
+            Log.d("STATION", "IS NULL")
+        }
+
+    }
+
     fun setSearchBut(){
         searchBut.setOnClickListener {
 
@@ -98,10 +124,9 @@ class FavoritesFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
 
                 stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toList()
-                //gson.fromJson(Fuel.get(data).awaitString(), Array<Stasjon>::class.java)//getData(data)
 
                 withContext(Dispatchers.Main){
-                    Log.d("API FETCHING", stasjoner.toString())
+                    //Log.d("API FETCHING", stasjoner.toString())
 
                     if (wanted != "") {
                         var added = false
@@ -136,21 +161,5 @@ class FavoritesFragment : Fragment() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(e.windowToken, 0)
     }
-
-
-
-
-    /*suspend fun getData() : List<Stasjon> { // Fuel. funksjonen funker kun med proxy-serveren. funksjonen settes i onCreateView()
-
-        var ret : List<Stasjon> = listOf()
-        try {
-            ret = gson.fromJson(Fuel.get(path).awaitString(), Array<Stasjon>::class.java).toList()
-        }
-        catch (exception: Exception) {
-            println("A network request exception was thrown: ${exception.message}")
-        }
-
-        return ret
-    }*/
 
 }

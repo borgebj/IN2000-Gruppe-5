@@ -27,12 +27,31 @@
         android:id="@+id/navigation_favorites"
         android:name="com.example.gruppe5.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
-        tools:layout="@layout/fragment_favorites" />
+        tools:layout="@layout/fragment_favorites" >
+        <argument
+            android:name="favorite_station"
+            app:argType="com.example.gruppe5.Stasjon"
+            app:nullable="true"
+            android:defaultValue="@null"/>
+        <action
+            android:id="@+id/action_navigation_favorites_to_navigation_search2"
+            app:destination="@id/navigation_search" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.gruppe5.ui.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/navigation_search"
+        android:name="com.example.gruppe5.ui.search.SearchFragment"
+        android:label="Search"
+        tools:layout="@layout/search_fragment" >
+        <action
+            android:id="@+id/action_navigation_search_to_navigation_favorites"
+            app:destination="@id/navigation_favorites" />
+    </fragment>
 
 </navigation>
