@@ -14,7 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.example.gruppe5.testFiler.StasjonAdapter
+import com.example.gruppe5.StasjonAdapter
 
 class FavoritesFragment : Fragment() {
 

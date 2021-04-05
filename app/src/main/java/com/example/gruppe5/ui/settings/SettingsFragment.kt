@@ -1,4 +1,4 @@
-package com.example.gruppe5.ui.info
+package com.example.gruppe5.ui.settings
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,15 +10,15 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.gruppe5.R
 
-class InfoFragment : Fragment() {
 
+class SettingsFragment : Fragment() {
 
     // globale variabler
-    private lateinit var infoModel: InfoViewModel
+    private lateinit var profileModel: SettingsViewModel
     lateinit var textView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root: View = inflater.inflate(R.layout.fragment_info, container, false)
+        val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
 
@@ -27,14 +27,14 @@ class InfoFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        infoModel = ViewModelProvider(this).get(InfoViewModel::class.java)
-        infoModel.text.observe(viewLifecycleOwner, Observer {
+        profileModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
+        profileModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
     }
 
     fun assignId(root: View) {
-        textView = root.findViewById(R.id.text_info)
+        textView = root.findViewById(R.id.text_profile)
     }
 
 }
