@@ -89,9 +89,9 @@ class SearchFragment : Fragment() {
         }
     }
 
-    fun handleData(root : View, wanted : String){
+    suspend fun handleData(root : View, wanted : String){
 
-        //withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main){
 
             if (wanted != "") {
                 for (station in stasjoner){
@@ -113,14 +113,14 @@ class SearchFragment : Fragment() {
                             root.findNavController().navigate(action)
                             Log.d("SENDE STATION TIL FAV", station.name)
                             //}
-                            return
+                            return@withContext
                         }
                     }
                 }
                 toastMsg("Station: ${wanted} does not exsist.")
             }
             else toastMsg("Enter a city name")
-        //}
+        }
     }
 
     fun closeKeyboard(e : EditText){

@@ -12,22 +12,16 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment.findNavController
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.example.gruppe5.testFiler.StasjonAdapter
-import com.example.gruppe5.ui.search.SearchFragment
 import com.google.gson.Gson
 import kotlinx.coroutines.*
-//import com.example.gruppe5.StasjonAdapter
+import com.example.gruppe5.StasjonAdapter
 
 class FavoritesFragment : Fragment() {
 
