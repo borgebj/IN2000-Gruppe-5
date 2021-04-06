@@ -28,7 +28,7 @@ class StasjonVerdier : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'") // tidsformat brukt i API og prosjekt
 
     // testvariabler ! Disse kan endres!
-    var stasjon = "NO0011A"
+    var stasjon = "NO0057A"
     val reftime = "2021-03-28T12%3A00%3A00Z"
     var type = ""
 
@@ -38,17 +38,16 @@ class StasjonVerdier : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         setContentView(R.layout.activity_stasjon_verdier)
         findViewById<RelativeLayout>(R.id.relative).setOnClickListener { closeKeyboard(findViewById(R.id.relative)) }
 
-
         // test-dato og naa-dato
         val klokkeslett = "2021-03-30T16:00:00Z"
-        val idag = dateFormat.format(Calendar.getInstance().time)
-
+        var idag = dateFormat.format(Calendar.getInstance().time)
+        idag = "2021-03-30T16:00:00Z"
 
         assignId()
         addSpinnerAdapter()
 
         // parser
-        parseJson(reftime, idag)
+        parseJson(idag)
     }
 
     // lukker "keyboard"-funksjon (etter knappetrykk)
@@ -76,19 +75,18 @@ class StasjonVerdier : AppCompatActivity(), AdapterView.OnItemSelectedListener {
         return khttp.get(full).text
     }
 
-    fun parseJson(refTime: String, klokkeslett: String) {
+    fun parseJson(klokkeslett: String) {
         submit.setOnClickListener {
             closeKeyboard(it)
             if (input.text.toString() != "") stasjon = input.text.toString()
             CoroutineScope(Dispatchers.IO).launch {
 
                 // linken med spesifikk stasjon og tidspunkt (Kan og maa modifiseres !)
-                val json = getData("/?station=${stasjon}&reftime=${refTime}")
+                val json = getData("/?station=${stasjon}&reftime=${reftime}")
 
-                val jsonobjekt = JSONObject(json)
-                val data : JSONObject = jsonobjekt.getJSONObject("data")
-                val tider : JSONArray = data.getJSONArray("time")
-
+                // henter array med tidspunkter fra data-objektet
+                val tider : JSONArray = JSONObject(json).getJSONObject("data").getJSONArray("time")
+                
                 // itererer gjennom tider-listen (time under data)
                 for (i in 1 until tider.length()) {
                     val tidspunkt = tider.getJSONObject(i)

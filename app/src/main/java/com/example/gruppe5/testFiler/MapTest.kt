@@ -23,7 +23,6 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
     private lateinit var mMap: GoogleMap
     lateinit var visMarker: ToggleButton
     lateinit var resetCamera: Button
-    lateinit var submit: Button
 
 
     // liste med stasjoner og Gson
@@ -41,9 +40,7 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map_test)
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         assignId()
@@ -75,7 +72,6 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
         visMarker = findViewById(R.id.addButton)
         resetCamera = findViewById(R.id.resetButton)
         spinner = findViewById(R.id.spinner)
-        submit = findViewById(R.id.submit)
     }
 
     fun setOnClickers() {
@@ -113,59 +109,6 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
         return khttp.get(full).text
     }
 
-    fun parseJson(eoi : String): String {
-        var fullString = ""
-
-        submit.setOnClickListener {
-            CoroutineScope(Dispatchers.IO).launch {
-
-                // linken med spesifikk stasjon og tidspunkt (Kan og maa modifiseres !)
-                val json = getData("/?station=${eoi}&reftime=${reftime}")
-
-                val jsonobjekt = JSONObject(json)
-                val data : JSONObject = jsonobjekt.getJSONObject("data")
-                val tider : JSONArray = data.getJSONArray("time")
-
-                // itererer gjennom tider-listen (time under data)
-                for (i in 1 until tider.length()) {
-                    val tidspunkt = tider.getJSONObject(i)
-                    val variabler = tidspunkt.getJSONObject("variables")
-
-
-                    // relevante variabler for luftkvalitet
-                    val no2 = variabler.getJSONObject("AQI_no2")
-                    val pm10 = variabler.getJSONObject("AQI_pm10")
-                    val pm25 = variabler.getJSONObject("AQI_pm25")
-                    val o3 = variabler.getJSONObject("AQI_o3")
-
-                    // henter og splitter tidspunkt fra i dag
-                    val idagListe = idag.split("T")
-                    val idagDato = idagListe[0]
-                    val idagKlokke = idagListe[1]
-
-                    // henter og splitter tidspunkter fra api-tidspunktene
-                    val apiList = tidspunkt.get("from").toString().split("T")
-                    val apiDato = apiList[0]
-                    val apiKlokke = apiList[1]
-
-                    // sammenligner gitt tidspunkt og type
-                    if (apiDato == idagDato && apiKlokke <= idagKlokke) {
-                        when (type) {
-                            "no2" -> fullString = "${"%.4f".format(no2.get("value"))}"
-                            "pm10" -> fullString = "${"%.4f".format(pm10.get("value"))}"
-                            "pm25" -> fullString = "${"%.4f".format(pm25.get("value"))}"
-                            "o3" -> fullString = "${"%.4f".format(o3.get("value"))}"
-                        }
-                        runBlocking {
-                            println(fullString)
-                            return@runBlocking fullString }
-                    }
-                }
-            }
-        }
-        return ""
-    }
-
 
     // metode for Coroutine -> legger til ALLE stasjoner
     fun addStasjoner() {
@@ -174,12 +117,9 @@ class MapTest : AppCompatActivity(), OnMapReadyCallback, AdapterView.OnItemSelec
             val lon: Double = stasjon.longitude
             val location = LatLng(lat, lon)
 
-            //TODO: Få dette til å fungere
-            val verdi = parseJson(stasjon.eoi)
-
             mMap.addMarker(MarkerOptions()
                     .position(location)
-                    .title(stasjon.name+" - "+verdi)
+                    .title(stasjon.name)
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)) // color
                     .alpha(0.9F) // Opacity
                     .flat(true) // flattener-marker

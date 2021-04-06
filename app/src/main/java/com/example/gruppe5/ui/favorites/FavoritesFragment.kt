@@ -27,6 +27,7 @@ import com.example.gruppe5.testFiler.StasjonAdapter
 import com.example.gruppe5.ui.search.SearchFragment
 import com.google.gson.Gson
 import kotlinx.coroutines.*
+//import com.example.gruppe5.StasjonAdapter
 
 class FavoritesFragment : Fragment() {
 

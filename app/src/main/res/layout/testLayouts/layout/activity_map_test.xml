@@ -45,17 +45,4 @@
         android:textSize="12sp"
         android:textColor="#ffffff" />
 
-    <Button
-        android:id="@+id/submit"
-        android:layout_width="277dp"
-        android:layout_height="38dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="30dp"
-        android:layout_marginStart="63dp"
-        android:backgroundTint="@color/gray"
-        android:gravity="center_horizontal"
-        android:text="Vis verdier"
-        android:textSize="12sp"
-        android:textColor="#ffffff" />
-
 </RelativeLayout>

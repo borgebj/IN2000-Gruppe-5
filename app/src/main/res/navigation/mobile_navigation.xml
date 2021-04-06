@@ -18,12 +18,6 @@
         tools:layout="@layout/fragment_maps" />
 
     <fragment
-        android:id="@+id/navigation_info"
-        android:name="com.example.gruppe5.ui.info.InfoFragment"
-        android:label="@string/title_info"
-        tools:layout="@layout/fragment_info" />
-
-    <fragment
         android:id="@+id/navigation_favorites"
         android:name="com.example.gruppe5.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
@@ -39,10 +33,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_profile"
-        android:name="com.example.gruppe5.ui.profile.ProfileFragment"
-        android:label="@string/title_profile"
-        tools:layout="@layout/fragment_profile" />
+        android:id="@+id/navigation_settings"
+        android:name="com.example.gruppe5.ui.settings.SettingsFragment"
+        android:label="@string/title_settings"
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_search"

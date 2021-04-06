@@ -6,7 +6,7 @@
     <string name="title_map">Map</string>
     <string name="title_info">Info</string>
     <string name="title_favorites">Favorites</string>
-    <string name="title_profile">Profile</string>
+    <string name="title_settings">Settings</string>
 
     <!-- google maps key -->
     <string name="google_maps_key">AIzaSyCf95oxW7tH8IQayHgOiYrqhjHUqd-9iIM</string>
