@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -75,4 +76,7 @@ dependencies {
     // for donut-chart
     implementation("app.futured.donut:library:2.1.0")
     compileOnly 'com.google.android.wearable:wearable:2.6.0'
+
+    // for navigation
+    apply plugin: "androidx.navigation.safeargs.kotlin"
 }
