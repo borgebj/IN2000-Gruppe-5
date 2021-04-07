@@ -1,4 +1,5 @@
 package com.example.gruppe5.ui.location
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,12 +10,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.gruppe5.R
 
-class LocationFragment : Fragment(){
+class LocationFragment : Fragment() {
 
-    private lateinit var viewModel: LocationViewModel
-    lateinit var textView: TextView
+    private lateinit var viewModel : LocationViewModel
+    lateinit var textView : TextView
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
         assignId(root)
         return root
@@ -29,6 +34,6 @@ class LocationFragment : Fragment(){
     }
 
     fun assignId(root: View) {
-        textView = root.findViewById(R.id.text_location)
+        textView = root.findViewById(R.id.aqiLevel_location)
     }
 }
