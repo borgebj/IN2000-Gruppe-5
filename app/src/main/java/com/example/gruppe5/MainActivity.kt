@@ -19,9 +19,6 @@ class MainActivity : AppCompatActivity() {
 
         // setter opp navbar
         navView.setupWithNavController(findNavController(R.id.nav_host_fragment))
-
-
-
     }
 
     fun assignId() {
