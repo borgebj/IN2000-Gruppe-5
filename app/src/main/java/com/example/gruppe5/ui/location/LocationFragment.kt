@@ -15,13 +15,12 @@ class LocationFragment : Fragment() {
     private lateinit var viewModel : LocationViewModel
     lateinit var textView : TextView
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
+
         assignId(root)
+
         return root
     }
 
