@@ -11,10 +11,11 @@ data class Stasjon(val name: String,
                    val latitude: Double,
                    val grunnkrets: Grunnkets,
                    val delomrade: Delomrade,
-                   val kommune: Kommune) : Parcelable
+                   val kommune: Kommune,
+                   var verdier : HashMap<String, Double>) : Parcelable
 {
     override fun toString(): String {
-        return "[$eoi] $name [H($height) L($longitude)]"
+        return "[$eoi] $name [H($height) L($longitude)] - - - ${verdier}"
     }
 }
 @Parcelize
@@ -44,5 +45,3 @@ data class Kommune(
 { override fun toString(): String {
     return "[$areacode]$name"
 } }
-
-data class StasjonListe(val list: List<Stasjon>)
