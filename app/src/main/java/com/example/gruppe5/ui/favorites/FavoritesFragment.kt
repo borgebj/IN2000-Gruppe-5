@@ -1,17 +1,16 @@
 package com.example.gruppe5.ui.favorites
 
-import android.content.Context
+import android.annotation.SuppressLint
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -19,26 +18,26 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.google.gson.Gson
-import kotlinx.coroutines.*
 import com.example.gruppe5.StasjonAdapter
+import com.google.gson.Gson
 
 class FavoritesFragment : Fragment() {
 
     // globale variabler
     private lateinit var viewModel: FavoritesViewModel
     lateinit var textView: TextView
-    lateinit var searchBar: EditText
-    lateinit var searchBut: ImageButton
+    lateinit var addBut: ImageButton
+    lateinit var resetB : Button
     lateinit var fav_recycler: RecyclerView
     lateinit var fav_adapter: StasjonAdapter // gjenbruker StasjonAdapter fra testFiler
-    lateinit var stasjoner : List<Stasjon>
 
     private val path: String = "https://api.met.no/weatherapi/airqualityforecast/0.1/stations"
 
-    // maa beholde denne listen for brukeren paa en eller annen maate -- kanskje Model?????
     var fav_stations: MutableList<Stasjon> = mutableListOf()
-    val gson = Gson()
+    lateinit var pref : SharedPreferences// = requireContext().getSharedPreferences("my_pref", MODE_PRIVATE)
+    lateinit var editor : SharedPreferences.Editor// = pref.edit()
+    var antKeys = 0 // antall lagrede favorittstasjoner
+    var gson = Gson()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +48,7 @@ class FavoritesFragment : Fragment() {
 
         assignId(root)
         addAdapter()
+        setResetBut(root)
         setSearchFrag(root)
 
         return root
@@ -63,98 +63,115 @@ class FavoritesFragment : Fragment() {
     }
 
     fun assignId(root: View) {
+
         textView = root.findViewById(R.id.text_favorites)
-        searchBar = root.findViewById(R.id.search_bar)
-        searchBut = root.findViewById(R.id.search_but)
+        addBut = root.findViewById(R.id.add_but)
+        resetB = root.findViewById(R.id.reset_but)
         fav_recycler = root.findViewById(R.id.favorites_recycler)
         fav_recycler.layoutManager = LinearLayoutManager(root.context, RecyclerView.VERTICAL, false)
+
+        pref = requireContext().getSharedPreferences("pre", MODE_PRIVATE)
+        editor = pref.edit()
+        antKeys = pref.all.size
+
     }
 
     fun addAdapter() {
+
+        setFavStations()
         fav_adapter = StasjonAdapter(fav_stations)
         fav_recycler.adapter = fav_adapter
     }
 
-    fun toastMsg(msg: String){
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    fun setFavStations(){
+
+        if (antKeys != 0){ // fav_statioins er ikke tom
+            for (i in 1 .. antKeys){
+                val st = getElem(i)
+                if (st != null && !sjekkDup(st)) fav_stations.add(st)
+                else break
+            }
+        }
     }
 
-    fun getData(): String {
-        return khttp.get(path).text
+    fun getElem(key: Int) : Stasjon? {
+
+        val e = pref.getString(key.toString(), "")
+        val favStation = gson.fromJson(e, Stasjon::class.java)
+        //if (favStation != null) Log.d("getElem(${key}) return", favStation.name)
+
+        return favStation
     }
 
-    fun setSearchFrag(root : View){
-        searchBar.setOnClickListener {
+    @SuppressLint("ApplySharedPref")
+    fun setResetBut(root: View){
+
+        resetB.setOnClickListener{
+
+            editor.clear().commit()
+            fav_stations = mutableListOf()
+            fav_adapter.notifyDataSetChanged()
+            refresh(root)
+        }
+    }
+
+    fun refresh(root: View){
+
+        root.findNavController().navigate(
+            FavoritesFragmentDirections.actionNavigationFavoritesSelf()
+        )
+    }
+
+    private fun sjekkDup(station: Stasjon) : Boolean = station in fav_stations
+
+
+    @SuppressLint("CommitPrefEdits")
+    fun setElem(station: Stasjon, key: Int){
+        //Log.d(" - setElem(${key})", "${station.name}")
+        val s = gson.toJson(station)
+        editor.putString(key.toString(), s)
+        editor.commit()
+
+    }
+
+    fun setSearchFrag(root: View){
+
+        addBut.setOnClickListener {
             tilSearch(root)  // navigere til SearchFragment
         }
         getDataTilbake()
     }
 
-    fun tilSearch(root : View){
+    fun tilSearch(root: View){
 
         root.findNavController().navigate(
-            FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
+            FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2()
+        )
     }
 
     fun getDataTilbake(){
-        //val args: FavoritesFragmentArgs by navArgs()
+
         val station: Stasjon? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation //args.favoriteStation
-        if (station != null) {
-            Log.d("DATA FRA SEARCH", station.name)
 
-            fav_stations.add(station!!)
-            fav_adapter.notifyDataSetChanged()
-        }
+        if (antKeys == 3) toastMsg("List is full!") // kan lagre MAKS TRE favorittstasjoner -- antall elementer som kan legges til kan endres
         else {
-            Log.d("STATION", "IS NULL")
-        }
+            if (station != null) {
+                if (!sjekkDup(station)){ // unngaa duplikater
 
-    }
+                    setElem(station, ++antKeys)
+                    fav_stations.add(station)
+                    fav_adapter.notifyDataSetChanged()
 
-    fun setSearchBut(){
-        searchBut.setOnClickListener {
-
-            val wanted = searchBar.text.toString() // henter det brukeren tastet inn
-
-            CoroutineScope(Dispatchers.IO).launch {
-
-                stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toList()
-
-                withContext(Dispatchers.Main){
-                    //Log.d("API FETCHING", stasjoner.toString())
-
-                    if (wanted != "") {
-                        var added = false
-                        for (station in stasjoner){
-                            Log.d("I FOR_LOEKKE", station.name)
-
-                            if (station.name.equals(wanted, ignoreCase = true)){
-                                if (station in fav_stations) { // unngaa duplikater
-                                    toastMsg("${station.name} is already your favorite city.")
-                                    return@withContext
-                                }
-                                else {
-                                    fav_stations.add(station)
-                                    fav_adapter.notifyDataSetChanged()
-                                    Log.d("FANT STASJON", station.name)
-                                    added = true
-                                }
-                            }
-                        }
-                        if (!added) toastMsg("${wanted} does not exsist.")
-
-                    }
-                    else toastMsg("Enter a city name")
+                } else {
+                    toastMsg("${station.name} is already your favorite city.")
                 }
             }
-            searchBar.text.clear()
-            closeKeyboard(searchBar)
+            else Log.d("STATION", "IS NULL")
         }
     }
 
-    fun closeKeyboard(e : EditText){
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(e.windowToken, 0)
+    fun toastMsg(msg: String){
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
 }
