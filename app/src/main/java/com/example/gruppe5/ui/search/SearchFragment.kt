@@ -30,14 +30,11 @@ class SearchFragment : Fragment() {
     lateinit var textView: TextView
     lateinit var searchBar: EditText
     lateinit var searchBut: ImageButton
-
     lateinit var stasjoner : List<Stasjon>
 
     private val path: String = "https://api.met.no/weatherapi/airqualityforecast/0.1/stations"
 
-    var fav_stations: MutableList<Stasjon> = mutableListOf() // MAA BEHOLDES
     val gson = Gson()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,7 +75,6 @@ class SearchFragment : Fragment() {
         searchBut.setOnClickListener {
 
             val wanted = searchBar.text.toString() // henter det brukeren tastet inn
-
             CoroutineScope(Dispatchers.IO).launch {
 
                 stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toList()
@@ -95,26 +91,14 @@ class SearchFragment : Fragment() {
 
             if (wanted != "") {
                 for (station in stasjoner){
-                    Log.d("I FOR_LOEKKE", station.name)
-
+                    //Log.d("I FOR_LOEKKE", station.name)
                     if (station.name.equals(wanted, ignoreCase = true)){ // finner match
-
-                        if (station in fav_stations) { // unngaa duplikater -- fav_stations oppdateres hver gang -- MAA FIKSES
-                            Log.d("I FAV_STATION", station.name)
-                            toastMsg("${station.name} is already your favorite city.")
-                        }
-                        else {
-                            // sender station tilbake til FavorteFragment
-                            fav_stations.add(station) // MAA FIKSES slik at elementene i fav_stations ikke forandres fra forrige kall
-                            Log.d("ADDED", station.name)
-
-                            //if (root.findNavController().currentDestination?.id == R.id.navigation_search){
+                            //if (root.findNavController().currentDestination?.id == R.id.navigation_search)
                             val action = SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
                             root.findNavController().navigate(action)
                             Log.d("SENDE STATION TIL FAV", station.name)
-                            //}
+
                             return@withContext
-                        }
                     }
                 }
                 toastMsg("Station: ${wanted} does not exsist.")
@@ -127,6 +111,5 @@ class SearchFragment : Fragment() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(e.windowToken, 0)
     }
-
 
 }

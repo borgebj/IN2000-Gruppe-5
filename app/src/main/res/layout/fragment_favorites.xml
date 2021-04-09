@@ -8,49 +8,53 @@
     tools:context=".ui.favorites.FavoritesFragment"
     android:orientation="vertical">
 
-
-    <EditText
-        android:id="@+id/search_bar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center_horizontal"
-        android:hint="Search a station"
-        android:inputType="none"
-        android:focusable="false"
-        app:layout_constraintTop_toTopOf="@+id/search_but"
-        app:layout_constraintBottom_toBottomOf="@+id/search_but"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/search_but" />
-
     <ImageButton
-        android:id="@+id/search_but"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_search"
+        android:id="@+id/add_but"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintLeft_toRightOf="@+id/search_bar"
+        android:layout_marginEnd="180dp"
+        android:gravity="center"
+        android:src="@drawable/ic_add"
+        android:background="@color/cardview_light_background"
+        android:tint="@color/teal_700"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/text_favorites"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/search_bar"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_favorites"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="0dp"
         android:gravity="center"
-        android:textSize="20sp"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_bar" />
+        app:layout_constraintTop_toBottomOf="@id/add_but" />
+
+
+    <Button
+        android:id="@+id/reset_but"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="0dp"
+        android:text="Reset favorites"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_favorites" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favorites_recycler"
         android:layout_width="match_parent"
         android:layout_height="500dp"
         android:layout_centerInParent="true"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_favorites" />
 

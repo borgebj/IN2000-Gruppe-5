@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_navigation_favorites_to_navigation_search2"
             app:destination="@id/navigation_search" />
+        <action
+            android:id="@+id/action_navigation_favorites_self"
+            app:destination="@id/navigation_favorites" />
     </fragment>
 
     <fragment
