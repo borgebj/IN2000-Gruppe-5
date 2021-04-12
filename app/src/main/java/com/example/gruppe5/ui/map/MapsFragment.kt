@@ -1,23 +1,17 @@
 package com.example.gruppe5.ui.map
 
-import androidx.fragment.app.Fragment
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
+import androidx.fragment.app.Fragment
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
@@ -26,11 +20,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.json.JSONArray
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
+
+// SKAL INNEHOLDE UI/kode som endrer viewet
 
 class MapsFragment : Fragment() {
 
@@ -57,6 +52,7 @@ class MapsFragment : Fragment() {
         mMap.addMarker(MarkerOptions().position(LatLng(59.911491, 10.757933)).title("Oslo"))
     }
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
         return root
@@ -77,6 +73,8 @@ class MapsFragment : Fragment() {
         mMap.uiSettings.isZoomGesturesEnabled = true
     }
 
+
+    //region OVERFØR TIL VIEWMODEL !
     // henter JSON/XML via KHTTP -> til String
     fun getData(del: String): String {
         val full = "$baseURL$del"
@@ -87,6 +85,7 @@ class MapsFragment : Fragment() {
 
         //TODO: Fjern eller spar - variabel som holder høyeste AQI-nivå i Norge
         var highestValueInNorway : Double = 0.0
+        var lowestValueInNorway : Double = 500.0
 
         // henter alle stasjoner og henter alle verdier
         fun getStations() {
@@ -129,8 +128,10 @@ class MapsFragment : Fragment() {
                         station.verdier = map
 
                         // skaffer hoyeste
-                        for (verdi in map)
+                        for (verdi in map) {
                             if (verdi.value > highestValueInNorway) highestValueInNorway = verdi.value
+                            if (verdi.value < lowestValueInNorway) lowestValueInNorway = verdi.value
+                        }
                     }
                 }
             }
@@ -140,7 +141,14 @@ class MapsFragment : Fragment() {
             for (station in stations) {
                 withContext(Dispatchers.Main) {
                     val title = "[${station.name}] - ${station.verdier.get(type)}"
-                    mMap.addMarker(MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title))
+                    mMap.addMarker(
+                        MarkerOptions().position(
+                            LatLng(
+                                station.latitude,
+                                station.longitude
+                            )
+                        ).title(title)
+                    )
 
                     //TODO: Fjern denne, + fiks markører som ikke viser tittel
                     Log.d(station.name, station.verdier.get(type).toString())
@@ -155,6 +163,8 @@ class MapsFragment : Fragment() {
             addMarkers()
 
             Log.d("Hoyeste i Norge", highestValueInNorway.toString())
+            Log.d("Laveste i Norge", lowestValueInNorway.toString())
         }
     }
+    //endregion
 }
