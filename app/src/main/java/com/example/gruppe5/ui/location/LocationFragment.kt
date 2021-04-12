@@ -13,11 +13,15 @@ import com.example.gruppe5.R
 class LocationFragment : Fragment() {
 
     private lateinit var viewModel : LocationViewModel
-    lateinit var textView : TextView
+
+    lateinit var stasjonNavn : TextView
+    lateinit var aqiLevel : TextView
+    lateinit var aqiSentence : TextView
+    lateinit var verdiNivaer : TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
-        val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
+        val root: View = inflater.inflate(R.layout.fragment_location, container, false)
 
         assignId(root)
 
@@ -28,11 +32,14 @@ class LocationFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         viewModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+            stasjonNavn.text = it
         })
     }
 
     fun assignId(root: View) {
-        textView = root.findViewById(R.id.aqiLevel_location)
+        stasjonNavn = root.findViewById(R.id.stationName_location)
+        aqiLevel = root.findViewById(R.id.aqiLevel_location)
+        aqiSentence = root.findViewById(R.id.aqiSentence_location)
+        verdiNivaer = root.findViewById(R.id.verdiNivaer_location)
     }
 }
