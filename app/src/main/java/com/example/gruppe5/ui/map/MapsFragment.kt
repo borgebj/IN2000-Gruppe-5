@@ -2,12 +2,13 @@ package com.example.gruppe5.ui.map
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.location.LocationFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -25,17 +26,19 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
+
 // SKAL INNEHOLDE UI/kode som endrer viewet
 
 class MapsFragment : Fragment() {
 
     // elementer
     lateinit var mMap: GoogleMap
-    val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // API url
-    var type = "o3"
+    lateinit var root : View
 
+    val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // API url
     val stations = mutableListOf<Stasjon>()
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
+    var type = "pm10"
 
 
 
@@ -49,12 +52,18 @@ class MapsFragment : Fragment() {
         addMapFunctions()
         parseData()
 
+        mMap.setOnInfoWindowClickListener {
+            Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
+            it.title = "trykket"
+        }
+
         mMap.addMarker(MarkerOptions().position(LatLng(59.911491, 10.757933)).title("Oslo"))
     }
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
+        this.root = root
         return root
     }
 
@@ -118,13 +127,17 @@ class MapsFragment : Fragment() {
                     val times = timeObject.get("from").toString().split("T")
                     val variables = timeObject.getJSONObject("variables")
 
+                    // for aa sikre at tidspunktet sammenlignet er innenfor denne og neste time
+                    val slit = today[1].split(":")
+                    val timeIsValid : Boolean = times[1] >= slit[0] && times[1] <= (slit[0].toInt()+1).toString()
+
                     // sammenligner dato og tidspunkt for aa hente verdier for NAA
-                    if (times[0] == today[0] && times[1] >= today[1]) {
+                    if (times[0] == today[0] && timeIsValid) {
                         val map = HashMap<String, Double>()
-                        map["no2"] = variables.getJSONObject("no2_concentration").get("value").toString().toDouble()
-                        map["pm10"] = variables.getJSONObject("pm10_concentration").get("value").toString().toDouble()
-                        map["pm25"] = variables.getJSONObject("pm25_concentration").get("value").toString().toDouble()
-                        map["o3"] = variables.getJSONObject("o3_concentration").get("value").toString().toDouble()
+                        map["no2"] = String.format("%.2f", variables.getJSONObject("no2_concentration").get("value")).toDouble()
+                        map["pm10"] = String.format("%.2f", variables.getJSONObject("pm10_concentration").get("value")).toDouble()
+                        map["pm25"] = String.format("%.2f", variables.getJSONObject("pm25_concentration").get("value")).toDouble()
+                        map["o3"] = String.format("%.2f", variables.getJSONObject("o3_concentration").get("value")).toDouble()
                         station.verdier = map
 
                         // skaffer hoyeste
@@ -135,23 +148,12 @@ class MapsFragment : Fragment() {
                     }
                 }
             }
-            Log.d("Highest", highestValueInNorway.toString()) // test
         }
         suspend fun addMarkers() {
             for (station in stations) {
                 withContext(Dispatchers.Main) {
-                    val title = "[${station.name}] - ${station.verdier.get(type)}"
-                    mMap.addMarker(
-                        MarkerOptions().position(
-                            LatLng(
-                                station.latitude,
-                                station.longitude
-                            )
-                        ).title(title)
-                    )
-
-                    //TODO: Fjern denne, + fiks markører som ikke viser tittel
-                    Log.d(station.name, station.verdier.get(type).toString())
+                    val title = "[${station.name}] - ${station.verdier.get(type)} ug/m3"
+                    mMap.addMarker(MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title))
                 }
             }
         }

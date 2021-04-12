@@ -6,10 +6,6 @@
     android:fitsSystemWindows="true"
     android:id="@+id/relative">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbarMain"/>
-
-
     <TextView
         android:id="@+id/verdiBoks"
         android:layout_width="300dp"
