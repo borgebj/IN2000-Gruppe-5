@@ -24,7 +24,7 @@
         tools:layout="@layout/fragment_favorites" >
         <argument
             android:name="favorite_station"
-            app:argType="com.example.gruppe5.Stasjon"
+            app:argType="string"
             app:nullable="true"
             android:defaultValue="@null"/>
         <action
