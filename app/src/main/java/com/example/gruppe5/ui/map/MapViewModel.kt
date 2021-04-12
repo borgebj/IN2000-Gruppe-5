@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
+// skal inneholde logikk
+
 class MapViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
