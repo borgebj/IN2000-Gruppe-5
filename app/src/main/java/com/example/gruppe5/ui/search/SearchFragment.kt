@@ -78,7 +78,7 @@ class SearchFragment : Fragment() {
         inflater.inflate(R.menu.search_bar_menu, menu)
         val search = menu.findItem(R.id.nav_search)
         val searchView = search?.actionView as SearchView
-        searchView.queryHint= "Search something!"
+        searchView.queryHint= "Search a station"
 
         searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
