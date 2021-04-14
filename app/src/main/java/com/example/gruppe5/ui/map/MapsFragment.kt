@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.location.LocationFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -60,6 +62,14 @@ class MapsFragment : Fragment() {
         mMap.setOnInfoWindowClickListener {
             Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
             it.title = "trykket"
+
+            // venter i 2 sec for endret
+            root.postDelayed({
+                val action = MapsFragmentDirections.actionNavigationMapToNavigationLocation()
+                root.findNavController().navigate(action)
+            }, 1500)
+
+            it.showInfoWindow()
         }
 
         mMap.addMarker(MarkerOptions().position(LatLng(59.911491, 10.757933)).title("Oslo"))
