@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
 
         // setter opp navbar
         navView.setupWithNavController(navController)
-        navView.setupWithNavController(findNavController(R.id.nav_host_fragment))
     }
 
     private fun checkMyPermission() {

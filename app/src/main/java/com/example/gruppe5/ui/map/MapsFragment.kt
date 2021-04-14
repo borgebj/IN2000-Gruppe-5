@@ -11,15 +11,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import android.os.Bundle
-import android.util.Log
-import android.view.*
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import com.example.gruppe5.R
-import com.example.gruppe5.Stasjon
-import com.example.gruppe5.ui.location.LocationFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
