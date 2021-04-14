@@ -21,7 +21,6 @@
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/text_favorites"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/search_bar"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
