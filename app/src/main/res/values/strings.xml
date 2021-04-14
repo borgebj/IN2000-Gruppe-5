@@ -20,4 +20,84 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="innstillinger">INNSTILLINGER</string>
+
+    <!-- strings for searchbar -->
+    <string-array name="search_bar_strings">
+        <item>Alnabru</item>
+        <item>Alvim</item>
+        <item>Bakke kirke</item>
+        <item>Bangeløkka</item>
+        <item>Bankplassen</item>
+        <item>Bekkestua</item>
+        <item>Birkenesobservatoriet</item>
+        <item>Breivoll</item>
+        <item>Bryn skole</item>
+        <item>Bygdøy Alle</item>
+        <item>Danmarks plass</item>
+        <item>E6 Alna senter</item>
+        <item>E6-Tiller</item>
+        <item>Eilif Dues vei</item>
+        <item>Elgeseter</item>
+        <item>Furulund</item>
+        <item>Gartnerløkka</item>
+        <item>Grimmerhaugen</item>
+        <item>Grønland</item>
+        <item>Hansjordnesbukta</item>
+        <item>Haukenes</item>
+        <item>Hjortnes</item>
+        <item>Holta</item>
+        <item>Hurdal25</item>
+        <item>Hønefoss skole</item>
+        <item>Kannik</item>
+        <item>Karl Eriksens plass</item>
+        <item>Karpdalen</item>
+        <item>Kirkeveien</item>
+        <item>Klosterhaugen</item>
+        <item>Knarrdalstranda</item>
+        <item>Kransen</item>
+        <item>Kårvatn</item>
+        <item>Leiret</item>
+        <item>Lensmannsdalen</item>
+        <item>Lillehammer barnehage</item>
+        <item>Loddefjord</item>
+        <item>Lommedalen</item>
+        <item>Manglerud</item>
+        <item>Minnesundvegen, Gjøvik</item>
+        <item>Moheia Vest</item>
+        <item>Nedre Langgate</item>
+        <item>Nedre Storgate</item>
+        <item>Nygaardsgata</item>
+        <item>Olav V gate</item>
+        <item>Omkjøringsvegen</item>
+        <item>Prestebakke</item>
+        <item>Rambergan</item>
+        <item>Ringsakervegen</item>
+        <item>Rolland, Åsane</item>
+        <item>Rv 4, Aker sykehus</item>
+        <item>Rådal</item>
+        <item>Sandve</item>
+        <item>Schancheholen</item>
+        <item>Seljestad Rv83</item>
+        <item>Sentrum</item>
+        <item>Skøyen</item>
+        <item>Smestad</item>
+        <item>Sofienbergparken</item>
+        <item>Solheim</item>
+        <item>St.Croix</item>
+        <item>Stener Heyerdahl</item>
+        <item>Svanvik</item>
+        <item>Sverresgate</item>
+        <item>Torvet</item>
+        <item>Tustervatn</item>
+        <item>Vaterland</item>
+        <item>Vangsveien, Hamar</item>
+        <item>Vigernes</item>
+        <item>Vollgata</item>
+        <item>Våland</item>
+        <item>Åkebergveien</item>
+        <item>Backeparken</item>
+        <item>Bjørndalssletta</item>
+        <item>Bærum Golfklubb</item>
+        <item>Vårveien</item>
+    </string-array>
 </resources>

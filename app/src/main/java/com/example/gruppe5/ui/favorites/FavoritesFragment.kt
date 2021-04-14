@@ -19,7 +19,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
+import com.example.gruppe5.ui.search.SearchFragmentDirections
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FavoritesFragment : Fragment() {
 
@@ -30,6 +35,8 @@ class FavoritesFragment : Fragment() {
     lateinit var resetB : Button
     lateinit var fav_recycler: RecyclerView
     lateinit var fav_adapter: StasjonAdapter // gjenbruker StasjonAdapter fra testFiler
+
+    lateinit var stasjoner : MutableList<Stasjon>
 
     private val path: String = "https://api.met.no/weatherapi/airqualityforecast/0.1/stations"
 
@@ -87,20 +94,56 @@ class FavoritesFragment : Fragment() {
 
         if (antKeys != 0){ // fav_statioins er ikke tom
             for (i in 1 .. antKeys){
-                val st = getElem(i)
-                if (st != null && !sjekkDup(st)) fav_stations.add(st)
+                val st : String = getElem(i)
+                Log.d("setFavStations()", st)
+
+                if (st != null /*&& !sjekkDup(st)*/) {
+                    addToFavStations(st)//fav_stations.add(getObj(st)!!)
+                }
                 else break
             }
         }
     }
 
-    fun getElem(key: Int) : Stasjon? {
+    fun addToFavStations(station: String){
 
-        val e = pref.getString(key.toString(), "")
-        val favStation = gson.fromJson(e, Stasjon::class.java)
+        CoroutineScope(Dispatchers.IO).launch {
+
+            stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toMutableList()
+
+            withContext(Dispatchers.Main){
+
+                for (st in stasjoner){
+                    if (st.name.equals(station, ignoreCase = true)){ // finner match
+
+                        if (!inFavStations(station)){ // ikke satt til CardView ennaa
+                            fav_stations.add(st)
+                            fav_adapter.notifyDataSetChanged()
+                            Log.d("ADDED TO FAV", st.name)
+
+                            if (!inPref(station)) setElem(station, ++antKeys) // ikke satt til pref ennaa = ny favorittby
+
+                        } else {
+                            toastMsg("${station} is already your favorite city.")
+                        }
+                        break
+                    }
+                }
+            }
+        }
+    }
+
+
+    fun getElem(key: Int) : String {
+
+        val station : String? = pref.getString(key.toString(), "")
+        Log.d("getElem() station", station.toString())
+
+        return station.toString()
+        /*val favStation = gson.fromJson(e, Stasjon::class.java)
         //if (favStation != null) Log.d("getElem(${key}) return", favStation.name)
 
-        return favStation
+        return favStation*/
     }
 
     @SuppressLint("ApplySharedPref")
@@ -122,24 +165,43 @@ class FavoritesFragment : Fragment() {
         )
     }
 
-    private fun sjekkDup(station: Stasjon) : Boolean = station in fav_stations
+    private fun inPref(station: String) : Boolean {
 
+        val favs : Map<String, String> = pref.all as Map<String, String>
+        for (s in favs){
+            if (s.value == station) return true
+        }
+        return false
+    }
+
+    private fun inFavStations(station: String) : Boolean {
+
+        for (st in fav_stations){
+            if (st.name == station) return true
+        }
+        return false
+    }
+
+    fun getData(): String {
+        return khttp.get(path).text
+    }
 
     @SuppressLint("CommitPrefEdits")
-    fun setElem(station: Stasjon, key: Int){
+    fun setElem(station: String, key: Int){
         //Log.d(" - setElem(${key})", "${station.name}")
-        val s = gson.toJson(station)
-        editor.putString(key.toString(), s)
+        //val s = gson.toJson(station)
+        editor.putString(key.toString(), station)
         editor.commit()
-
     }
 
     fun setSearchFrag(root: View){
 
         addBut.setOnClickListener {
             tilSearch(root)  // navigere til SearchFragment
+            if (antKeys == 3) toastMsg("List is full! Reset favorite stations to add new favorite.")
         }
         getDataTilbake()
+
     }
 
     fun tilSearch(root: View){
@@ -151,21 +213,10 @@ class FavoritesFragment : Fragment() {
 
     fun getDataTilbake(){
 
-        val station: Stasjon? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation //args.favoriteStation
+        val station: String? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation //args.favoriteStation
 
-        if (antKeys == 3) toastMsg("List is full!") // kan lagre MAKS TRE favorittstasjoner -- antall elementer som kan legges til kan endres
-        else {
-            if (station != null) {
-                if (!sjekkDup(station)){ // unngaa duplikater
-
-                    setElem(station, ++antKeys)
-                    fav_stations.add(station)
-                    fav_adapter.notifyDataSetChanged()
-
-                } else {
-                    toastMsg("${station.name} is already your favorite city.")
-                }
-            }
+        if (antKeys != 3) { // kan lagre MAKS TRE favorittstasjoner -- antall elementer som kan legges til kan endres
+            if (station != null) addToFavStations(station)
             else Log.d("STATION", "IS NULL")
         }
     }

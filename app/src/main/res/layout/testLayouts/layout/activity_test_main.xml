@@ -8,9 +8,6 @@
     android:id="@+id/test_main"
     tools:context=".testFiler.MainTestActivity">
 
-    <include layout="@layout/toolbar"
-        android:id="@+id/toolbarMain"/>
-
     <TextView
         android:layout_width="299dp"
         android:layout_height="91dp"

@@ -7,6 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment" >
 
+    <ImageView
+        android:id="@+id/iconLocation_home"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/ic_location_marker"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="32dp" />
+
     <TextView
         android:id="@+id/text_home"
         android:layout_width="257dp"
@@ -19,6 +28,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.06" />
 
+
+    <ImageButton
+        android:id="@+id/info_home"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:background="@drawable/ic_info"
+        app:layout_constraintBottom_toTopOf="@+id/donut_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.92"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_home"
+        app:layout_constraintVertical_bias="1.0" />
 
     <app.futured.donut.DonutProgressView
         android:id="@+id/donut_view"
@@ -34,6 +55,32 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_home" />
+
+    <TextView
+        android:id="@+id/aqiSentence_home"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="Luftkvaliteten er bra"
+        android:textColor="@color/black"
+        android:textSize="25dp"
+        app:layout_constraintBottom_toTopOf="@+id/testFiler_knapp"
+        app:layout_constraintEnd_toStartOf="@+id/smiley_location"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/donut_view"
+        app:layout_constraintVertical_bias="0.577" />
+
+    <ImageView
+        android:id="@+id/smiley_home"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/ic_smiley_lvl1"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="577dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/testFiler_knapp"
