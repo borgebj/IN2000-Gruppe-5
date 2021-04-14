@@ -37,6 +37,8 @@ class SearchFragment : Fragment() {
     ): View? {
         val root : View = inflater.inflate(R.layout.search_fragment, container, false)
 
+        setHasOptionsMenu(true)
+
         assignId(root)
         //setSearchBut(root)
         setOnListView(root)
