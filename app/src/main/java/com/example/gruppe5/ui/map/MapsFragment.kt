@@ -1,5 +1,16 @@
 package com.example.gruppe5.ui.map
-
+import android.annotation.SuppressLint
+import android.content.Context
+import android.location.LocationManager
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -35,13 +46,16 @@ class MapsFragment : Fragment() {
     lateinit var mMap: GoogleMap
     lateinit var root : View
 
+
     val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // API url
     val stations = mutableListOf<Stasjon>()
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
     var type = "pm10"
+  
+    var locationManager: LocationManager? = null
+    var GpsStatus = false
 
-
-
+  
     private val callback = OnMapReadyCallback { Map ->
         mMap = Map
 
@@ -59,8 +73,7 @@ class MapsFragment : Fragment() {
 
         mMap.addMarker(MarkerOptions().position(LatLng(59.911491, 10.757933)).title("Oslo"))
     }
-
-
+  
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
         this.root = root
@@ -75,11 +88,26 @@ class MapsFragment : Fragment() {
 
 
     // legger til funksjoner fra google-maps
+
+    open fun CheckGpsStatus() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+    @SuppressLint("MissingPermission")
     fun addMapFunctions() {
+//        CheckGpsStatus()
+//        if (GpsStatus == true) {
+//            Toast.makeText(requireContext(), "GPS ENABLED", Toast.LENGTH_SHORT).show()
+//
+//        } else {
+//            Toast.makeText(requireContext(), "GPS NOT ENABLED", Toast.LENGTH_SHORT).show()
+//        }
+        mMap.isMyLocationEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomGesturesEnabled = true
+
     }
 
 
