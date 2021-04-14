@@ -97,9 +97,7 @@ class FavoritesFragment : Fragment() {
                 val st : String = getElem(i)
                 Log.d("setFavStations()", st)
 
-                if (st != null /*&& !sjekkDup(st)*/) {
-                    addToFavStations(st)//fav_stations.add(getObj(st)!!)
-                }
+                if (st != null /*&& !sjekkDup(st)*/) addToFavStations(st)//fav_stations.add(getObj(st)!!)
                 else break
             }
         }
