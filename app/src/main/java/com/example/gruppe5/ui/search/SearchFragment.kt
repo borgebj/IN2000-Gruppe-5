@@ -67,6 +67,7 @@ class SearchFragment : Fragment() {
         listView.onItemClickListener = AdapterView.OnItemClickListener{ parent, view, position, id ->
             val station = parent?.getItemAtPosition(position).toString()
             //toastMsg(station)
+            closeKeyboard(listView)
 
             val action = SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
             root.findNavController().navigate(action)
@@ -94,6 +95,11 @@ class SearchFragment : Fragment() {
         })
 
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    fun closeKeyboard(e : View){
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(e.windowToken, 0)
     }
 
 /*
