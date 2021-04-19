@@ -40,9 +40,7 @@
             app:exitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_navigation_favorites_self"
-            app:destination="@id/navigation_favorites"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right" />
+            app:destination="@id/navigation_favorites" />
     </fragment>
 
     <fragment
@@ -68,8 +66,7 @@
         tools:layout="@layout/fragment_location">
 
         <action
-            android:id="@+id/action_navigation_location_to_navigation_map2"
-            app:destination="@id/navigation_map"
+             app:destination="@id/navigation_map"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right" />
     </fragment>

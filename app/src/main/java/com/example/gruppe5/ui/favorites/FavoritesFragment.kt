@@ -44,7 +44,6 @@ class FavoritesFragment : Fragment() {
     lateinit var pref : SharedPreferences// = requireContext().getSharedPreferences("my_pref", MODE_PRIVATE)
     lateinit var editor : SharedPreferences.Editor// = pref.edit()
     var antKeys = 0 // antall lagrede favorittstasjoner
-    var gson = Gson()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -107,7 +106,7 @@ class FavoritesFragment : Fragment() {
 
         CoroutineScope(Dispatchers.IO).launch {
 
-            stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toMutableList()
+            stasjoner = Gson().fromJson(getData(), Array<Stasjon>::class.java).toMutableList()
 
             withContext(Dispatchers.Main){
 

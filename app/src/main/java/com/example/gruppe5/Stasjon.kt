@@ -12,10 +12,10 @@ data class Stasjon(val name: String,
                    val grunnkrets: Grunnkets,
                    val delomrade: Delomrade,
                    val kommune: Kommune,
-                   var verdier : HashMap<String, Double>) : Parcelable
+                   var verdier : HashMap<String, Double>) : Parcelable // key:type : value:verdi -> (o3, pm10, pm25, no2)
 {
     override fun toString(): String {
-        return "[$eoi] $name [H($height) L($longitude)] - - - ${verdier}"
+        return "[$eoi] $name [H($height) L($longitude)] - - Verdier[${verdier}]"
     }
 }
 @Parcelize
@@ -25,7 +25,7 @@ data class Grunnkets(
         val areacode: Int
 ): Parcelable
 { override fun toString(): String {
-    return "[$areacode]$name"
+    return "Grunnkrets:[$areacode]$name"
 } }
 
 @Parcelize
@@ -34,7 +34,7 @@ data class Delomrade(
         val areacode: Int
 ): Parcelable
 { override fun toString(): String {
-    return "[$areacode]$name"
+    return "Delomrade:[$areacode]$name"
 } }
 
 @Parcelize
@@ -43,5 +43,5 @@ data class Kommune(
         val areacode: Int
 ): Parcelable
 { override fun toString(): String {
-    return "[$areacode]$name"
+    return "Kommune:[$areacode]$name"
 } }
