@@ -46,6 +46,9 @@ class SearchFragment : Fragment() {
         return root
     }
 
+    //TODO: Gjøre slik at hvis man søker tilsvarende en av de tre område-gruppene (delområde, grunnkrets, kommune)
+    // (f.eks. oslo) så går de gjennom listen med alle stasjoner, og henter og viser kun de som inneholder kommunen Oslo
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)

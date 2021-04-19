@@ -9,26 +9,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.example.gruppe5.ui.location.LocationFragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.HashMap
 
 
 // SKAL INNEHOLDE UI/kode som endrer viewet
@@ -39,16 +30,15 @@ class MapsFragment : Fragment() {
     lateinit var mMap: GoogleMap
     lateinit var root : View
 
+    // viewmodel
+    lateinit var viewModel : MapViewModel
 
-    val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // API url
-    val stations = mutableListOf<Stasjon>()
-    val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
-    var type = "pm10"
-  
+    // info
     var locationManager: LocationManager? = null
     var GpsStatus = false
+    var type = "pm10"
 
-  
+
     private val callback = OnMapReadyCallback { Map ->
         mMap = Map
 
@@ -57,22 +47,14 @@ class MapsFragment : Fragment() {
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
         addMapFunctions()
-        parseData()
+        addOnClickers()
+        viewModel.parseData()
 
-        mMap.setOnInfoWindowClickListener {
-            Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
-            it.title = "trykket"
-
-            // venter i 2 sec for endret
-            root.postDelayed({
-                val action = MapsFragmentDirections.actionNavigationMapToNavigationLocation()
-                root.findNavController().navigate(action)
-            }, 1500)
-
-            it.showInfoWindow()
-        }
-
-        mMap.addMarker(MarkerOptions().position(LatLng(59.911491, 10.757933)).title("Oslo"))
+        Log.d("test", "en")
+        viewModel.stations.observe(viewLifecycleOwner, Observer {
+            Log.d("test to ->", it.toString())
+            addMarkers(it)
+        })
     }
   
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -83,6 +65,7 @@ class MapsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this).get(MapViewModel::class.java) // legger til viewmodel
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
@@ -111,91 +94,28 @@ class MapsFragment : Fragment() {
 
     }
 
+    fun addOnClickers() {
+        mMap.setOnInfoWindowClickListener {
+            Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
+            it.title = "trykket"
 
-    //region OVERFØR TIL VIEWMODEL !
-    // henter JSON/XML via KHTTP -> til String
-    fun getData(del: String): String {
-        val full = "$baseURL$del"
-        return khttp.get(full).text
-    }
+            // venter i 2 sec for endret (postDelayed for aa vente)
+            root.postDelayed({
+                val action = MapsFragmentDirections.actionNavigationMapToNavigationLocation()
+                root.findNavController().navigate(action)
+            }, 1500)
 
-    fun parseData() {
-
-        //TODO: Fjern eller spar - variabel som holder høyeste AQI-nivå i Norge
-        var highestValueInNorway : Double = 0.0
-        var lowestValueInNorway : Double = 500.0
-
-        // henter alle stasjoner og henter alle verdier
-        fun getStations() {
-            val stationJson = getData("/stations")
-
-            // oppretter en array med stasjon-objekter fra JSON
-            val collectionType = object : TypeToken<Collection<Stasjon?>?>() {}.type
-            val stasjonArray: ArrayList<Stasjon> = Gson().fromJson(stationJson, collectionType)
-
-            for (stasjon in stasjonArray) {
-                stations.add(stasjon)
-            }
-        }
-        fun getValues() {
-            for (station in stations) {
-                val valueJson = getData("/?station=${station.eoi}")
-
-                val objekt = JSONObject(valueJson)
-
-                // main-data
-                val meta = objekt.getJSONObject("meta")
-                val data = objekt.getJSONObject("data")
-
-
-                // gaar gjennom listen med tidspunkter
-                val timeList = data.getJSONArray("time")
-                for (i in 0 until timeList.length()) {
-                    val timeObject = timeList.getJSONObject(i)
-
-                    val times = timeObject.get("from").toString().split("T")
-                    val variables = timeObject.getJSONObject("variables")
-
-                    // for aa sikre at tidspunktet sammenlignet er innenfor denne og neste time
-                    val slit = today[1].split(":")
-                    val timeIsValid : Boolean = times[1] >= slit[0] && times[1] <= (slit[0].toInt()+1).toString()
-
-                    // sammenligner dato og tidspunkt for aa hente verdier for NAA
-                    if (times[0] == today[0] && timeIsValid) {
-                        val map = HashMap<String, Double>()
-                        map["no2"] = String.format("%.2f", variables.getJSONObject("no2_concentration").get("value")).toDouble()
-                        map["pm10"] = String.format("%.2f", variables.getJSONObject("pm10_concentration").get("value")).toDouble()
-                        map["pm25"] = String.format("%.2f", variables.getJSONObject("pm25_concentration").get("value")).toDouble()
-                        map["o3"] = String.format("%.2f", variables.getJSONObject("o3_concentration").get("value")).toDouble()
-                        station.verdier = map
-
-                        // skaffer hoyeste
-                        for (verdi in map) {
-                            if (verdi.value > highestValueInNorway) highestValueInNorway = verdi.value
-                            if (verdi.value < lowestValueInNorway) lowestValueInNorway = verdi.value
-                        }
-                    }
-                }
-            }
-        }
-        suspend fun addMarkers() {
-            for (station in stations) {
-                withContext(Dispatchers.Main) {
-                    val title = "[${station.name}] - ${station.verdier.get(type)} ug/m3"
-                    mMap.addMarker(MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title))
-                }
-            }
-        }
-
-        // starter coroutine som parser all dataen
-        CoroutineScope(Dispatchers.IO).launch {
-            getStations()
-            getValues()
-            addMarkers()
-
-            Log.d("Hoyeste i Norge", highestValueInNorway.toString())
-            Log.d("Laveste i Norge", lowestValueInNorway.toString())
+            it.showInfoWindow()
         }
     }
-    //endregion
+
+    fun addMarkers(stations : MutableList<Stasjon>) {
+        for (station in stations) {
+            val title = "[${station.name}] - ${station.verdier.get(type)} ug/m3"
+            mMap.addMarker(
+                MarkerOptions().position(LatLng(station.latitude, station.longitude))
+                    .title(title)
+            )
+        }
+    }
 }
