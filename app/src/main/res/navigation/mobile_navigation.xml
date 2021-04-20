@@ -66,7 +66,8 @@
         tools:layout="@layout/fragment_location">
 
         <action
-             app:destination="@id/navigation_map"
+            android:id="@+id/action_navigation_location_to_map"
+            app:destination="@id/navigation_map"
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right" />
     </fragment>
