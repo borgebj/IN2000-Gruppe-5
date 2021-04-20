@@ -20,7 +20,25 @@
             android:id="@+id/action_navigation_map_to_navigation_location"
             app:destination="@id/navigation_location"
             app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right" />
+            app:exitAnim="@android:anim/slide_out_right"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_location"
+        android:name="com.example.gruppe5.ui.location.LocationFragment"
+        android:label="Location"
+        tools:layout="@layout/fragment_location">
+
+        <action
+            android:id="@+id/action_navigation_location_to_navigation_map"
+            app:destination="@id/navigation_map"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right">
+        </action>
+        <argument
+            android:name="station_name"
+            app:argType="string"
+            android:defaultValue="STASJONSNAVN"/>
     </fragment>
 
     <fragment
@@ -59,17 +77,6 @@
             app:destination="@id/navigation_favorites" />
     </fragment>
 
-    <fragment
-        android:id="@+id/navigation_location"
-        android:name="com.example.gruppe5.ui.location.LocationFragment"
-        android:label="Location"
-        tools:layout="@layout/fragment_location">
-
-        <action
-             app:destination="@id/navigation_map"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right" />
-    </fragment>
 
 
 </navigation>

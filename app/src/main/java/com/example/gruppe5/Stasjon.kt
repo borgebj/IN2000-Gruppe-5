@@ -15,7 +15,7 @@ data class Stasjon(val name: String,
                    var verdier : HashMap<String, Double>) : Parcelable // key:type : value:verdi -> (o3, pm10, pm25, no2)
 {
     override fun toString(): String {
-        return "[$eoi] $name [H($height) L($longitude)] - - Verdier[${verdier}]"
+        return "[$eoi] $name [Lat($latitude) Lng($longitude)] - - Verdier[${verdier}]"
     }
 }
 @Parcelize
