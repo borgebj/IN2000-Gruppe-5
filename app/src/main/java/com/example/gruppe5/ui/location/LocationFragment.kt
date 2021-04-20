@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import com.example.gruppe5.R
 
 class LocationFragment : Fragment() {
@@ -25,6 +26,10 @@ class LocationFragment : Fragment() {
 
         assignId(root)
 
+        val navn = LocationFragmentArgs.fromBundle(requireArguments()).stationName
+        val kortNavn = navn.substring(navn.indexOf("[") + 1, navn.indexOf("]"))
+        stasjonNavn.text = kortNavn
+
         return root
     }
 
@@ -32,7 +37,7 @@ class LocationFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
         viewModel.text.observe(viewLifecycleOwner, Observer {
-            stasjonNavn.text = it
+            //stasjonNavn.text = it
         })
     }
 

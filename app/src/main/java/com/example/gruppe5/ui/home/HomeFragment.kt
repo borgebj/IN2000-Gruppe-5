@@ -3,6 +3,8 @@ package com.example.gruppe5.ui.home
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,15 +17,18 @@ import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
 import com.example.gruppe5.testFiler.MainTestActivity
+import org.w3c.dom.Text
+import java.util.*
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(){
 
     // globale variabler
     private lateinit var homeModel: HomeViewModel
     lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
     lateinit var testFilKnapp: Button
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
@@ -47,7 +52,6 @@ class HomeFragment : Fragment() {
 
         donutView.cap = 100f
         donutView.submitData(listOf(section1,section2,section3))
-
 
 
         return root
@@ -76,6 +80,4 @@ class HomeFragment : Fragment() {
             startActivity(map)
         }
     }
-
-
 }

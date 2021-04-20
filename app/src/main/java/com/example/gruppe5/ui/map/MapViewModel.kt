@@ -44,13 +44,11 @@ class MapViewModel() : ViewModel() {
         fun getValues(stations : MutableList<Stasjon>) {
             for (station in stations) {
                 val valueJson = getData("/?station=${station.eoi}")
-
                 val objekt = JSONObject(valueJson)
 
                 // main-data
                 val meta = objekt.getJSONObject("meta")
                 val data = objekt.getJSONObject("data")
-
 
                 // gaar gjennom listen med tidspunkter
                 val timeList = data.getJSONArray("time")
@@ -88,7 +86,6 @@ class MapViewModel() : ViewModel() {
             val stasjoner = getStations()
             getValues(stasjoner)
             stations.postValue(stasjoner)
-            //stations.value = stasjoner
         }
     }
 
