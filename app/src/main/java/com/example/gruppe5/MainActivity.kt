@@ -6,6 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -20,6 +22,7 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,33 +51,32 @@ class MainActivity : AppCompatActivity() {
         Dexter.withContext(this)
             .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             .withListener(
-            object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse){
-                    Toast.makeText(applicationContext, "ACCESS GRANTED", Toast.LENGTH_SHORT).show()
-                }
+                object : PermissionListener {
+                    override fun onPermissionGranted(response: PermissionGrantedResponse){
+                        Toast.makeText(applicationContext, "ACCESS GRANTED", Toast.LENGTH_SHORT).show()
+                    }
 
-                override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
 //                    val intent = Intent()
 //                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
 //                    val uri = Uri.fromParts("package", getPackageName(),"");
 //                    intent.setData(uri);
 //                    startActivity(intent);
 
-                    checkMyPermission()
-                }
+                        checkMyPermission()
+                    }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest?,
-                    token: PermissionToken?
-                ) {
+                    override fun onPermissionRationaleShouldBeShown(
+                        permission: PermissionRequest?,
+                        token: PermissionToken?
+                    ) {
 //                        token?.continuePermissionRequest()
-                }
-            }).check()
+                    }
+                }).check()
 
     }
 
     fun assignId() {
         navView = findViewById(R.id.nav_view)
     }
-
 }
