@@ -7,14 +7,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.home.HomeFragment" >
 
+
     <ImageView
         android:id="@+id/iconLocation_home"
         android:layout_width="40dp"
         android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="18dp"
         android:background="@drawable/ic_location_marker"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="32dp" />
+        app:layout_constraintEnd_toStartOf="@+id/text_home"
+        app:layout_constraintHorizontal_bias="0.842"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_home"
@@ -25,33 +29,32 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.06" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
     <ImageButton
         android:id="@+id/info_home"
         android:layout_width="35dp"
         android:layout_height="35dp"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/ic_info"
-        app:layout_constraintBottom_toTopOf="@+id/donut_view"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.92"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_home"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/text_home"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <app.futured.donut.DonutProgressView
         android:id="@+id/donut_view"
         android:layout_width="300dp"
         android:layout_height="300dp"
+        android:layout_marginBottom="80dp"
         android:gravity="center"
         app:donut_bgLineColor="@color/light_gray"
         app:donut_gapAngle="270"
         app:donut_gapWidth="80"
         app:donut_strokeWidth="25dp"
-        android:layout_marginBottom="80dp"
-        app:layout_constraintBottom_toTopOf="@+id/testFiler_knapp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_home" />
@@ -65,30 +68,33 @@
         android:text="Luftkvaliteten er bra"
         android:textColor="@color/black"
         android:textSize="25dp"
-        app:layout_constraintBottom_toTopOf="@+id/testFiler_knapp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/smiley_location"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/donut_view"
-        app:layout_constraintVertical_bias="0.577" />
+        app:layout_constraintVertical_bias="0.247" />
 
     <ImageView
         android:id="@+id/smiley_home"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="36dp"
         android:background="@drawable/ic_smiley_lvl1"
+        app:layout_constraintBottom_toBottomOf="@+id/aqiSentence_home"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="577dp"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintTop_toTopOf="@+id/aqiSentence_home"
+        app:layout_constraintVertical_bias="0.437" />
 
-    <Button
-        android:id="@+id/testFiler_knapp"
-        android:layout_width="350dp"
-        android:layout_height="50dp"
-        android:backgroundTint="@color/gray"
-        android:text="Test-filer"
+    <SeekBar
+        android:id="@+id/seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/aqiSentence_home"
+        app:layout_constraintVertical_bias="0.383" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

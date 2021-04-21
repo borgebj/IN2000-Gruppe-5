@@ -107,7 +107,6 @@ class FavoritesFragment : Fragment() {
 
         for (st in stasjoner){
             if (st.name.equals(station, ignoreCase = true)){ // finner match
-
                 if (!inFavStations(station)){ // ikke satt til CardView ennaa
                     fav_stations.add(st)
                     fav_adapter.notifyDataSetChanged()

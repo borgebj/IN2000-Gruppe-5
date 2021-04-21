@@ -31,16 +31,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
-    sourceSets {
-        main {
-            res {
-                srcDirs 'src\\main\\res',
-                        'src\\main\\res\\layout',
-                        'src\\main\\res\\layout\\mainLayouts',
-                        'src\\main\\res\\layout\\testLayouts'
-            }
-        }
-    }
 }
 
 repositories {
@@ -49,6 +39,7 @@ repositories {
 }
 
 dependencies {
+
 
     // GSON, khttp og coroutine brukt for API-fetching
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
