@@ -26,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.maps.model.TileOverlayOptions
 import com.google.maps.android.heatmaps.HeatmapTileProvider
+import com.google.maps.android.heatmaps.WeightedLatLng
 import java.util.*
 
 
@@ -64,7 +65,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         addOnClickers()
         viewModel.parseData()
         viewModel.parseNiluData() //TODO fjern?
-        addHeatmap()
+        addHeatmap() // setter opp heatmap
 
         //region [midlertidig] TODO: fjern?
         viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
@@ -99,7 +100,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
         // henter livedata fra viewmodel
         viewModel.stations.observe(viewLifecycleOwner, Observer {
-            addMarkers(it)
+            //addMarkers(it)
             val nearby: MutableList<Stasjon>? = getNearbyStations(it)
             val nearest: Stasjon? = getNearestStation(it)
 
@@ -129,13 +130,21 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     fun addHeatmap() {
         viewModel.stations.observe(viewLifecycleOwner, Observer {
             val data : MutableList<LatLng> = mutableListOf()
+            val weightedData : MutableList<WeightedLatLng> = mutableListOf()
 
+            // lager LatLng og WeightedLatLng av hver stasjon for heatmap
             for (station in it) {
-                data.add(LatLng(station.latitude, station.longitude)) }
+                val verdi = station.verdier[type]
+                data.add(LatLng(station.latitude, station.longitude))
+                if (verdi != null) weightedData.add(WeightedLatLng(LatLng(station.latitude, station.longitude), verdi))
+            }
 
+            // lager selve heatmap og starter
             val mProvider = HeatmapTileProvider.Builder()
-                .data(data)
                 .radius(50)
+                .weightedData(weightedData)
+                .maxIntensity(500.0)
+                .opacity(0.5)
                 .build()
 
             val mOverlay = mMap.addTileOverlay(

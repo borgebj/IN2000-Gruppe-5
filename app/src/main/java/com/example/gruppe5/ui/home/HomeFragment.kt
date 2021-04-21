@@ -91,5 +91,4 @@ class HomeFragment : Fragment(){
                 { dialoginterface, i -> }).show()
     }
         //TODO: Implementer fremtids-onclickers
-    }
 }
