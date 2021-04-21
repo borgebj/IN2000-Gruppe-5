@@ -1,9 +1,7 @@
 package com.example.gruppe5.ui.settings
 
-import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
@@ -12,11 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.gruppe5.R
-import com.google.android.gms.maps.GoogleMap
 
 
 class SettingsFragment : Fragment() {
@@ -39,9 +35,9 @@ class SettingsFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
-        setTilstand(root)
-        setLokasjon(root)
-        setOmLuftkvalitet(root)
+        setCondition(root)
+        setLocation(root)
+        setAboutAirquality(root)
 
         return root
     }
@@ -64,15 +60,15 @@ class SettingsFragment : Fragment() {
     }
 
 
-    fun setLokasjon(root: View) {
+    fun setLocation(root: View) {
         lokasjonKnapp.setOnClickListener{
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            setTilstand(root)
+            setCondition(root)
         }
     }
 
 
-    fun setTilstand(root: View) {
+    fun setCondition(root: View) {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if (location) {
@@ -108,7 +104,7 @@ class SettingsFragment : Fragment() {
         */
 
 
-    fun setOmLuftkvalitet(root: View) {
+    fun setAboutAirquality(root: View) {
         luftkvalitetKnapp.setOnClickListener() {
             //root.findNavController().navigate(R.id.navigation_luftkvalitet)
         }
