@@ -21,6 +21,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="innstillinger">INNSTILLINGER</string>
 
+    <!-- Infoknapp -->
+    <string name="str_info">AQI nivået sier noe om hvor mye luftforurensing det er i et område osv blabla </string>
+    <string name="str_info_values">AQI nivået sier noe om luftforurensning. vi har flere verdier blablabla</string>
+
     <!-- strings for searchbar -->
     <string-array name="search_bar_strings">
         <item>Alnabru</item>

@@ -1,5 +1,6 @@
 package com.example.gruppe5.ui.home
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -71,6 +73,23 @@ class HomeFragment : Fragment(){
 
     // setter onClickers for kart og API_test
     fun setOnClickers(root: View){
+        //infoknapp
+        val infoButton : ImageButton = root.findViewById(R.id.info_home)
+        infoButton.setOnClickListener(){
+            alertView(getString(R.string.str_info))
+        }
+    }
+
+
+    //viser dialog/pop up vindu. brukes for infoknapper
+    private fun alertView(message: String) {
+        val dialog = AlertDialog.Builder(context)
+        dialog.setTitle("Hva er AQI?")
+            .setIcon(R.drawable.ic_info)
+            .setMessage(message)
+            .setPositiveButton("Lukk",
+                { dialoginterface, i -> }).show()
+    }
         //TODO: Implementer fremtids-onclickers
     }
 }
