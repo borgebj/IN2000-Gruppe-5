@@ -1,6 +1,7 @@
 package com.example.gruppe5.ui.location
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
 
 class LocationFragment : Fragment() {
 
@@ -20,15 +22,22 @@ class LocationFragment : Fragment() {
     lateinit var aqiSentence : TextView
     lateinit var verdiNivaer : TextView
 
+    lateinit var stasjon: Stasjon
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         val root: View = inflater.inflate(R.layout.fragment_location, container, false)
 
         assignId(root)
 
-        val navn = LocationFragmentArgs.fromBundle(requireArguments()).stationName
-        val kortNavn = navn.substring(navn.indexOf("[") + 1, navn.indexOf("]"))
-        stasjonNavn.text = kortNavn
+        val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
+        if (stasjon != null) this.stasjon = stasjon
+
+        //val kortNavn = navn.substring(navn.indexOf("[") + 1, navn.indexOf("]"))
+        if (stasjon != null) {
+            stasjonNavn.text = stasjon.name
+            Log.d("mine verdier", stasjon.verdier.toString())
+        }
 
         return root
     }
