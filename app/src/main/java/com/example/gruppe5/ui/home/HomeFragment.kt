@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,15 +19,17 @@ import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
 import com.example.gruppe5.testFiler.MainTestActivity
+import org.w3c.dom.Text
+import java.util.*
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(){
 
     // globale variabler
     private lateinit var homeModel: HomeViewModel
     lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
-    lateinit var testFilKnapp: Button
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
@@ -51,7 +55,6 @@ class HomeFragment : Fragment() {
         donutView.submitData(listOf(section1,section2,section3))
 
 
-
         return root
     }
 
@@ -65,18 +68,11 @@ class HomeFragment : Fragment() {
 
     fun assignId(root: View) {
         textView = root.findViewById(R.id.text_home)
-        testFilKnapp = root.findViewById(R.id.testFiler_knapp)
         donutView = root.findViewById(R.id.donut_view)
     }
 
     // setter onClickers for kart og API_test
     fun setOnClickers(root: View){
-
-//         gaar til map-tester
-        testFilKnapp.setOnClickListener {
-            val map = Intent(root.context, MainTestActivity::class.java)
-            startActivity(map)
-        }
         //infoknapp
         val infoButton : ImageButton = root.findViewById(R.id.info_home)
         infoButton.setOnClickListener(){
@@ -93,5 +89,7 @@ class HomeFragment : Fragment() {
             .setMessage(message)
             .setPositiveButton("Lukk",
                 { dialoginterface, i -> }).show()
+    }
+        //TODO: Implementer fremtids-onclickers
     }
 }

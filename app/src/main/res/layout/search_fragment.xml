@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -7,35 +7,29 @@
     android:layout_height="match_parent"
     tools:context=".ui.search.SearchFragment">
 
-    <EditText
-        android:id="@+id/search_bar"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:gravity="center_horizontal"
-        android:hint="Search a station"
-        android:inputType="text"
-        app:layout_constraintTop_toTopOf="@+id/search_but"
-        app:layout_constraintBottom_toBottomOf="@+id/search_but"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/search_but" />
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"/>
 
-    <ImageButton
-        android:id="@+id/search_but"
+    <TextView
+        android:id="@+id/empy_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_search"
-        android:layout_marginTop="80dp"
-        app:layout_constraintLeft_toRightOf="@+id/search_bar"
-        app:layout_constraintBottom_toTopOf="@+id/text_favorites"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_centerInParent="true"
+        android:text="No Result"
+        android:textSize="20dp"
+        android:visibility="gone"
+        android:gravity="center" />
+
+
 
     <TextView
         android:id="@+id/search_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="30dp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/search_but" />
+        android:gravity="center" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
