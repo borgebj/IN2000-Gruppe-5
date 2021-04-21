@@ -64,7 +64,11 @@
         android:id="@+id/navigation_settings"
         android:name="com.example.gruppe5.ui.settings.SettingsFragment"
         android:label="@string/title_settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_navigation_settings_to_aboutAirqualityFragment"
+            app:destination="@id/aboutAirqualityFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_search"
@@ -74,6 +78,15 @@
         <action
             android:id="@+id/action_navigation_search_to_navigation_favorites"
             app:destination="@id/navigation_favorites" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutAirqualityFragment"
+        android:name="com.example.gruppe5.ui.settings.AboutAirqualityFragment"
+        android:label="fragment_about_airquality"
+        tools:layout="@layout/fragment_about_airquality" >
+        <action
+            android:id="@+id/action_aboutAirqualityFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
     </fragment>
 
 </navigation>

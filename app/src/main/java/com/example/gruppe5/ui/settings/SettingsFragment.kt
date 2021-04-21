@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.example.gruppe5.R
 
 
@@ -106,7 +107,7 @@ class SettingsFragment : Fragment() {
 
     fun setAboutAirquality(root: View) {
         luftkvalitetKnapp.setOnClickListener() {
-            //root.findNavController().navigate(R.id.navigation_luftkvalitet)
+            root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAirqualityFragment)
         }
     }
 }
