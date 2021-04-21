@@ -1,5 +1,6 @@
 package com.example.gruppe5.ui.map
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.MutableLiveData
@@ -20,30 +21,36 @@ class MapViewModel() : ViewModel() {
         MutableLiveData<MutableList<Stasjon>>()
     }
 
-    val baseURL: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // API url
+    val niluStations: MutableLiveData<MutableList<Stasjon>> by lazy {
+        MutableLiveData<MutableList<Stasjon>>()
+    }
+
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
 
 
     //region OVERFØR TIL VIEWMODEL !
     // henter JSON/XML via KHTTP -> til String
-    fun getData(del: String): String {
-        val full = "$baseURL$del"
+    fun getData(base: String, del: String): String {
+        val full = "$base$del"
         return khttp.get(full).text
     }
 
+    // henter data fra AirQuality (metrologisk institutt API)
     fun parseData() {
+        val baseURLMetro: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
+        val baseURLNilu: String = "https://api.nilu.no/" // Nilu API url
 
         //TODO: Fjern eller spar - variabel som holder høyeste+lavest AQI-nivå i Norge
         var highestValueInNorway : Double = 0.0
         var lowestValueInNorway : Double = 500.0
 
         // henter alle stasjoner
-        fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData("/stations"), Array<Stasjon>::class.java).toMutableList()
+        fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURLMetro,"/stations"), Array<Stasjon>::class.java).toMutableList()
 
         // henter og tildeler verdier til alle stasjoner
         fun getValues(stations : MutableList<Stasjon>) {
             for (station in stations) {
-                val valueJson = getData("/?station=${station.eoi}")
+                val valueJson = getData(baseURLMetro,"/?station=${station.eoi}")
                 val objekt = JSONObject(valueJson)
 
                 // main-data
@@ -89,5 +96,16 @@ class MapViewModel() : ViewModel() {
         }
     }
 
+    fun parseNiluData() {
+        val baseURL: String = "https://api.nilu.no/" // Nilu API url
+
+        fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURL, "/lookup/stations"), Array<Stasjon>::class.java).toMutableList()
+
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val stations = getStations()
+            niluStations.postValue(stations)
+        }
+    }
     //endregion
 }

@@ -11,6 +11,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -27,6 +28,7 @@ import java.util.*
 class MainActivity : AppCompatActivity() {
 
     lateinit var navView: BottomNavigationView
+    lateinit var navController : NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         assignId()
         checkMyPermission()
 
-        val navController = findNavController(R.id.nav_host_fragment)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(setOf(
@@ -78,5 +79,6 @@ class MainActivity : AppCompatActivity() {
 
     fun assignId() {
         navView = findViewById(R.id.nav_view)
+        navController = findNavController(R.id.nav_host_fragment)
     }
 }
