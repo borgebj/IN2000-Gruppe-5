@@ -26,8 +26,7 @@ class SettingsFragment : Fragment() {
     private lateinit var settingsModel: SettingsViewModel
     private lateinit var innstillinger: TextView
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private lateinit var gps: Switch
+    private lateinit var lokasjon: Button
 
     private lateinit var informasjon: TextView
     private lateinit var luftkvalitetKnapp: Button
@@ -43,7 +42,7 @@ class SettingsFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
-        setSwitch()
+        setLokasjon()
         setOmLuftkvalitet(root)
 
         return root
@@ -59,7 +58,7 @@ class SettingsFragment : Fragment() {
 
     fun assignId(root: View) {
         innstillinger = root.findViewById(R.id.innstillinger)
-        gps = root.findViewById(R.id.switch1)
+        lokasjon = root.findViewById(R.id.location_button)
         informasjon = root.findViewById(R.id.informasjon)
         luftkvalitetKnapp = root.findViewById(R.id.button1)
         appKnapp = root.findViewById(R.id.button2)
@@ -67,13 +66,9 @@ class SettingsFragment : Fragment() {
 
     }
 
-    fun setSwitch() {
-        gps.setOnCheckedChangeListener{ _, isChecked->
-            if (isChecked) {
-                //GPS ON
-            } else {
-                //GPS OFF
-            }
+    fun setLokasjon() {
+        lokasjon.setOnClickListener{
+
         }
     }
 

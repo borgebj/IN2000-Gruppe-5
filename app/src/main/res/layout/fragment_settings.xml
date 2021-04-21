@@ -15,24 +15,37 @@
         android:gravity="center"
         android:text="@string/innstillinger"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/switch1"
+        app:layout_constraintBottom_toTopOf="@+id/location_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.009" />
 
-    <Switch
-        android:id="@+id/switch1"
-        android:layout_width="match_parent"
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lokasjon"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/informasjon"
+        app:layout_constraintEnd_toStartOf="@+id/location_button"
+        app:layout_constraintHorizontal_bias="0.126"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.683" />
+
+    <Button
+        android:id="@+id/location_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="GPS"
-        app:layout_constraintTop_toBottomOf="@+id/innstillinger"
+        android:text="Av"
         app:layout_constraintBottom_toTopOf="@id/informasjon"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/innstillinger"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
-
 
     <TextView
         android:id="@+id/informasjon"
@@ -44,7 +57,7 @@
         app:layout_constraintBottom_toTopOf="@+id/button1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+        app:layout_constraintTop_toBottomOf="@+id/location_button" />
 
     <Button
         android:id="@+id/button1"
