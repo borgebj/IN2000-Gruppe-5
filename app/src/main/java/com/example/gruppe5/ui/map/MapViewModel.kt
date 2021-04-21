@@ -14,8 +14,7 @@ import java.util.*
 import kotlin.collections.HashMap
 
 // skal inneholde logikk
-
-class MapViewModel : ViewModel() {
+class MapViewModel() : ViewModel() {
     init {
         parseData()
     }
@@ -26,10 +25,6 @@ class MapViewModel : ViewModel() {
 
     //TODO: fjern?
     val niluStations: MutableLiveData<MutableList<Stasjon>> by lazy {
-        MutableLiveData<MutableList<Stasjon>>()
-    }
-
-    val favorite_stations: MutableLiveData<MutableList<Stasjon>> by lazy {
         MutableLiveData<MutableList<Stasjon>>()
     }
 
