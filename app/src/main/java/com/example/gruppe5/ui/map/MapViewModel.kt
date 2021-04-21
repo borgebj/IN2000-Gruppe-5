@@ -21,6 +21,7 @@ class MapViewModel() : ViewModel() {
         MutableLiveData<MutableList<Stasjon>>()
     }
 
+    //TODO: fjern?
     val niluStations: MutableLiveData<MutableList<Stasjon>> by lazy {
         MutableLiveData<MutableList<Stasjon>>()
     }
@@ -96,6 +97,7 @@ class MapViewModel() : ViewModel() {
         }
     }
 
+    //region [midlertidig] TODO: fjern?
     fun parseNiluData() {
         val baseURL: String = "https://api.nilu.no/" // Nilu API url
 
@@ -107,5 +109,6 @@ class MapViewModel() : ViewModel() {
             niluStations.postValue(stations)
         }
     }
+    //endregion
     //endregion
 }
