@@ -61,15 +61,46 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         addMapFunctions()
         addOnClickers()
         viewModel.parseData()
+        viewModel.parseNiluData()
+
+        viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
+            viewModel.niluStations.observe(viewLifecycleOwner, Observer { nilu ->
+                var antLike = 0
+                var antNilu = 0
+                var antAq = 0
+                val like : MutableList<Stasjon> = mutableListOf()
+                val ulike : MutableList<Stasjon> = mutableListOf()
+
+                for (y in nilu) antNilu++
+                for (x in aq) antAq++
+
+                for (x in aq) {
+                    for (y in nilu) {
+                        if (y.eoi == x.eoi) {
+                            like.add(x)
+                            antLike++
+                        } else {
+                            ulike.add(y)
+                        }
+                    }
+                }
+                Log.d("Antall like stasjoner", antLike.toString())
+                Log.d("Antall NILU", antNilu.toString())
+                Log.d("Antall Aq", antAq.toString())
+                Log.d("like", like.toString())
+                Log.d("ulike", ulike.toString())
+            })
+        })
 
         // henter livedata fra viewmodel
         viewModel.stations.observe(viewLifecycleOwner, Observer {
             addMarkers(it)
             val nearby: MutableList<Stasjon>? = getNearbyStations(it)
-            val nearest: Stasjon? = getNearbyStation(it)
+            val nearest: Stasjon? = getNearestStation(it)
 
-            Log.d("nearby stations", nearby.toString())
-            Log.d("nearest station", nearest.toString())
+            Log.d("nearby stations (ute)", nearby.toString())
+            Log.d("nearest station (ute)", nearest.toString())
+            Log.d("--- Inne i coroutine --", "--------------------------------------")
         })
     }
 
@@ -91,7 +122,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     @SuppressLint("MissingPermission")
-    fun getNearbyStation(stations: MutableList<Stasjon>) : Stasjon? {
+    fun getNearestStation(stations: MutableList<Stasjon>) : Stasjon? {
         var nearest : Stasjon? = null
         var closest: Float = 100000.00F
 
@@ -115,7 +146,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                         closest = distance
                         nearest = stasjon
                     }
-                }
+                }; Log.d("Nearest station (inne)", nearest.toString())
             }; return nearest //TODO: Fungerer ikke pga async-task (?)
         } else return null
     }
@@ -124,7 +155,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     @SuppressLint("MissingPermission")
     fun getNearbyStations(stations: MutableList<Stasjon>) : MutableList<Stasjon>? {
-        val nearby: MutableList<Stasjon>? = null
+        val nearby: MutableList<Stasjon> = mutableListOf()
 
         if (GpsStatus) {
             fusedLocationClient.lastLocation.addOnSuccessListener {
@@ -136,13 +167,14 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                     // henter stasjoner innen en 10km radius (ca, ish 11.1 km)
                     if (stationCoordiantes.latitude <= myCoordinates.latitude+0.1 && stationCoordiantes.latitude >= myCoordinates.latitude-0.1){
                         if (stationCoordiantes.longitude <= myCoordinates.longitude+0.1 && stationCoordiantes.longitude >= myCoordinates.longitude-0.1) {
-                            nearby?.add(stasjon)
+                            nearby.add(stasjon)
                         }
                     }
-                }
+                }; Log.d("Nearby stations (inne)", nearby.toString())
             }; return nearby //TODO: Fungerer ikke pga async-task (?)
         } else return null
     }
+
 
 
     open fun CheckGpsStatus() {
