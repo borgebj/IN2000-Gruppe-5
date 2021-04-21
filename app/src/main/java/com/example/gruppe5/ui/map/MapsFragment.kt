@@ -24,6 +24,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.TileOverlayOptions
+import com.google.maps.android.heatmaps.HeatmapTileProvider
 import java.util.*
 
 
@@ -61,8 +63,10 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         addMapFunctions()
         addOnClickers()
         viewModel.parseData()
-        viewModel.parseNiluData()
+        viewModel.parseNiluData() //TODO fjern?
+        addHeatmap()
 
+        //region [midlertidig] TODO: fjern?
         viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
             viewModel.niluStations.observe(viewLifecycleOwner, Observer { nilu ->
                 var antLike = 0
@@ -91,10 +95,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                 Log.d("ulike", ulike.toString())
             })
         })
+        //endregion
 
         // henter livedata fra viewmodel
         viewModel.stations.observe(viewLifecycleOwner, Observer {
-            addMarkers(it)
+            //addMarkers(it)
             val nearby: MutableList<Stasjon>? = getNearbyStations(it)
             val nearest: Stasjon? = getNearestStation(it)
 
@@ -119,6 +124,23 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         viewModel = ViewModelProvider(this).get(MapViewModel::class.java) // legger til viewmodel
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+    }
+
+    fun addHeatmap() {
+        viewModel.stations.observe(viewLifecycleOwner, Observer {
+            val data : MutableList<LatLng> = mutableListOf()
+
+            for (station in it) {
+                data.add(LatLng(station.latitude, station.longitude)) }
+
+            val mProvider = HeatmapTileProvider.Builder()
+                .data(data)
+                .build()
+
+            val mOverlay = mMap.addTileOverlay(
+                TileOverlayOptions().tileProvider(mProvider)
+            )
+        })
     }
 
     @SuppressLint("MissingPermission")
