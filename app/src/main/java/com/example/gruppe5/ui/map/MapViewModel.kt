@@ -14,7 +14,6 @@ import java.util.*
 import kotlin.collections.HashMap
 
 // skal inneholde logikk
-
 class MapViewModel() : ViewModel() {
     init {
         parseData()
