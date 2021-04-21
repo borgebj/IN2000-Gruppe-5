@@ -35,9 +35,10 @@
             app:enterAnim="@android:anim/slide_in_left"
             app:exitAnim="@android:anim/slide_out_right" />
         <argument
-            android:name="station_name"
-            app:argType="string"
-            android:defaultValue="STASJONSNAVN"/>
+            android:name="station"
+            app:argType="com.example.gruppe5.Stasjon"
+            app:nullable="true"
+            android:defaultValue="@null"/>
     </fragment>
 
     <fragment

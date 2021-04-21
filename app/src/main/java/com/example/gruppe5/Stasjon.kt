@@ -1,8 +1,10 @@
 package com.example.gruppe5
 
 import android.os.Parcelable
+import com.google.android.gms.maps.model.Marker
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 
 @Parcelize
 data class Stasjon(

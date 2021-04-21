@@ -98,7 +98,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
         // henter livedata fra viewmodel
         viewModel.stations.observe(viewLifecycleOwner, Observer {
-            //addMarkers(it)
+            addMarkers(it)
             val nearby: MutableList<Stasjon>? = getNearbyStations(it)
             val nearest: Stasjon? = getNearestStation(it)
 
@@ -223,22 +223,31 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     // setter onClicker for infoWindow til hver markoer
+    @SuppressLint("PotentialBehaviorOverride")
     fun addOnClickers() {
-        mMap.setOnInfoWindowClickListener {
-            // tts-test
-            val string = it.title.substring(it.title.indexOf("[") + 1, it.title.indexOf("]"))
+        mMap.setOnInfoWindowClickListener { marker ->
+            viewModel.stations.observe(viewLifecycleOwner) { list ->
 
-            if (ttsStatus) tts!!.speak("Opening page $string", TextToSpeech.QUEUE_FLUSH, null, "")
+                for (stasjon in list) {
+                    val navn = marker.title.substring(marker.title.indexOf("[") + 1, marker.title.indexOf("]"))
 
-            Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
+                    if (navn == stasjon.name) {
+                        // tts-test
 
-            // venter i 2 sec for endret (postDelayed for aa vente)
-            root.postDelayed({
-                val action = MapsFragmentDirections.actionNavigationMapToNavigationLocation(it.title)
-                root.findNavController().navigate(action)
-            }, 1500)
+                        if (ttsStatus) tts!!.speak("Opening page $navn", TextToSpeech.QUEUE_FLUSH, null, "")
 
-            it.showInfoWindow()
+                        Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
+
+                        // venter i 2 sec for endret (postDelayed for aa vente)
+                        root.postDelayed({
+                            val action = MapsFragmentDirections.actionNavigationMapToNavigationLocation(stasjon)
+                            root.findNavController().navigate(action)
+                        }, 1500)
+
+                        marker.showInfoWindow()
+                    }
+                }
+            }
         }
     }
 
