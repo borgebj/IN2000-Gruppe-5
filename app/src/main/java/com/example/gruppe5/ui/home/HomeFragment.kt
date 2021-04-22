@@ -88,9 +88,6 @@ class HomeFragment : Fragment(){
             .setPositiveButton("Lukk",
                 { dialoginterface, i -> }).show()
     }
-<<<<<<< Updated upstream
-        //TODO: Implementer fremtids-onclickers
-=======
 
     @SuppressLint("ResourceAsColor")
     fun setAqiInformer(root: View) {
@@ -131,6 +128,5 @@ class HomeFragment : Fragment(){
             aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
         }
         aqiLevel.text = (highestIndex.toString() + " AQI")
->>>>>>> Stashed changes
     }
 }
