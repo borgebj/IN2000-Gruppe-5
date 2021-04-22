@@ -49,7 +49,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
 
     // info
-    var type = "pm10"
+    var type = "o3"
     private var tts: TextToSpeech? = null
 
 
@@ -73,8 +73,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                 var antLike = 0
                 var antNilu = 0
                 var antAq = 0
-                val like : MutableList<Stasjon> = mutableListOf()
-                val ulike : MutableList<Stasjon> = mutableListOf()
+                val like: MutableList<Stasjon> = mutableListOf()
+                val ulike: MutableList<Stasjon> = mutableListOf()
 
                 for (y in nilu) antNilu++
                 for (x in aq) antAq++
@@ -129,12 +129,12 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     fun addHeatmap() {
         viewModel.stations.observe(viewLifecycleOwner, Observer {
-            val data : MutableList<LatLng> = mutableListOf()
-            val weightedData : MutableList<WeightedLatLng> = mutableListOf()
+            val data: MutableList<LatLng> = mutableListOf()
+            val weightedData: MutableList<WeightedLatLng> = mutableListOf()
 
             // lager LatLng og WeightedLatLng av hver stasjon for heatmap
             for (station in it) {
-                val verdi = station.verdier[type]
+                var verdi = station.verdier[type]
                 data.add(LatLng(station.latitude, station.longitude))
                 if (verdi != null) weightedData.add(WeightedLatLng(LatLng(station.latitude, station.longitude), verdi))
             }
@@ -150,6 +150,12 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             val mOverlay = mMap.addTileOverlay(
                 TileOverlayOptions().tileProvider(mProvider)
             )
+
+            mMap.setOnCameraIdleListener {
+                val newZoom = mMap.cameraPosition.zoom.toInt()
+                mProvider.setMaxIntensity((500.0/newZoom)*10)
+                mProvider.setRadius((10 + newZoom * 2)*4)
+            }
         })
     }
 
@@ -239,18 +245,30 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             viewModel.stations.observe(viewLifecycleOwner) { list ->
 
                 for (stasjon in list) {
-                    val navn = marker.title.substring(marker.title.indexOf("[") + 1, marker.title.indexOf("]"))
+                    val navn = marker.title.substring(
+                        marker.title.indexOf("[") + 1, marker.title.indexOf(
+                            "]"
+                        )
+                    )
 
                     if (navn == stasjon.name) {
                         // tts-test
 
-                        if (ttsStatus) tts!!.speak("Opening page $navn", TextToSpeech.QUEUE_FLUSH, null, "")
+                        if (ttsStatus) tts!!.speak(
+                            "Opening page $navn",
+                            TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            ""
+                        )
 
                         Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
 
                         // venter i 2 sec for endret (postDelayed for aa vente)
                         root.postDelayed({
-                            val action = MapsFragmentDirections.actionNavigationMapToNavigationLocation(stasjon)
+                            val action =
+                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(
+                                    stasjon
+                                )
                             root.findNavController().navigate(action)
                         }, 1500)
 
