@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
+import com.example.gruppe5.ui.favorites.FavoritesFragment
 
 
 class SettingsFragment : Fragment() {
@@ -35,8 +36,8 @@ class SettingsFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
-        setCondition()
-        setLocation()
+        setCondition(root)
+        setLocation(root)
         setAboutAirquality(root)
         setAboutApp(root)
         setAboutData(root)
@@ -61,15 +62,15 @@ class SettingsFragment : Fragment() {
     }
 
 
-    private fun setLocation() {
+    private fun setLocation(root: View) {
         lokasjonKnapp.setOnClickListener{
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            setCondition()
+            setCondition(root)
         }
     }
 
 
-    private fun setCondition() {
+    private fun setCondition(root: View) {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if (location) {
@@ -77,6 +78,10 @@ class SettingsFragment : Fragment() {
         } else {
             lokasjonKnapp.text = "Av"
         }
+    }
+
+    private fun refresh(root: View) {
+        root.findNavController().navigate(R.id.navigation_settings)
     }
 
         /* FORSØK PÅ Å FJERNE POSISJONSKNAPPEN PÅ KARTET:
