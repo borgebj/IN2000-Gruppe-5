@@ -20,7 +20,6 @@ class SettingsFragment : Fragment() {
 
     private lateinit var settingsModel: SettingsViewModel
 
-    private lateinit var innstillinger: TextView
     private lateinit var lokasjonKnapp: Button
     private lateinit var informasjon: TextView
     private lateinit var luftkvalitetKnapp: Button
@@ -39,6 +38,8 @@ class SettingsFragment : Fragment() {
         setCondition(root)
         setLocation(root)
         setAboutAirquality(root)
+        setAboutApp(root)
+        setAboutData(root)
 
         return root
     }
@@ -52,12 +53,11 @@ class SettingsFragment : Fragment() {
     }
 
     fun assignId(root: View) {
-        innstillinger = root.findViewById(R.id.innstillinger)
         lokasjonKnapp = root.findViewById(R.id.location_button)
         informasjon = root.findViewById(R.id.informasjon)
-        luftkvalitetKnapp = root.findViewById(R.id.button1)
-        appKnapp = root.findViewById(R.id.button2)
-        dataKnapp = root.findViewById(R.id.button3)
+        luftkvalitetKnapp = root.findViewById(R.id.about_airquality)
+        appKnapp = root.findViewById(R.id.about_app)
+        dataKnapp = root.findViewById(R.id.about_data)
     }
 
 
@@ -108,6 +108,18 @@ class SettingsFragment : Fragment() {
     fun setAboutAirquality(root: View) {
         luftkvalitetKnapp.setOnClickListener() {
             root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAirqualityFragment)
+        }
+    }
+
+    fun setAboutApp(root: View) {
+        appKnapp.setOnClickListener() {
+            root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAppFragment)
+        }
+    }
+
+    fun setAboutData(root: View) {
+        dataKnapp.setOnClickListener() {
+            root.findNavController().navigate(R.id.action_navigation_settings_to_aboutDataFragment)
         }
     }
 }

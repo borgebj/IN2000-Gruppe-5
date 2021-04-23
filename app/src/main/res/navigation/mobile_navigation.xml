@@ -63,11 +63,17 @@
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.example.gruppe5.ui.settings.SettingsFragment"
-        android:label="@string/title_settings"
+        android:label="Innstillinger"
         tools:layout="@layout/fragment_settings" >
         <action
             android:id="@+id/action_navigation_settings_to_aboutAirqualityFragment"
             app:destination="@id/aboutAirqualityFragment" />
+        <action
+            android:id="@+id/action_navigation_settings_to_aboutAppFragment"
+            app:destination="@id/aboutAppFragment" />
+        <action
+            android:id="@+id/action_navigation_settings_to_aboutDataFragment"
+            app:destination="@id/aboutDataFragment" />
     </fragment>
 
     <fragment
@@ -82,10 +88,28 @@
     <fragment
         android:id="@+id/aboutAirqualityFragment"
         android:name="com.example.gruppe5.ui.settings.AboutAirqualityFragment"
-        android:label="fragment_about_airquality"
+        android:label="Om luftkvalitet"
         tools:layout="@layout/fragment_about_airquality" >
         <action
             android:id="@+id/action_aboutAirqualityFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutAppFragment"
+        android:name="com.example.gruppe5.ui.settings.AboutAppFragment"
+        android:label="Om appen"
+        tools:layout="@layout/fragment_about_app" >
+        <action
+            android:id="@+id/action_aboutAppFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutDataFragment"
+        android:name="com.example.gruppe5.ui.settings.AboutDataFragment"
+        android:label="Om dataen"
+        tools:layout="@layout/fragment_about_data" >
+        <action
+            android:id="@+id/action_aboutDataFragment_to_navigation_settings"
             app:destination="@id/navigation_settings" />
     </fragment>
 
