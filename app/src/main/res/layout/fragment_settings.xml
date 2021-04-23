@@ -7,32 +7,17 @@
     android:layout_height="match_parent"
     tools:context=".ui.settings.SettingsFragment" >
 
-    <TextView
-        android:id="@+id/innstillinger"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:gravity="center"
-        android:text="@string/innstillinger"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/location_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.009" />
-
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="192dp"
         android:text="Lokasjon"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/informasjon"
         app:layout_constraintEnd_toStartOf="@+id/location_button"
-        app:layout_constraintHorizontal_bias="0.126"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.683" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/location_button"
@@ -40,56 +25,58 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:text="Av"
-        app:layout_constraintBottom_toTopOf="@id/informasjon"
+        app:layout_constraintBottom_toTopOf="@+id/informasjon"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/innstillinger"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/informasjon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="96dp"
         android:gravity="center"
         android:text="INFORMASJON"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/button1"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/location_button" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/about_airquality"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:text="Om luftkvalitet"
         android:textAlignment="textStart"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/informasjon" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/about_app"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="Om appen"
         android:textAlignment="textStart"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button1" />
+        app:layout_constraintTop_toBottomOf="@+id/about_airquality" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/about_data"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="Om dataen"
         android:textAlignment="textStart"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button2" />
-
+        app:layout_constraintTop_toBottomOf="@+id/about_app" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

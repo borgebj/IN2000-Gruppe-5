@@ -64,8 +64,21 @@
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.example.gruppe5.ui.settings.SettingsFragment"
-        android:label="@string/title_settings"
-        tools:layout="@layout/fragment_settings" />
+        android:label="Innstillinger"
+        tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_navigation_settings_to_aboutAirqualityFragment"
+            app:destination="@id/aboutAirqualityFragment" />
+        <action
+            android:id="@+id/action_navigation_settings_to_aboutAppFragment"
+            app:destination="@id/aboutAppFragment" />
+        <action
+            android:id="@+id/action_navigation_settings_to_aboutDataFragment"
+            app:destination="@id/aboutDataFragment" />
+        <action
+            android:id="@+id/action_navigation_settings_self"
+            app:destination="@id/navigation_settings" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_search"
@@ -75,6 +88,33 @@
         <action
             android:id="@+id/action_navigation_search_to_navigation_favorites"
             app:destination="@id/navigation_favorites" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutAirqualityFragment"
+        android:name="com.example.gruppe5.ui.settings.AboutAirqualityFragment"
+        android:label="Om luftkvalitet"
+        tools:layout="@layout/fragment_about_airquality" >
+        <action
+            android:id="@+id/action_aboutAirqualityFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutAppFragment"
+        android:name="com.example.gruppe5.ui.settings.AboutAppFragment"
+        android:label="Om appen"
+        tools:layout="@layout/fragment_about_app" >
+        <action
+            android:id="@+id/action_aboutAppFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutDataFragment"
+        android:name="com.example.gruppe5.ui.settings.AboutDataFragment"
+        android:label="Om dataen"
+        tools:layout="@layout/fragment_about_data" >
+        <action
+            android:id="@+id/action_aboutDataFragment_to_navigation_settings"
+            app:destination="@id/navigation_settings" />
     </fragment>
 
 </navigation>
