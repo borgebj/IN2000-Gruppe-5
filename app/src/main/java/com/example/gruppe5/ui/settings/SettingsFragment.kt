@@ -35,8 +35,8 @@ class SettingsFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
-        setCondition(root)
-        setLocation(root)
+        setCondition()
+        setLocation()
         setAboutAirquality(root)
         setAboutApp(root)
         setAboutData(root)
@@ -61,25 +61,26 @@ class SettingsFragment : Fragment() {
     }
 
 
-    fun setLocation(root: View) {
+    private fun setLocation() {
         lokasjonKnapp.setOnClickListener{
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            setCondition(root)
+            setCondition()
         }
     }
 
 
-    fun setCondition(root: View) {
+    private fun setCondition() {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if (location) {
-            lokasjonKnapp.setText("På")
+            lokasjonKnapp.text = "På"
         } else {
-            lokasjonKnapp.setText("Av")
+            lokasjonKnapp.text = "Av"
         }
     }
 
-        /*
+        /* FORSØK PÅ Å FJERNE POSISJONSKNAPPEN PÅ KARTET:
+
         val mMap : GoogleMap = root.findViewById(R.id.map)
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -105,20 +106,20 @@ class SettingsFragment : Fragment() {
         */
 
 
-    fun setAboutAirquality(root: View) {
-        luftkvalitetKnapp.setOnClickListener() {
+    private fun setAboutAirquality(root: View) {
+        luftkvalitetKnapp.setOnClickListener {
             root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAirqualityFragment)
         }
     }
 
-    fun setAboutApp(root: View) {
-        appKnapp.setOnClickListener() {
+    private fun setAboutApp(root: View) {
+        appKnapp.setOnClickListener {
             root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAppFragment)
         }
     }
 
-    fun setAboutData(root: View) {
-        dataKnapp.setOnClickListener() {
+    private fun setAboutData(root: View) {
+        dataKnapp.setOnClickListener {
             root.findNavController().navigate(R.id.action_navigation_settings_to_aboutDataFragment)
         }
     }
