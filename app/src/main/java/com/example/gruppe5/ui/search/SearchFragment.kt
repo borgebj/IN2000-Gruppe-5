@@ -1,22 +1,17 @@
 package com.example.gruppe5.ui.search
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import androidx.fragment.app.Fragment
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
-import com.example.gruppe5.Stasjon
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SearchFragment : Fragment() {
 
@@ -55,12 +50,17 @@ class SearchFragment : Fragment() {
         viewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
+
     }
 
     fun assignId(root: View) {
         textView = root.findViewById(R.id.search_text)
         listView = root.findViewById(R.id.list_view)
-        adapter = ArrayAdapter(root.context, android.R.layout.simple_list_item_1, resources.getStringArray(R.array.search_bar_strings))
+        adapter = ArrayAdapter(
+            root.context, android.R.layout.simple_list_item_1, resources.getStringArray(
+                R.array.search_bar_strings
+            )
+        )
         listView.adapter = adapter
         //searchBar = root.findViewById(R.id.search_bar)
         //searchBut = root.findViewById(R.id.search_but)
@@ -68,13 +68,17 @@ class SearchFragment : Fragment() {
 
     fun setOnListView(root: View){
         listView.onItemClickListener = AdapterView.OnItemClickListener{ parent, view, position, id ->
+            Log.d("in ontemclicklistener", "KALT")
+
             val station = parent?.getItemAtPosition(position).toString()
             //toastMsg(station)
             closeKeyboard(listView)
 
             val action = SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
+
             root.findNavController().navigate(action)
             Log.d("SENDE STATION TIL FAV", station)
+            toastMsg("Legger til ${station} i lista ..")
         }
         listView.emptyView = root.findViewById(R.id.empy_text_view)
     }
@@ -86,7 +90,7 @@ class SearchFragment : Fragment() {
         val searchView = search?.actionView as SearchView
         searchView.queryHint= "Search a station"
 
-        searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -100,15 +104,17 @@ class SearchFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    fun closeKeyboard(e : View){
+    fun closeKeyboard(e: View){
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(e.windowToken, 0)
     }
 
-/*
     fun toastMsg(msg: String){
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
+
+/*
+
 
     fun getData(): String {
         return khttp.get(path).text

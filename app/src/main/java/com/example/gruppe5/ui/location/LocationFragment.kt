@@ -1,7 +1,7 @@
 package com.example.gruppe5.ui.location
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -14,9 +14,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.navArgs
 import com.example.gruppe5.R
-import com.example.gruppe5.testFiler.MainTestActivity
 import com.example.gruppe5.Stasjon
 
 
@@ -31,7 +29,12 @@ class LocationFragment : Fragment() {
 
     lateinit var stasjon: Stasjon
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    @SuppressLint("UseRequireInsteadOfGet")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val root: View = inflater.inflate(R.layout.fragment_location, container, false)
 
@@ -39,12 +42,24 @@ class LocationFragment : Fragment() {
         setOnClickers(root)
 
         val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
-        if (stasjon != null) this.stasjon = stasjon
 
         //val kortNavn = navn.substring(navn.indexOf("[") + 1, navn.indexOf("]"))
-        if (stasjon != null) {
+
+        if (stasjon != null) { // fra Map
+            this.stasjon = stasjon
             stasjonNavn.text = stasjon.name
+
             Log.d("mine verdier", stasjon.verdier.toString())
+        }
+        else { // fra Favorite
+            val args = arguments
+            if (args != null) {
+                val myStasjon: Stasjon? = args?.getParcelable("location") as Stasjon?
+                this.stasjon = myStasjon!!
+                stasjonNavn.text = myStasjon?.name
+                Log.d("fra favorite", myStasjon.toString())
+            }
+            else Log.d("bundle == null", "HER")
         }
 
         return root
@@ -97,10 +112,18 @@ class LocationFragment : Fragment() {
         val values = arrayOf("no2", "pm10", "pm25", "o3")
         builder.setItems(values) { dialog, which ->
             when (which) {
-                0 -> {displayTypeFact("no2 er ikke bra for lungene")}           //disse utdypes senere
-                1 -> {displayTypeFact("pm10 er ikke bra for lungene")}
-                2 -> {displayTypeFact("pm25 er ikke bra for lungene")}
-                3 -> {displayTypeFact("o3 er heller ikke bra for lungene")}
+                0 -> {
+                    displayTypeFact("no2 er ikke bra for lungene")
+                }           //disse utdypes senere
+                1 -> {
+                    displayTypeFact("pm10 er ikke bra for lungene")
+                }
+                2 -> {
+                    displayTypeFact("pm25 er ikke bra for lungene")
+                }
+                3 -> {
+                    displayTypeFact("o3 er heller ikke bra for lungene")
+                }
             }
         }
         val dialog = builder.create()

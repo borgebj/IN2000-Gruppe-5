@@ -99,7 +99,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
         // henter livedata fra viewmodel
         viewModel.stations.observe(viewLifecycleOwner, Observer {
-            //addMarkers(it)
+            addMarkers(it)
             val nearby: MutableList<Stasjon>? = getNearbyStations(it)
             val nearest: Stasjon? = getNearestStation(it)
 

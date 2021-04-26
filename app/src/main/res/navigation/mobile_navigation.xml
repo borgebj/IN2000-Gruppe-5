@@ -63,6 +63,9 @@
         <action
             android:id="@+id/action_navigation_favorites_self"
             app:destination="@id/navigation_favorites" />
+        <action
+            android:id="@+id/action_navigation_favorites_to_navigation_location"
+            app:destination="@id/navigation_location" />
     </fragment>
 
     <fragment
@@ -120,5 +123,6 @@
             android:id="@+id/action_aboutDataFragment_to_navigation_settings"
             app:destination="@id/navigation_settings" />
     </fragment>
+
 
 </navigation>
