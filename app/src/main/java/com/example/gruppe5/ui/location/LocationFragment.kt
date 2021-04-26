@@ -72,9 +72,52 @@ class LocationFragment : Fragment() {
         }
         val infoButton2 : ImageButton = root.findViewById(R.id.info2_location)
         infoButton2.setOnClickListener(){
-            alertView(getString(R.string.str_info_values))
+            alertValuesView(getString(R.string.str_info_values))
         }
     }
+
+    //test for Location sin infoknapp om ulike nivåer. Gir en liste man kan velge i.
+    private fun alertValuesView(message: String) {
+        val dialog = AlertDialog.Builder(context)
+
+        dialog.setTitle("AQI nivåer")
+            .setIcon(R.drawable.ic_info)
+            .setMessage(message)
+            .setPositiveButton("Lukk") { dialoginterface, i -> }
+            .setNeutralButton("les mer") { dialog, which -> openValueList() }
+        dialog.show()
+    }
+
+    //kalles i metoden ovenfor. Åpner liste med ulike verdier, som man kan velge i for deretter å få en forklaring.
+    private fun openValueList(){
+        // setter opp alert builder
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Velg en type")
+
+        val values = arrayOf("no2", "pm10", "pm25", "o3")
+        builder.setItems(values) { dialog, which ->
+            when (which) {
+                0 -> {displayTypeFact("no2 er ikke bra for lungene")}           //disse utdypes senere
+                1 -> {displayTypeFact("pm10 er ikke bra for lungene")}
+                2 -> {displayTypeFact("pm25 er ikke bra for lungene")}
+                3 -> {displayTypeFact("o3 er heller ikke bra for lungene")}
+            }
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    //for hver av typene i lista.
+    private fun displayTypeFact(message: String){
+        val dialog = AlertDialog.Builder(context)
+        dialog.setTitle(((message.split(" ".toRegex(), 2).toTypedArray())[0]))  //setter første ord som tittel
+            .setIcon(R.drawable.ic_info)
+            .setMessage(message)
+            .setPositiveButton("Lukk") { dialoginterface, i -> }
+            .setNeutralButton("Tilbake") { dialog, which -> openValueList() }
+        dialog.show()
+    }
+
 
     //viser dialog/pop up vindu. brukes for infoknapper
     private fun alertView(message: String) {

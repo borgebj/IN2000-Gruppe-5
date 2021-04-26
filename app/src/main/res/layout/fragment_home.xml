@@ -8,7 +8,7 @@
     tools:context=".ui.home.HomeFragment" >
 
 
-    <ImageView
+    <ImageButton
         android:id="@+id/iconLocation_home"
         android:layout_width="40dp"
         android:layout_height="40dp"
