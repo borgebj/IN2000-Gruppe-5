@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -14,38 +15,43 @@
 
         <TextView
             android:id="@+id/textEn"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_width="0sp"
+            android:layout_height="30sp"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textSize="23sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textTo"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/textTre"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:textSize="23sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textFire"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:textSize="23sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginTop="-15dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/star_but"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/to_location"/>
+
+        <ImageButton
+            android:id="@+id/star_but"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:gravity="center"
+            android:scaleType="fitCenter"
+            android:tint="@color/yellow"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/ic_favorites"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/to_location"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:backgroundTint="@color/white"
+            android:gravity="center"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_location_marker"
+            app:layout_constraintLeft_toRightOf="@+id/textEn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

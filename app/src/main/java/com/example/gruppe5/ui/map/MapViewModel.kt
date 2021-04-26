@@ -14,22 +14,17 @@ import java.util.*
 import kotlin.collections.HashMap
 
 // skal inneholde logikk
-
-class MapViewModel : ViewModel() {
+class MapViewModel() : ViewModel() {
     init {
         parseData()
     }
-
+    
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy {
         MutableLiveData<MutableList<Stasjon>>()
     }
 
     //TODO: fjern?
     val niluStations: MutableLiveData<MutableList<Stasjon>> by lazy {
-        MutableLiveData<MutableList<Stasjon>>()
-    }
-
-    val favorite_stations: MutableLiveData<MutableList<Stasjon>> by lazy {
         MutableLiveData<MutableList<Stasjon>>()
     }
 

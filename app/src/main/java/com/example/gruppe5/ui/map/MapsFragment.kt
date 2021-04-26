@@ -63,7 +63,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
         addMapFunctions()
         addOnClickers()
-        viewModel.parseData()
         viewModel.parseNiluData() //TODO fjern?
         addHeatmap() // setter opp heatmap
 
@@ -100,7 +99,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
         // henter livedata fra viewmodel
         viewModel.stations.observe(viewLifecycleOwner, Observer {
-            //addMarkers(it)
+            addMarkers(it)
             val nearby: MutableList<Stasjon>? = getNearbyStations(it)
             val nearest: Stasjon? = getNearestStation(it)
 
