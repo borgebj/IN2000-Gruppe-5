@@ -78,7 +78,6 @@ class FavoritesFragment : Fragment() {
 
         Log.d("assignID", "KALT")
 
-        //textView = root.findViewById(R.id.text_favorites)
         addBut = root.findViewById(R.id.add_but)
         resetB = root.findViewById(R.id.reset_but)
         fav_recycler = root.findViewById(R.id.favorites_recycler)
@@ -119,7 +118,6 @@ class FavoritesFragment : Fragment() {
 
                 //if (!viewModel.inFavStations(station)){
                 if (!inFavStations(station)){ // ikke satt til CardView ennaa
-
                     //viewModel.addStatToFav(st)
                     fav_stations.add(st) // TODO
                     fav_adapter.notifyDataSetChanged()
@@ -127,10 +125,7 @@ class FavoritesFragment : Fragment() {
 
                     if (!inPref(station)) setElem(station, ++antKeys) // ikke satt til pref ennaa = ny favorittby
                     //else toastMsg("${station} is already in pref.")
-
-                } else {
-                    //toastMsg("${station} is already in fav_stasjoner.")
-                }
+                } else //toastMsg("${station} is already in fav_stasjoner.")
                 break
             }
         }

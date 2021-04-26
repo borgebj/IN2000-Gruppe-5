@@ -8,9 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.ui.location.LocationFragment
@@ -21,9 +18,6 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textEn: TextView = view.findViewById(R.id.textEn)
-        //val textTo: TextView = view.findViewById(R.id.textTo)
-        //var textTre: TextView = view.findViewById(R.id.textTre)
-        //var textFire: TextView = view.findViewById(R.id.textFire)
         val star: ImageButton = view.findViewById(R.id.star_but)
         val location : ImageButton = view.findViewById(R.id.to_location)
 
@@ -40,9 +34,6 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textEn.text = "${liste[position].name}"
-        //viewHolder.textTo.text = "eoi: [${liste[position].eoi}]"
-        //viewHolder.textTre.text = "Height: ${liste[position].latitude}"
-        //viewHolder.textFire.text = "Longitude: ${liste[position].longitude}"
         viewHolder.star.setOnClickListener {
             // TODO fjerne stasjonen fra fav_stasjoner (cardview)
             //liste.remove(liste[position])

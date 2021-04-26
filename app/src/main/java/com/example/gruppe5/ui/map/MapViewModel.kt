@@ -28,33 +28,7 @@ class MapViewModel() : ViewModel() {
         MutableLiveData<MutableList<Stasjon>>()
     }
 
-    /*val fav_stations: MutableLiveData<MutableList<Stasjon>> by lazy {
-        MutableLiveData<MutableList<Stasjon>>()
-    }*/
-
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
-
-
-    /*fun addStatToFav(station : Stasjon){
-        val list = fav_stations.value
-        list?.add(station)
-        fav_stations.value = list
-        //fav_stations.value?.add(station)
-    }
-
-    fun resetFavStations(){
-        fav_stations.value = mutableListOf()
-    }
-
-    fun inFavStations(station: String) : Boolean{
-        val list = fav_stations.value
-        if (list != null) {
-            for (st in list){
-                if (st.name == station) return true
-            }
-        }
-        return false
-    }*/
 
 
     //region OVERFØR TIL VIEWMODEL !
