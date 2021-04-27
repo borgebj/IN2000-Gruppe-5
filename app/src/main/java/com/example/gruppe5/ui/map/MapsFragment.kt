@@ -10,21 +10,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.home.HomeViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.TileOverlayOptions
+import com.google.android.gms.maps.model.*
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
 import java.util.*
@@ -36,36 +36,40 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // elementer
     lateinit var mMap: GoogleMap
+    lateinit var overlay : TileOverlay
     lateinit var root : View
+    lateinit var switch : SwitchCompat
 
     // viewmodel
-    lateinit var viewModel : MapViewModel
+    lateinit var viewModel : ViewModel
 
     // maps stuff
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    var GpsStatus = false
-    var ttsStatus = true
     var locationManager: LocationManager? = null
 
+    // status
+    var GpsStatus = false
+    var ttsStatus = true
 
     // info
     var type = "o3"
-    private var tts: TextToSpeech? = null
+    private var tts: TextToSpeech? = null //TODO fjern?
 
 
     private val callback = OnMapReadyCallback { Map ->
         mMap = Map
-        tts = TextToSpeech(this.context, this) // oppretter TTS
+        tts = TextToSpeech(this.context, this) //TODO fjern?
 
         // starter med aa flytte kamera til Norge
         mMap.setPadding(0, 0, 0, 120)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
-        addMapFunctions()
-        addOnClickers()
-        viewModel.parseData()
-        viewModel.parseNiluData() //TODO fjern?
-        addHeatmap() // setter opp heatmap
+        root.postDelayed({
+            assignId(root)
+            addMapFunctions()
+            addMarkers()
+            addOnClickers()
+            addSwitchFunction() }, 2000)
 
         //region [midlertidig] TODO: fjern?
         viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
@@ -84,9 +88,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                         if (y.eoi == x.eoi) {
                             like.add(x)
                             antLike++
-                        } else {
-                            ulike.add(y)
                         }
+                        else ulike.add(y)
                     }
                 }
                 Log.d("Antall like stasjoner", antLike.toString())
@@ -97,24 +100,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             })
         })
         //endregion
-
-        // henter livedata fra viewmodel
-        viewModel.stations.observe(viewLifecycleOwner, Observer {
-            //addMarkers(it)
-            val nearby: MutableList<Stasjon>? = getNearbyStations(it)
-            val nearest: Stasjon? = getNearestStation(it)
-
-            Log.d("nearby stations (ute)", nearby.toString())
-            Log.d("nearest station (ute)", nearest.toString())
-            Log.d("--- Inne i coroutine --", "--------------------------------------")
-        })
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
         this.root = root
         return root
@@ -122,43 +110,17 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MapViewModel::class.java) // legger til viewmodel
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java) // legger til viewmodel
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
 
-    fun addHeatmap() {
-        viewModel.stations.observe(viewLifecycleOwner, Observer {
-            val data: MutableList<LatLng> = mutableListOf()
-            val weightedData: MutableList<WeightedLatLng> = mutableListOf()
-
-            // lager LatLng og WeightedLatLng av hver stasjon for heatmap
-            for (station in it) {
-                var verdi = station.verdier[type]
-                data.add(LatLng(station.latitude, station.longitude))
-                if (verdi != null) weightedData.add(WeightedLatLng(LatLng(station.latitude, station.longitude), verdi))
-            }
-
-            // lager selve heatmap og starter
-            val mProvider = HeatmapTileProvider.Builder()
-                .radius(50)
-                .weightedData(weightedData)
-                .maxIntensity(500.0)
-                .opacity(0.5)
-                .build()
-
-            val mOverlay = mMap.addTileOverlay(
-                TileOverlayOptions().tileProvider(mProvider)
-            )
-
-            mMap.setOnCameraIdleListener {
-                val newZoom = mMap.cameraPosition.zoom.toInt()
-                mProvider.setMaxIntensity((500.0/newZoom)*10)
-                mProvider.setRadius((10 + newZoom * 2)*4)
-            }
-        })
+    fun assignId(root : View) {
+        switch = root.findViewById(R.id.heatmap_Switch)
     }
 
+
+    //region [nearby stations]
     @SuppressLint("MissingPermission")
     fun getNearestStation(stations: MutableList<Stasjon>) : Stasjon? {
         var nearest : Stasjon? = null
@@ -189,8 +151,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         } else return null
     }
 
-
-
     @SuppressLint("MissingPermission")
     fun getNearbyStations(stations: MutableList<Stasjon>) : MutableList<Stasjon>? {
         val nearby: MutableList<Stasjon> = mutableListOf()
@@ -212,7 +172,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             }; return nearby //TODO: Fungerer ikke pga async-task (?)
         } else return null
     }
-
+    //endregion
 
 
     open fun CheckGpsStatus() {
@@ -238,6 +198,50 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     }
 
+    // legger til hver stasjon paa kartet
+    fun addMarkers() {
+        viewModel.stations.observe(viewLifecycleOwner, Observer { stations ->
+            for (station in stations) {
+                val title = "[${station.name}] - ${station.verdier.get(type)} ug/m3"
+                val marker : MarkerOptions = MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title)
+                mMap.addMarker(marker)
+            }
+        })
+
+    }
+
+    fun addHeatmap() {
+        viewModel.stations.observe(viewLifecycleOwner, Observer {
+            val weightedData: MutableList<WeightedLatLng> = mutableListOf()
+
+            // lager LatLng og WeightedLatLng av hver stasjon for heatmap
+            for (station in it) {
+                var verdi = station.verdier[type]
+                if (station.name == "Alnabru") verdi = 260.0
+                if (verdi != null) weightedData.add(WeightedLatLng(LatLng(station.latitude, station.longitude), verdi))
+            }
+
+            // lager selve heatmap og starter
+            val mProvider = HeatmapTileProvider.Builder()
+                .radius(50)
+                .weightedData(weightedData)
+                .build()
+
+            val overlay = mMap.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
+
+            // endrer heatmap naar kartet endres - bevegelser / zoom
+            mMap.setOnCameraIdleListener {
+                val newZoom = mMap.cameraPosition.zoom.toInt()
+                mProvider.setRadius((10 + newZoom * 2)*4)
+
+                if (newZoom in 10..20) { mProvider.setMaxIntensity(500.0)}
+                if (newZoom in 9..9) { mProvider.setMaxIntensity(1000.0)}
+                if (newZoom in 5..8) { mProvider.setMaxIntensity(2000.0)}
+                if (newZoom in 0..4) { mProvider.setMaxIntensity(4000.0)}
+            }
+        })
+    }
+
     // setter onClicker for infoWindow til hver markoer
     @SuppressLint("PotentialBehaviorOverride")
     fun addOnClickers() {
@@ -245,25 +249,15 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             viewModel.stations.observe(viewLifecycleOwner) { list ->
 
                 for (stasjon in list) {
-                    val navn = marker.title.substring(
-                        marker.title.indexOf("[") + 1, marker.title.indexOf(
-                            "]"
-                        )
-                    )
+                    val navn = marker.title.substring(marker.title.indexOf("[") + 1, marker.title.indexOf("]"))
 
                     if (navn == stasjon.name) {
                         // tts-test
-
-                        if (ttsStatus) tts!!.speak(
-                            "Opening page $navn",
-                            TextToSpeech.QUEUE_FLUSH,
-                            null,
-                            ""
-                        )
+                        if (ttsStatus) tts!!.speak("Opening page $navn", TextToSpeech.QUEUE_FLUSH, null, "")
 
                         Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
 
-                        // venter i 2 sec for endret (postDelayed for aa vente)
+                        // venter i (ca) 2 sec for endret (postDelayed for aa vente)
                         root.postDelayed({
                             val action =
                                 MapsFragmentDirections.actionNavigationMapToNavigationLocation(
@@ -279,19 +273,21 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         }
     }
 
-    // legger til hver stasjon paa kartet
-    fun addMarkers(stations: MutableList<Stasjon>) {
-        for (station in stations) {
-            val title = "[${station.name}] - ${station.verdier.get(type)} ug/m3"
-            mMap.addMarker(
-                MarkerOptions().position(LatLng(station.latitude, station.longitude))
-                    .title(title)
-            )
+    fun addSwitchFunction() {
+        switch.setOnCheckedChangeListener { buttonView, isChecked ->
+            if (isChecked) {
+                mMap.clear()
+                root.postDelayed({
+                    addHeatmap()
+                }, 250)
+            } else {
+                mMap.clear()
+                root.postDelayed({
+                    addMarkers()
+                }, 250)
+            }
         }
     }
-
-
-
 
     // KUN FOR TEST ATM !
     override fun onInit(status: Int) {

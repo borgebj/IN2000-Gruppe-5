@@ -15,9 +15,10 @@ import kotlin.collections.HashMap
 
 // skal inneholde logikk
 
-class MapViewModel : ViewModel() {
+class ViewModel : ViewModel() {
     init {
         parseData()
+        parseNiluData()
     }
 
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy {

@@ -6,6 +6,7 @@ import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Color.*
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,8 @@ import androidx.lifecycle.ViewModelProvider
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
+import java.util.*
+import kotlin.math.max
 
 
 class HomeFragment : Fragment(){
@@ -26,6 +29,9 @@ class HomeFragment : Fragment(){
     private lateinit var homeModel: HomeViewModel
     lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
+    lateinit var aqiLevel : TextView
+    lateinit var aqiSentence : TextView
+    lateinit var aqiSmiley : ImageView
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -45,9 +51,11 @@ class HomeFragment : Fragment(){
             color = Color.parseColor("#FFE33B3B"),
             amount = 10f
         )
+
         assignId(root)
         setOnClickers(root)
         setAqiInformer(root)
+        test2(root)
 
         donutView.cap = 100f
         donutView.submitData(listOf(section1,section2,section3))
@@ -67,6 +75,9 @@ class HomeFragment : Fragment(){
     fun assignId(root: View) {
         textView = root.findViewById(R.id.text_home)
         donutView = root.findViewById(R.id.donut_view)
+        aqiLevel = root.findViewById(R.id.aqiLvlHome)
+        aqiSentence = root.findViewById(R.id.aqiSentence_home)
+        aqiSmiley = root.findViewById(R.id.smiley_home)
     }
 
     // setter onClickers for kart og API_test
@@ -89,14 +100,13 @@ class HomeFragment : Fragment(){
                 { dialoginterface, i -> }).show()
     }
 
+    //TODO bruk av LiveData fra ViewModel for aa hente stasjoner, og lokasjon for aa hente naermeste stasjon (begge disse blir gjort i MapFragment ;)
     @SuppressLint("ResourceAsColor")
     fun setAqiInformer(root: View) {
         //skal finne hoyeste tallet bland aqiverdier, og sette det på homepage. farge og emoji skal endres etter verdien.
         var aqiValuesList = listOf(6, 250, 12, 36) //midlertidig aqi liste
         val highestIndex = aqiValuesList.maxOrNull() ?: 0
-        val aqiLevel : TextView = root.findViewById(R.id.aqiLvlHome)
-        val aqiSentence : TextView = root.findViewById(R.id.aqiSentence_home)
-        val aqiSmiley : ImageView = root.findViewById(R.id.smiley_home)
+
         if (highestIndex < 50) { //bra verdi
             aqiLevel.setTextColor(GREEN)
             aqiSentence.text = "AQI nivået er bra"
@@ -128,5 +138,51 @@ class HomeFragment : Fragment(){
             aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
         }
         aqiLevel.text = (highestIndex.toString() + " AQI")
+    }
+
+    @SuppressLint("ResourceAsColor")
+    fun test2(root: View) {
+        val map = mapOf<String, Double>("no2" to 6.00, "pm10" to 250.00, "pm25" to 12.00, "o3" to 36.00)
+        val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
+
+        if (highest != null)
+        when (highest.key) {
+            "no2" -> {
+                if (highest.value <= 100.0) {
+
+                } else if (highest.value in 100.0..200.0) {
+
+                } else if (highest.value in 200.0..400.0) {
+
+                } else if (highest.value >= 400.0) { }
+            }
+            "pm10" -> {
+                if (highest.value <= 60.0) {
+
+                } else if (highest.value in 60.0..120.0) {
+
+                } else if (highest.value in 120.0..400.0) {
+
+                } else if (highest.value >= 400.0) { }
+            }
+            "pm25" -> {
+                if (highest.value <= 30.0) {
+
+                } else if (highest.value in 30.0..50.0) {
+
+                } else if (highest.value in 50.0..150.0) {
+
+                } else if (highest.value >= 150.0) { }
+            }
+            "o3" -> {
+                if (highest.value <= 100.0) {
+
+                } else if (highest.value in 100.0..180.0) {
+
+                } else if (highest.value in 180.0..240.0) {
+
+                } else if (highest.value >= 240.0) { }
+            }
+        }
     }
 }

@@ -18,6 +18,10 @@ import androidx.navigation.fragment.navArgs
 import com.example.gruppe5.R
 import com.example.gruppe5.testFiler.MainTestActivity
 import com.example.gruppe5.Stasjon
+import com.github.mikephil.charting.charts.HorizontalBarChart
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 
 
 class LocationFragment : Fragment() {
@@ -28,6 +32,7 @@ class LocationFragment : Fragment() {
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
     lateinit var verdiNivaer : TextView
+    lateinit var barchart : HorizontalBarChart
 
     lateinit var stasjon: Stasjon
 
@@ -37,12 +42,12 @@ class LocationFragment : Fragment() {
 
         assignId(root)
         setOnClickers(root)
+        setupBarchart(root)
 
         val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
-        if (stasjon != null) this.stasjon = stasjon
 
-        //val kortNavn = navn.substring(navn.indexOf("[") + 1, navn.indexOf("]"))
         if (stasjon != null) {
+            this.stasjon = stasjon
             stasjonNavn.text = stasjon.name
             Log.d("mine verdier", stasjon.verdier.toString())
         }
@@ -63,6 +68,23 @@ class LocationFragment : Fragment() {
         aqiLevel = root.findViewById(R.id.aqiLevel_location)
         aqiSentence = root.findViewById(R.id.aqiSentence_location)
         verdiNivaer = root.findViewById(R.id.verdiNivaer_location)
+        barchart = root.findViewById(R.id.chart)
+    }
+
+    fun setupBarchart(root: View) {
+        val data = BarData(getDataSet())
+        barchart.data = data
+        barchart.animateXY(2000, 2000)
+        barchart.invalidate()
+    }
+
+    fun getDataSet() : BarDataSet {
+        val entries = ArrayList<BarEntry>()
+        entries.add(BarEntry(4f, 0f))
+        entries.add(BarEntry(8f, 1f))
+        entries.add(BarEntry(16f, 2f))
+        val dataset = BarDataSet(entries, "hi")
+        return dataset
     }
 
     fun setOnClickers(root: View){

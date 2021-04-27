@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -19,10 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
-import com.example.gruppe5.ui.map.MapViewModel
-import com.example.gruppe5.ui.search.SearchFragmentDirections
-import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
+import com.example.gruppe5.ui.map.ViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,7 +26,7 @@ import kotlinx.coroutines.withContext
 class FavoritesFragment : Fragment() {
 
     // globale variabler
-    private lateinit var viewModel: MapViewModel
+    private lateinit var viewModel: ViewModel
     lateinit var textView: TextView
     lateinit var addBut: ImageButton
     lateinit var resetB : Button
@@ -58,7 +54,7 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MapViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
         assignId(root)
         addAdapter()
         setResetBut(root)
