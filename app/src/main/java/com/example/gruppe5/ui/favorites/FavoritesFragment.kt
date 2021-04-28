@@ -18,13 +18,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
-import com.example.gruppe5.ui.map.MapViewModel
+import com.example.gruppe5.ui.map.ViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+
 
 class FavoritesFragment : Fragment() {
 
     // globale variabler
-    private lateinit var viewModel: MapViewModel
-    //lateinit var textView: TextView
+    private lateinit var viewModel: ViewModel
+    lateinit var textView: TextView
+
     lateinit var addBut: ImageButton
     lateinit var resetB : Button
     lateinit var fav_recycler: RecyclerView
@@ -40,11 +45,7 @@ class FavoritesFragment : Fragment() {
     var antKeys = 0 // antall lagrede favorittstasjoner
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         Log.d("onCreateView", "KALT")
         val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
         this.root = root
@@ -53,7 +54,7 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MapViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
         assignId(root)
         addAdapter()
 
