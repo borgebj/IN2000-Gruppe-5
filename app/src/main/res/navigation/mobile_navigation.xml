@@ -46,6 +46,14 @@
             app:destination="@id/navigation_map"
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"/>
+
+        <action
+            android:id="@+id/action_navigation_location_to_self"
+            app:destination="@id/navigation_location"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"
+            />
+
         <argument
             android:name="station"
             app:argType="com.example.gruppe5.Stasjon"
@@ -58,8 +66,7 @@
         android:name="com.example.gruppe5.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
         tools:layout="@layout/fragment_favorites"
-        app:enterAnim="@transition/slide_left"
-        app:popEnterAnim="@transition/slide_left_i">
+        >
         <argument
             android:name="favorite_station"
             app:argType="string"
@@ -73,8 +80,7 @@
         <action
             android:id="@+id/action_navigation_favorites_self"
             app:destination="@id/navigation_favorites"
-            app:enterAnim="@transition/slide_left"
-            app:popEnterAnim="@transition/slide_left_i"/>
+            />
         <action
             android:id="@+id/action_navigation_favorites_to_navigation_location"
             app:destination="@id/navigation_location"
