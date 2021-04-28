@@ -64,12 +64,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         mMap.setPadding(0, 0, 0, 120)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
-        root.postDelayed({
-            assignId(root)
-            addMapFunctions()
-            addMarkers()
-            addOnClickers()
-            addSwitchFunction() }, 2000)
+        assignId(root)
+        addMapFunctions()
+        addMarkers()
+        addOnClickers()
+        addSwitchFunction()
 
         //region [midlertidig] TODO: fjern?
         viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
