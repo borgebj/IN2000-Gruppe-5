@@ -1,8 +1,5 @@
 package com.example.gruppe5.ui.map
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gruppe5.Stasjon

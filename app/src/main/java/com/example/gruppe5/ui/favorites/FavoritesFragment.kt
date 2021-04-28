@@ -42,11 +42,7 @@ class FavoritesFragment : Fragment() {
     lateinit var editor : SharedPreferences.Editor// = pref.edit()
     var antKeys = 0 // antall lagrede favorittstasjoner
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
         this.root = root
         return root

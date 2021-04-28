@@ -217,7 +217,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             // lager LatLng og WeightedLatLng av hver stasjon for heatmap
             for (station in it) {
                 var verdi = station.verdier[type]
-                if (station.name == "Alnabru") verdi = 260.0
                 if (verdi != null) weightedData.add(WeightedLatLng(LatLng(station.latitude, station.longitude), verdi))
             }
 
@@ -260,9 +259,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
                         root.postDelayed({
                             val action =
-                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(
-                                    stasjon
-                                )
+                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(stasjon)
                             root.findNavController().navigate(action)
                         }, 1500)
 
