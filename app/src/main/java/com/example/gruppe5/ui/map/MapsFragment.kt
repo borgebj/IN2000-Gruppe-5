@@ -70,6 +70,19 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         addOnClickers()
         addSwitchFunction()
 
+        //TODO fjern! - dette er bare en fremvisning av hvordan hente Nearest og Nearby
+        viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
+            viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
+            viewModel.findNearbyStations(fusedLocationClient, stasjoner, GpsStatus)
+            viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
+                Log.d("Nearest", nearest.toString())
+            })
+            viewModel.nearby_stations.observe(viewLifecycleOwner, Observer { nearby ->
+                Log.d("nearby", nearby.toString())
+            })
+        })
+
+
         //region [midlertidig] TODO: fjern?
         viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
             viewModel.niluStations.observe(viewLifecycleOwner, Observer { nilu ->
@@ -117,61 +130,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     fun assignId(root : View) {
         switch = root.findViewById(R.id.heatmap_Switch)
     }
-
-
-    //region [nearby stations]
-    @SuppressLint("MissingPermission")
-    fun getNearestStation(stations: MutableList<Stasjon>) : Stasjon? {
-        var nearest : Stasjon? = null
-        var closest: Float = 100000.00F
-
-        if (GpsStatus) {
-            val me : Location
-            fusedLocationClient.lastLocation.addOnSuccessListener {
-                for (stasjon in stations) {
-
-                    // oppretter Location-objekter
-                    val myLocation = Location("")
-                    myLocation.latitude = it.latitude
-                    myLocation.longitude = it.longitude
-
-                    val stationLocation = Location("")
-                    stationLocation.latitude = stasjon.latitude
-                    stationLocation.longitude = stasjon.longitude
-
-                    // sammenligner avstand mellom "her" og markoer, og sjekker hvem er naermest
-                    val distance = myLocation.distanceTo(stationLocation)
-                    if (distance <= closest) {
-                        closest = distance
-                        nearest = stasjon
-                    }
-                }; Log.d("Nearest station (inne)", nearest.toString())
-            }; return nearest //TODO: Fungerer ikke pga async-task (?)
-        } else return null
-    }
-
-    @SuppressLint("MissingPermission")
-    fun getNearbyStations(stations: MutableList<Stasjon>) : MutableList<Stasjon>? {
-        val nearby: MutableList<Stasjon> = mutableListOf()
-
-        if (GpsStatus) {
-            fusedLocationClient.lastLocation.addOnSuccessListener {
-
-                for (stasjon in stations) {
-                    val myCoordinates = LatLng(it.latitude, it.longitude)
-                    val stationCoordiantes = LatLng(stasjon.latitude, stasjon.longitude)
-
-                    // henter stasjoner innen en 10km radius (ca, ish 11.1 km)
-                    if (stationCoordiantes.latitude <= myCoordinates.latitude+0.1 && stationCoordiantes.latitude >= myCoordinates.latitude-0.1){
-                        if (stationCoordiantes.longitude <= myCoordinates.longitude+0.1 && stationCoordiantes.longitude >= myCoordinates.longitude-0.1) {
-                            nearby.add(stasjon)
-                        }
-                    }
-                }; Log.d("Nearby stations (inne)", nearby.toString())
-            }; return nearby //TODO: Fungerer ikke pga async-task (?)
-        } else return null
-    }
-    //endregion
 
 
     open fun CheckGpsStatus() {
