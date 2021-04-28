@@ -249,7 +249,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                             "]"
                         )
                     )
-
                     if (navn == stasjon.name) {
                         // tts-test
 

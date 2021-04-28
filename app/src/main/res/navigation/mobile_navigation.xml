@@ -9,49 +9,57 @@
         android:id="@+id/navigation_home"
         android:name="com.example.gruppe5.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home"
+        app:enterAnim="@transition/slide_left"
+        app:popEnterAnim="@transition/slide_left_i">
         <action
             android:id="@+id/action_navigation_dialog_to_AboutAirQualityFragment"
             app:destination="@id/aboutAirqualityFragment"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_map"
         android:name="com.example.gruppe5.ui.map.MapsFragment"
         android:label="@string/title_map"
-        tools:layout="@layout/fragment_maps" >
+        tools:layout="@layout/fragment_maps"
+        app:enterAnim="@transition/slide_left"
+        app:popEnterAnim="@transition/slide_left_i">
         <action
             android:id="@+id/action_navigation_map_to_navigation_location"
             app:destination="@id/navigation_location"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"/>
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_location"
         android:name="com.example.gruppe5.ui.location.LocationFragment"
         android:label="Location"
-        tools:layout="@layout/fragment_location">
+        tools:layout="@layout/fragment_location"
+        app:enterAnim="@transition/slide_left"
+        app:popEnterAnim="@transition/slide_left_i">
 
         <action
             android:id="@+id/action_navigation_location_to_navigation_map"
             app:destination="@id/navigation_map"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right" />
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
         <argument
             android:name="station"
             app:argType="com.example.gruppe5.Stasjon"
             app:nullable="true"
-            android:defaultValue="@null"/>
+            android:defaultValue="@null" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_favorites"
         android:name="com.example.gruppe5.ui.favorites.FavoritesFragment"
         android:label="@string/title_favorites"
-        tools:layout="@layout/fragment_favorites" >
+        tools:layout="@layout/fragment_favorites"
+        app:enterAnim="@transition/slide_left"
+        app:popEnterAnim="@transition/slide_left_i">
         <argument
             android:name="favorite_station"
             app:argType="string"
@@ -60,33 +68,54 @@
         <action
             android:id="@+id/action_navigation_favorites_to_navigation_search2"
             app:destination="@id/navigation_search"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right" />
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i" />
         <action
             android:id="@+id/action_navigation_favorites_self"
-            app:destination="@id/navigation_favorites" />
+            app:destination="@id/navigation_favorites"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
         <action
             android:id="@+id/action_navigation_favorites_to_navigation_location"
-            app:destination="@id/navigation_location" />
+            app:destination="@id/navigation_location"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
     </fragment>
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="com.example.gruppe5.ui.settings.SettingsFragment"
         android:label="Innstillinger"
-        tools:layout="@layout/fragment_settings" >
+        tools:layout="@layout/fragment_settings"
+        app:enterAnim="@transition/slide_left"
+        app:popEnterAnim="@transition/slide_left_i">
         <action
             android:id="@+id/action_navigation_settings_to_aboutAirqualityFragment"
-            app:destination="@id/aboutAirqualityFragment" />
+            app:destination="@id/aboutAirqualityFragment"
+
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
         <action
             android:id="@+id/action_navigation_settings_to_aboutAppFragment"
-            app:destination="@id/aboutAppFragment" />
+            app:destination="@id/aboutAppFragment"
+
+
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
         <action
             android:id="@+id/action_navigation_settings_to_aboutDataFragment"
-            app:destination="@id/aboutDataFragment" />
+            app:destination="@id/aboutDataFragment"
+
+
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
         <action
             android:id="@+id/action_navigation_settings_self"
-            app:destination="@id/navigation_settings" />
+            app:destination="@id/navigation_settings"
+
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"
+            />
     </fragment>
 
     <fragment
@@ -96,7 +125,9 @@
         tools:layout="@layout/search_fragment" >
         <action
             android:id="@+id/action_navigation_search_to_navigation_favorites"
-            app:destination="@id/navigation_favorites" />
+            app:destination="@id/navigation_favorites"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
     </fragment>
     <fragment
         android:id="@+id/aboutAirqualityFragment"
@@ -105,7 +136,9 @@
         tools:layout="@layout/fragment_about_airquality" >
         <action
             android:id="@+id/action_aboutAirqualityFragment_to_navigation_settings"
-            app:destination="@id/navigation_settings" />
+            app:destination="@id/navigation_settings"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
     </fragment>
     <fragment
         android:id="@+id/aboutAppFragment"
@@ -114,7 +147,9 @@
         tools:layout="@layout/fragment_about_app" >
         <action
             android:id="@+id/action_aboutAppFragment_to_navigation_settings"
-            app:destination="@id/navigation_settings" />
+            app:destination="@id/navigation_settings"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
     </fragment>
     <fragment
         android:id="@+id/aboutDataFragment"
@@ -123,7 +158,9 @@
         tools:layout="@layout/fragment_about_data" >
         <action
             android:id="@+id/action_aboutDataFragment_to_navigation_settings"
-            app:destination="@id/navigation_settings" />
+            app:destination="@id/navigation_settings"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
     </fragment>
 
 
