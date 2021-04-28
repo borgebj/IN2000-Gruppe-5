@@ -22,8 +22,16 @@
     <string name="innstillinger">INNSTILLINGER</string>
 
     <!-- Infoknapp -->
-    <string name="str_info">AQI nivået sier noe om hvor mye luftforurensing det er i et område osv blabla </string>
-    <string name="str_info_values">AQI nivået sier noe om luftforurensning. vi har flere verdier blablabla</string>
+    <string name="str_info">AQI er forkortelsen for Air Quality Index. Som navnet antyder, er dette en indikator som lar deg vurdere den helhetlige luftkvaliteten. AQI nivået går fra 0 til 500, der 500 er særdeles helseskadelig luftkvalitet. </string>
+    <string name="str_info_values">Luftforurensning påvirkes av flere verdier, og den høyeste verdien bestemmer aqi nivået. no2, pm10, pm25 og 03 er ulike typer luftforurensende partikler som gir oss nøkkelinformasjon om luftkvaliteten, og måles i milligram per kubikkmeter luft.</string>
+
+    <string-array name="aqiFunfactList">
+    <item>funfact 1</item>
+    <item>funfact 2</item>
+    <item>funfact 3 </item>
+    <item>funfact 4</item>
+    </string-array>
+
 
     <!-- strings for searchbar -->
     <string-array name="search_bar_strings">

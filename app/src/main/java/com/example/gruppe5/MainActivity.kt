@@ -8,7 +8,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -45,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         // setter opp navbar
         navView.setupWithNavController(navController)
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -84,4 +87,5 @@ class MainActivity : AppCompatActivity() {
         navView = findViewById(R.id.nav_view)
         navController = findNavController(R.id.nav_host_fragment)
     }
+
 }
