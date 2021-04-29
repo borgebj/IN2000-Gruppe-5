@@ -110,7 +110,7 @@ class LocationFragment : Fragment() {
         }
         val infoButton2 : ImageButton = root.findViewById(R.id.info2_location)
         infoButton2.setOnClickListener(){
-            alertValuesView(getString(R.string.str_info_values), "open")
+            alertValuesView(getString(R.string.str_info_values), "open", root)
         }
     }
 
@@ -124,57 +124,56 @@ class LocationFragment : Fragment() {
         return (animasjonsDialog.show())
     }
 
-    private fun alertValuesView(message: String, command : String) {
+    private fun alertValuesView(message: String, command : String, root : View) {
         val dialog = AlertDialog.Builder(context)
         dialog.setTitle("AQI nivåer")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { dialoginterface, i -> } //legge til animasjon senere
-            .setNeutralButton("les mer") { dialog, which -> openValueList("next") }
+            .setNeutralButton("les mer") { dialog, which -> openValueList("next", root) }
         //dialog.show()
         slideShow(command, dialog)
     }
 
     //kalles i metoden ovenfor. Åpner liste med ulike verdier, som man kan velge i for deretter å få en forklaring. åpnes når det trykkes "les mer"
-    private fun openValueList(command : String){
+    private fun openValueList(command : String, root : View){
         // setter opp alert builder
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Velg en type")
-            .setNeutralButton("Tilbake") { dialog, which -> alertValuesView(getString(R.string.str_info_values), "back")}
+            .setNeutralButton("Tilbake") { dialog, which -> alertValuesView(getString(R.string.str_info_values), "back", root)}
 
-        //ToDO - endre til stasjon.verdi
+        //ToDO - endre til stasjon.verawidi
         val values = arrayOf("NO2", "PM10", "PM2,5", "O3")
         builder.setItems(values) { dialog, which ->
             when (which) {
-                0 -> {displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, er dager som oftest blir vi utsatt for de høyeste konsentrasjonene om vinteren på kalde dager med lite vind, og spesielt på trafikkerte veier og i tunneler. Oslo og Bergen har hatt de høyeste verdiene." )}           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
-                1 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000 000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.")}
-                2 -> {displayTypeFact("pm2,5 er betegnelse på partikler med diameter under 2,5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.")}
-                3 -> {displayTypeFact("o3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke luftveisfunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.")} //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
+                0 -> {displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, er dager som oftest blir vi utsatt for de høyeste konsentrasjonene om vinteren på kalde dager med lite vind, og spesielt på trafikkerte veier og i tunneler. Oslo og Bergen har hatt de høyeste verdiene.", root )}           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
+                1 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000 000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.", root)}
+                2 -> {displayTypeFact("pm2,5 er betegnelse på partikler med diameter under 2,5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.", root)}
+                3 -> {displayTypeFact("o3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke luftveisfunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.", root)} //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
             }
         }
         slideShow(command, builder)
-            alertView(getString(R.string.str_info))
-        }
+        //alertView(getString(R.string.str_info))
         val infoButton2 : ImageButton = root.findViewById(R.id.info2_location)
         infoButton2.setOnClickListener(){
-            alertValuesView(getString(R.string.str_info_values))
+            alertValuesView(getString(R.string.str_info_values), root)
         }
     }
 
     //test for Location sin infoknapp om ulike nivåer. Gir en liste man kan velge i.
-    private fun alertValuesView(message: String) {
+    private fun alertValuesView(message: String, root : View) {
         val dialog = AlertDialog.Builder(context)
 
         dialog.setTitle("AQI nivåer")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { dialoginterface, i -> }
-            .setNeutralButton("les mer") { dialog, which -> openValueList() }
+            .setNeutralButton("les mer") { dialog, which -> openValueList(root) }
         dialog.show()
     }
 
     //kalles i metoden ovenfor. Åpner liste med ulike verdier, som man kan velge i for deretter å få en forklaring.
-    private fun openValueList(){
+    private fun openValueList(root : View){
         // setter opp alert builder
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Velg en type")
@@ -183,18 +182,10 @@ class LocationFragment : Fragment() {
         val values = arrayOf("no2", "pm10", "pm25", "o3")
         builder.setItems(values) { dialog, which ->
             when (which) {
-                0 -> {
-                    displayTypeFact("no2 er ikke bra for lungene")
-                }           //disse utdypes senere
-                1 -> {
-                    displayTypeFact("pm10 er ikke bra for lungene")
-                }
-                2 -> {
-                    displayTypeFact("pm25 er ikke bra for lungene")
-                }
-                3 -> {
-                    displayTypeFact("o3 er heller ikke bra for lungene")
-                }
+                0 -> { displayTypeFact("no2 er ikke bra for lungene", root) }
+                1 -> { displayTypeFact("pm10 er ikke bra for lungene", root) }
+                2 -> { displayTypeFact("pm25 er ikke bra for lungene", root) }
+                3 -> { displayTypeFact("o3 er heller ikke bra for lungene", root) }
             }
         }
         val dialog = builder.create()
@@ -202,14 +193,14 @@ class LocationFragment : Fragment() {
     }
 
     //for hver av typene i lista.
-    private fun displayTypeFact(message: String){
+    private fun displayTypeFact(message: String, root : View){
         val dialog = AlertDialog.Builder(context)
         dialog.setTitle(((message.split(" ".toRegex(), 2).toTypedArray())[0]))  //setter første ord som tittel
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { dialoginterface, i -> }
             .setNeutralButton("Tilbake") { dialog, which ->
-                openValueList("back")}
+                openValueList("back", root)}
         //dialog.show()
         slideShow("next", dialog)
     }
@@ -275,8 +266,7 @@ class LocationFragment : Fragment() {
                 alertView(getString(R.string.str_info), root, "back")}
         //newDialog.show()
         slideShow("nextNext", newDialog)
-            .setNeutralButton("Tilbake") { dialog, which -> openValueList() }
-        dialog.show()
+            //.setNeutralButton("Tilbake") { dialog, which -> openValueList() }
     }
 
 
