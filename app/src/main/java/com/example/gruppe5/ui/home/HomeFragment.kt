@@ -2,8 +2,10 @@ package com.example.gruppe5.ui.home
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Color.*
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,59 +16,90 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.map.ViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.max
+import kotlin.math.min
+import kotlin.properties.Delegates
 
 
 class HomeFragment : Fragment(){
 
     // globale variabler
-    private lateinit var homeModel: HomeViewModel
+    private lateinit var viewModel: ViewModel
     lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
     lateinit var aqiSmiley : ImageView
 
+    lateinit var root : View
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    var locationManager: LocationManager? = null
+    var GpsStatus = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
-        val section1 = DonutSection(
-            name = "normal_pollution",
-            color = Color.parseColor("#FF46E33B"),
-            amount = 60f
-        )
-        val section2 = DonutSection(
-            name = "warning_pollution",
-            color = Color.parseColor("#FFDDE33B"),
-            amount = 20f
-        )
-        val section3 = DonutSection(
-            name = "dangerous_pollution",
-            color = Color.parseColor("#FFE33B3B"),
-            amount = 10f
-        )
+        this.root = root
 
+        CheckGpsStatus()
+        getPollutionLevel()
         assignId(root)
         setOnClickers(root)
         setAqiInformer(root)
         test2(root)
 
-        donutView.cap = 100f
-        donutView.submitData(listOf(section1,section2,section3))
-
         return root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        homeModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        homeModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+    fun donutChartSetup(amount: Float) {
+        var color: Int = 1
+        //Dere kan bare erstatte denne switch statement med deres!!!
+        when {
+            amount < 50 -> {
+                color = GREEN
+                aqiLevel.setTextColor(GREEN)
+                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                aqiSentence.text = "AQI nivået er bra"
+            } amount > 50 && amount < 100 -> {
+                color = YELLOW
+                aqiLevel.setTextColor(YELLOW)
+                aqiSentence.text = "AQI nivået er moderat"
+                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+            }
+            else -> BLUE
+        }
+        aqiLevel.text = amount.toString()
+        val section1 = DonutSection(
+            name = "pollution level",
+            color = color,
+            amount = amount,
+        )
+        donutView.cap = 400f
+        donutView.submitData(listOf(section1))
+    }
+
+    @JvmName("getPollutionLevel1")
+    fun getPollutionLevel(){
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
+        viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
+            viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
+            viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
+                val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
+                if (highest != null) {
+                    nearest.verdier[highest.key]?.let { donutChartSetup(it.toFloat()) }
+                }
+            })
         })
     }
 
@@ -76,6 +109,12 @@ class HomeFragment : Fragment(){
         aqiLevel = root.findViewById(R.id.aqiLvlHome)
         aqiSentence = root.findViewById(R.id.aqiSentence_home)
         aqiSmiley = root.findViewById(R.id.smiley_home)
+    }
+
+    open fun CheckGpsStatus() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
     // setter onClickers for kart og API_test
