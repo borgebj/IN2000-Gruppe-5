@@ -57,7 +57,7 @@ class HomeFragment : Fragment(){
         assignId(root)
         setOnClickers(root)
         setAqiInformer()
-      
+
         return root
     }
 
