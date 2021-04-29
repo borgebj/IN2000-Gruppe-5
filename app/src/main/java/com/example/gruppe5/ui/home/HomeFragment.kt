@@ -2,8 +2,10 @@ package com.example.gruppe5.ui.home
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.graphics.Color
 import android.graphics.Color.*
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,59 +16,89 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.map.ViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import java.util.*
+import kotlin.collections.HashMap
 import kotlin.math.max
+import kotlin.math.min
+import kotlin.properties.Delegates
 
 
 class HomeFragment : Fragment(){
 
     // globale variabler
-    private lateinit var homeModel: HomeViewModel
+    private lateinit var viewModel: ViewModel
     lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
     lateinit var aqiSmiley : ImageView
 
+    lateinit var root : View
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    var locationManager: LocationManager? = null
+    var GpsStatus = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
-        val section1 = DonutSection(
-            name = "normal_pollution",
-            color = Color.parseColor("#FF46E33B"),
-            amount = 60f
-        )
-        val section2 = DonutSection(
-            name = "warning_pollution",
-            color = Color.parseColor("#FFDDE33B"),
-            amount = 20f
-        )
-        val section3 = DonutSection(
-            name = "dangerous_pollution",
-            color = Color.parseColor("#FFE33B3B"),
-            amount = 10f
-        )
+        this.root = root
 
+        CheckGpsStatus()
+        getPollutionLevel()
         assignId(root)
         setOnClickers(root)
-        setAqiInformer(root)
-        test2(root)
-
-        donutView.cap = 100f
-        donutView.submitData(listOf(section1,section2,section3))
+        setAqiInformer()
 
         return root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        homeModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        homeModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+    fun donutChartSetup(amount: Float) {
+        var color: Int = 1
+        //Dere kan bare erstatte denne switch statement med deres!!!
+        when {
+            amount < 50 -> {
+                color = GREEN
+                aqiLevel.setTextColor(GREEN)
+                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                aqiSentence.text = "AQI nivået er bra"
+            } amount > 50 && amount < 100 -> {
+                color = YELLOW
+                aqiLevel.setTextColor(YELLOW)
+                aqiSentence.text = "AQI nivået er moderat"
+                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+            }
+            else -> BLUE
+        }
+        aqiLevel.text = amount.toString()
+        val section1 = DonutSection(
+            name = "pollution level",
+            color = color,
+            amount = amount,
+        )
+        donutView.cap = 400f
+        donutView.submitData(listOf(section1))
+    }
+
+    @JvmName("getPollutionLevel1")
+    fun getPollutionLevel(){
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
+        viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
+            viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
+            viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
+                val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
+                if (highest != null) {
+                    nearest.verdier[highest.key]?.let { donutChartSetup(it.toFloat()) }
+                }
+            })
         })
     }
 
@@ -76,6 +108,12 @@ class HomeFragment : Fragment(){
         aqiLevel = root.findViewById(R.id.aqiLvlHome)
         aqiSentence = root.findViewById(R.id.aqiSentence_home)
         aqiSmiley = root.findViewById(R.id.smiley_home)
+    }
+
+    open fun CheckGpsStatus() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
     // setter onClickers for kart og API_test
@@ -207,88 +245,65 @@ class HomeFragment : Fragment(){
     }
 
     //TODO bruk av LiveData fra ViewModel for aa hente stasjoner, og lokasjon for aa hente naermeste stasjon (begge disse blir gjort i MapFragment ;)
-    @SuppressLint("ResourceAsColor")
-    fun setAqiInformer(root: View) {
-        //skal finne hoyeste tallet bland aqiverdier, og sette det på homepage. farge og emoji skal endres etter verdien.
-        var aqiValuesList = listOf(6, 250, 12, 36) //midlertidig aqi liste
-        val highestIndex = aqiValuesList.maxOrNull() ?: 0
-
-        if (highestIndex < 50) { //bra verdi
-            aqiLevel.setTextColor(GREEN)
-            aqiSentence.text = "AQI nivået er bra"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
-        }
-        else if (highestIndex > 50 && highestIndex < 100){
-            aqiLevel.setTextColor(YELLOW)
-            aqiSentence.text = "AQI nivået er moderat"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-        }
-        else if (highestIndex > 100 && highestIndex < 150){
-            aqiLevel.setTextColor(YELLOW) //endres til oransje
-            aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
-        }
-        else if (highestIndex > 150 && highestIndex < 200){
-            aqiLevel.setTextColor(RED) //endres til oransje
-            aqiSentence.text = "AQI nivået er usunt"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
-        }
-        else if (highestIndex > 200 && highestIndex < 300){
-            aqiLevel.setTextColor(RED) //endres til LILLA
-            aqiSentence.text = "AQI nivået er veldig usunt"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
-        }
-        else if (highestIndex > 300){
-            aqiLevel.setTextColor(YELLOW) //endres til MAROON (?)
-            aqiSentence.text = "AQI nivået er helseskadelig"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
-        }
-        aqiLevel.text = (highestIndex.toString() + " AQI")
-    }
-
-    @SuppressLint("ResourceAsColor")
-    fun test2(root: View) {
+    fun setAqiInformer() {
         val map = mapOf<String, Double>("no2" to 6.00, "pm10" to 250.00, "pm25" to 12.00, "o3" to 36.00)
         val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
+        //TODO endre til høyeste PROSENTMESSIG ikke direkte høyeste verdi
+
+        fun changeVisuals(level : String)   {
+            when(level) {
+                "green" -> {
+                    aqiLevel.setTextColor(parseColor("#3F9F41"))
+                    aqiSentence.text = "AQI nivået er bra"
+                    //recommendation.text = "Det er lite luftforurensning"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                } "orange" -> {
+                    aqiLevel.setTextColor(parseColor("#FFCB00"))
+                    aqiSentence.text = "AQI nivået er moderat"
+                    //recommendation.text ="Utendørs aktivitet anbefales for de fleste"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+                } "red" -> {
+                    aqiLevel.setTextColor(parseColor("#C13500"))
+                    aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
+                    //recommendation.text ="Barn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
+                } "purple" -> {
+                    aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
+                    aqiSentence.text = "AQI nivået er usunt"
+                    //recommendation.text ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
+                }
+            }
+        }
 
         if (highest != null)
         when (highest.key) {
             "no2" -> {
-                if (highest.value <= 100.0) {
-
-                } else if (highest.value in 100.0..200.0) {
-
-                } else if (highest.value in 200.0..400.0) {
-
-                } else if (highest.value >= 400.0) { }
+                if (highest.value <= 100.0) changeVisuals("green")
+                else if (highest.value in 100.0..200.0) changeVisuals("orange")
+                else if (highest.value in 200.0..400.0) changeVisuals("red")
+                else if (highest.value >= 400.0) changeVisuals("purple")
             }
             "pm10" -> {
-                if (highest.value <= 60.0) {
-
-                } else if (highest.value in 60.0..120.0) {
-
-                } else if (highest.value in 120.0..400.0) {
-
-                } else if (highest.value >= 400.0) { }
+                if (highest.value <= 60.0) changeVisuals("green")
+                else if (highest.value in 60.0..120.0) changeVisuals("orange")
+                else if (highest.value in 120.0..400.0) changeVisuals("red")
+                else if (highest.value >= 400.0) changeVisuals("purple")
             }
             "pm25" -> {
-                if (highest.value <= 30.0) {
-
-                } else if (highest.value in 30.0..50.0) {
-
-                } else if (highest.value in 50.0..150.0) {
-
-                } else if (highest.value >= 150.0) { }
+                if (highest.value <= 30.0) changeVisuals("green")
+                else if (highest.value in 30.0..50.0) changeVisuals("orange")
+                else if (highest.value in 50.0..150.0) changeVisuals("red")
+                else if (highest.value >= 150.0) changeVisuals("purple")
             }
             "o3" -> {
-                if (highest.value <= 100.0) {
-
-                } else if (highest.value in 100.0..180.0) {
-
-                } else if (highest.value in 180.0..240.0) {
-
-                } else if (highest.value >= 240.0) { }
+                if (highest.value <= 100.0) changeVisuals("green")
+                else if (highest.value in 100.0..180.0) changeVisuals("orange")
+                else if (highest.value in 180.0..240.0) changeVisuals("red")
+                else if (highest.value >= 240.0) changeVisuals("purple")
             }
-        }
+        }; aqiLevel.text = (highest?.value.toString() + " ug/m3")
+
     }
 }
+
