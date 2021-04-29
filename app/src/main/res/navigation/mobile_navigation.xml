@@ -53,6 +53,12 @@
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"
             />
+        <action
+            android:id="@+id/action_navigation_location_to_navigation_favorites"
+            app:destination="@id/navigation_favorites"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"
+            />
 
         <argument
             android:name="station"
