@@ -43,7 +43,6 @@ class HomeFragment : Fragment(){
     lateinit var aqiSentence : TextView
     lateinit var aqiSmiley : ImageView
 
-    var pollutionLevel: Double = 0.0
     lateinit var root : View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var locationManager: LocationManager? = null
@@ -102,11 +101,6 @@ class HomeFragment : Fragment(){
                 }
             })
         })
-    }
-
-    fun test(myVal: Double) {
-        Log.d("value in function", myVal.toString());
-        pollutionLevel = myVal
     }
 
     fun assignId(root: View) {
