@@ -163,7 +163,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     fun addMarkers() {
         viewModel.stations.observe(viewLifecycleOwner, Observer { stations ->
             for (station in stations) {
-                val title = "[${station.name}] - ${station.verdier.get(type)} ug/m3"
+                val highest : Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
+                val title = "[${station.name}] - ${highest?.value} ug/m3 [${highest?.key}]"
                 val marker : MarkerOptions = MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title)
                 mMap.addMarker(marker)
             }
@@ -172,12 +173,13 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     fun addHeatmap() {
-        viewModel.stations.observe(viewLifecycleOwner, Observer {
+        viewModel.stations.observe(viewLifecycleOwner, Observer { list ->
             val weightedData: MutableList<WeightedLatLng> = mutableListOf()
 
             // lager LatLng og WeightedLatLng av hver stasjon for heatmap
-            for (station in it) {
-                var verdi = station.verdier[type]
+            for (station in list) {
+                val highest : Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
+                val verdi = station.verdier[highest?.key]
                 if (verdi != null) weightedData.add(WeightedLatLng(LatLng(station.latitude, station.longitude), verdi))
             }
 
