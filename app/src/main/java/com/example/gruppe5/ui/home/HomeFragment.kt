@@ -33,7 +33,6 @@ class HomeFragment : Fragment(){
     lateinit var aqiSentence : TextView
     lateinit var aqiSmiley : ImageView
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         val section1 = DonutSection(
@@ -60,7 +59,6 @@ class HomeFragment : Fragment(){
         donutView.cap = 100f
         donutView.submitData(listOf(section1,section2,section3))
 
-
         return root
     }
 
@@ -82,16 +80,11 @@ class HomeFragment : Fragment(){
 
     // setter onClickers for kart og API_test
     fun setOnClickers(root: View){
+        //TODO: Implementer fremtids-onclickers
         //infoknapp
         val infoButton : ImageButton = root.findViewById(R.id.info_home)
         infoButton.setOnClickListener{
             alertView(getString(R.string.str_info), root, "open")
-        }
-
-        //Test for Location, da slipper jeg å accesse Locations gjennom mappet hele tiden
-        val locButton : ImageButton = root.findViewById(R.id.iconLocation_home)
-        locButton.setOnClickListener{
-            alertValuesView(getString(R.string.str_info_values), "open")
         }
     }
 
@@ -149,7 +142,6 @@ class HomeFragment : Fragment(){
         //dialog.show()
         slideShow("next", dialog)
     }
-
 
     //viser dialog/pop up vindu. brukes for infoknapper
     private fun alertView(message: String, root : View, command : String) {

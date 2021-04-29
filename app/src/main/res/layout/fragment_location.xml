@@ -56,8 +56,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="25dp"
         android:background="@drawable/ic_info"
         />
 
@@ -72,15 +72,6 @@
         android:textColor="@color/black"
         android:textSize="25sp" />
 
-    <ImageView
-        android:id="@+id/smiley_location"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="@drawable/ic_smiley_lvl1"
-        android:layout_marginLeft="340dp"
-        android:layout_marginTop="370dp"
-        />
-
     <View
         style="@style/Divider.Horizontal"
         android:layout_marginTop="440dp"
@@ -89,14 +80,31 @@
 
     <TextView
         android:id="@+id/verdiNivaer_location"
-        android:foregroundGravity="center"
-        android:text="VERDINIVÅER"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="450dp"
-        android:textColor="@color/black"
+        android:foregroundGravity="center"
         android:gravity="center"
         android:textStyle="bold"
+        android:textSize="25dp" />
+        android:text="VERDINIVÅER"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/smiley_location"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/stationName_location"
+        android:layout_alignStart="@+id/donut_view_location"
+        android:layout_alignEnd="@+id/donut_view_location"
+        android:layout_alignBottom="@+id/donut_view_location"
+        android:layout_marginStart="123dp"
+        android:layout_marginTop="208dp"
+        android:layout_marginEnd="127dp"
+        android:layout_marginBottom="52dp"
+        android:background="@drawable/ic_smiley_lvl1" />
         android:textSize="25sp" />
 
     <ImageButton
@@ -105,7 +113,7 @@
         android:layout_height="35dp"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="450dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginEnd="25dp"
         android:background="@drawable/ic_info"
         android:outlineAmbientShadowColor="@color/white"
         />
