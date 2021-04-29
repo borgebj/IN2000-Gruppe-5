@@ -29,26 +29,51 @@
 
     <app.futured.donut.DonutProgressView
         android:id="@+id/donut_view_location"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
+        android:layout_below="@+id/stationName_location"
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="11dp"
         android:gravity="center"
         app:donut_bgLineColor="@color/light_gray"
         app:donut_gapAngle="270"
         app:donut_gapWidth="80"
-        app:donut_strokeWidth="25dp"
-        android:layout_marginTop="70dp"
-        android:layout_marginLeft="60dp"
-        />
+        app:donut_strokeWidth="25dp" />
+
+    <TextView
+        android:id="@+id/donutNmbrsLocation"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/donut_view_location"
+        android:layout_alignTop="@+id/donut_view_location"
+        android:layout_alignEnd="@+id/donut_view_location"
+        android:layout_alignBottom="@+id/aqiSentence_location"
+        android:layout_marginStart="51dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="49dp"
+        android:layout_marginBottom="234dp"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="500             0"
+        android:textColor="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/aqiLevel_location"
+        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
+        app:layout_constraintTop_toTopOf="@+id/donut_view_location"
+        app:layout_constraintVertical_bias="0.232" />
 
     <TextView
         android:id="@+id/aqiLevel_location"
-        android:foregroundGravity="center"
-        android:text="180 AQI"
-        android:textColor="@color/green"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_alignTop="@+id/donut_view_location"
+        android:layout_marginTop="78dp"
+        android:foregroundGravity="center"
         android:gravity="center"
+        android:text="180 AQI"
+        android:textColor="@color/green"
         android:textSize="40sp" />
 
     <ImageButton
@@ -56,8 +81,8 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="70dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="25dp"
         android:background="@drawable/ic_info"
         />
 
@@ -72,48 +97,52 @@
         android:textColor="@color/black"
         android:textSize="25sp" />
 
+    <View
+        style="@style/Divider.Horizontal"
+        android:layout_below="@+id/aqiSentence_location"
+        android:layout_marginTop="20dp"
+        android:background="@color/black" />
+
+    <TextView
+        android:id="@+id/verdiNivaer_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="350dp"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="VERDINIVÅER"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
     <ImageView
         android:id="@+id/smiley_location"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:background="@drawable/ic_smiley_lvl1"
-        android:layout_marginLeft="340dp"
-        android:layout_marginTop="370dp"
-        />
-
-    <View
-        style="@style/Divider.Horizontal"
-        android:layout_marginTop="440dp"
-        android:background="@color/black"
-        />
-
-    <TextView
-        android:id="@+id/verdiNivaer_location"
-        android:foregroundGravity="center"
-        android:text="VERDINIVÅER"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="450dp"
-        android:textColor="@color/black"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="25sp" />
+        android:layout_below="@+id/stationName_location"
+        android:layout_alignStart="@+id/donut_view_location"
+        android:layout_alignEnd="@+id/donut_view_location"
+        android:layout_marginStart="89dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="91dp"
+        android:layout_marginBottom="33dp"
+        android:background="@drawable/ic_smiley_lvl1" />
 
     <ImageButton
         android:id="@+id/info2_location"
         android:layout_width="35dp"
         android:layout_height="35dp"
+        android:layout_alignTop="@+id/verdiNivaer_location"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="450dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="19dp"
         android:background="@drawable/ic_info"
-        android:outlineAmbientShadowColor="@color/white"
-        />
+        android:outlineAmbientShadowColor="@color/white" />
 
     <com.github.mikephil.charting.charts.HorizontalBarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="350dp"
         android:layout_margin="8dp"
         android:layout_marginTop="20dp"
         android:layout_below="@id/verdiNivaer_location"

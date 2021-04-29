@@ -70,6 +70,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         addOnClickers()
         addSwitchFunction()
 
+        /*
         //TODO fjern! - dette er bare en fremvisning av hvordan hente Nearest og Nearby
         viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
             viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
@@ -81,6 +82,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                 Log.d("nearby", nearby.toString())
             })
         })
+
+
+         */
 
 
         //region [midlertidig] TODO: fjern?
