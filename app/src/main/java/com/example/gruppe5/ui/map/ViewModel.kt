@@ -104,6 +104,9 @@ class ViewModel : ViewModel() {
             val stasjoner = getStations()
             getValues(stasjoner)
             stations.postValue(stasjoner)
+            Log.d("høyest", highestValueInNorway.toString())
+            Log.d("lavest", lowestValueInNorway.toString())
+
         }
     }
 

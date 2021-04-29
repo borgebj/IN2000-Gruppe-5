@@ -39,26 +39,35 @@ class HomeFragment : Fragment(){
         val section1 = DonutSection(
             name = "normal_pollution",
             color = Color.parseColor("#FF46E33B"),
-            amount = 60f
+            amount = 20f
         )
         val section2 = DonutSection(
             name = "warning_pollution",
-            color = Color.parseColor("#FFDDE33B"),
+            color = Color.parseColor("#4900AC"),
             amount = 20f
         )
         val section3 = DonutSection(
             name = "dangerous_pollution",
             color = Color.parseColor("#FFE33B3B"),
-            amount = 10f
+            amount = 20f
+        )
+        val section4 = DonutSection(
+            name = "a",
+            color = Color.parseColor("#0000FF"),
+            amount = 20f
+        )
+        val section5 = DonutSection(
+            name = "b",
+            color = Color.parseColor("#FFDDE33B"),
+            amount = 20f
         )
 
         assignId(root)
         setOnClickers(root)
-        setAqiInformer(root)
-        test2(root)
+        setAqiInformer()
 
         donutView.cap = 100f
-        donutView.submitData(listOf(section1,section2,section3))
+        donutView.submitData(listOf(section1,section2,section3, section4, section5))
 
 
         return root
@@ -215,88 +224,65 @@ class HomeFragment : Fragment(){
     }
 
     //TODO bruk av LiveData fra ViewModel for aa hente stasjoner, og lokasjon for aa hente naermeste stasjon (begge disse blir gjort i MapFragment ;)
-    @SuppressLint("ResourceAsColor")
-    fun setAqiInformer(root: View) {
-        //skal finne hoyeste tallet bland aqiverdier, og sette det på homepage. farge og emoji skal endres etter verdien.
-        var aqiValuesList = listOf(6, 250, 12, 36) //midlertidig aqi liste
-        val highestIndex = aqiValuesList.maxOrNull() ?: 0
-
-        if (highestIndex < 50) { //bra verdi
-            aqiLevel.setTextColor(GREEN)
-            aqiSentence.text = "AQI nivået er bra"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
-        }
-        else if (highestIndex > 50 && highestIndex < 100){
-            aqiLevel.setTextColor(YELLOW)
-            aqiSentence.text = "AQI nivået er moderat"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-        }
-        else if (highestIndex > 100 && highestIndex < 150){
-            aqiLevel.setTextColor(YELLOW) //endres til oransje
-            aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
-        }
-        else if (highestIndex > 150 && highestIndex < 200){
-            aqiLevel.setTextColor(RED) //endres til oransje
-            aqiSentence.text = "AQI nivået er usunt"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
-        }
-        else if (highestIndex > 200 && highestIndex < 300){
-            aqiLevel.setTextColor(RED) //endres til LILLA
-            aqiSentence.text = "AQI nivået er veldig usunt"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
-        }
-        else if (highestIndex > 300){
-            aqiLevel.setTextColor(YELLOW) //endres til MAROON (?)
-            aqiSentence.text = "AQI nivået er helseskadelig"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
-        }
-        aqiLevel.text = (highestIndex.toString() + " AQI")
-    }
-
-    @SuppressLint("ResourceAsColor")
-    fun test2(root: View) {
+    fun setAqiInformer() {
         val map = mapOf<String, Double>("no2" to 6.00, "pm10" to 250.00, "pm25" to 12.00, "o3" to 36.00)
         val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
+        //TODO endre til høyeste PROSENTMESSIG ikke direkte høyeste verdi
+
+        fun changeVisuals(level : String)   {
+            when(level) {
+                "green" -> {
+                    aqiLevel.setTextColor(parseColor("#3F9F41"))
+                    aqiSentence.text = "AQI nivået er bra"
+                    //recommendation.text = "Det er lite luftforurensning"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                } "orange" -> {
+                    aqiLevel.setTextColor(parseColor("#FFCB00"))
+                    aqiSentence.text = "AQI nivået er moderat"
+                    //recommendation.text ="Utendørs aktivitet anbefales for de fleste"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+                } "red" -> {
+                    aqiLevel.setTextColor(parseColor("#C13500"))
+                    aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
+                    //recommendation.text ="Barn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
+                } "purple" -> {
+                    aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
+                    aqiSentence.text = "AQI nivået er usunt"
+                    //recommendation.text ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
+                }
+            }
+        }
 
         if (highest != null)
         when (highest.key) {
             "no2" -> {
-                if (highest.value <= 100.0) {
-
-                } else if (highest.value in 100.0..200.0) {
-
-                } else if (highest.value in 200.0..400.0) {
-
-                } else if (highest.value >= 400.0) { }
+                if (highest.value <= 100.0) changeVisuals("green")
+                else if (highest.value in 100.0..200.0) changeVisuals("orange")
+                else if (highest.value in 200.0..400.0) changeVisuals("red")
+                else if (highest.value >= 400.0) changeVisuals("purple")
             }
             "pm10" -> {
-                if (highest.value <= 60.0) {
-
-                } else if (highest.value in 60.0..120.0) {
-
-                } else if (highest.value in 120.0..400.0) {
-
-                } else if (highest.value >= 400.0) { }
+                if (highest.value <= 60.0) changeVisuals("green")
+                else if (highest.value in 60.0..120.0) changeVisuals("orange")
+                else if (highest.value in 120.0..400.0) changeVisuals("red")
+                else if (highest.value >= 400.0) changeVisuals("purple")
             }
             "pm25" -> {
-                if (highest.value <= 30.0) {
-
-                } else if (highest.value in 30.0..50.0) {
-
-                } else if (highest.value in 50.0..150.0) {
-
-                } else if (highest.value >= 150.0) { }
+                if (highest.value <= 30.0) changeVisuals("green")
+                else if (highest.value in 30.0..50.0) changeVisuals("orange")
+                else if (highest.value in 50.0..150.0) changeVisuals("red")
+                else if (highest.value >= 150.0) changeVisuals("purple")
             }
             "o3" -> {
-                if (highest.value <= 100.0) {
-
-                } else if (highest.value in 100.0..180.0) {
-
-                } else if (highest.value in 180.0..240.0) {
-
-                } else if (highest.value >= 240.0) { }
+                if (highest.value <= 100.0) changeVisuals("green")
+                else if (highest.value in 100.0..180.0) changeVisuals("orange")
+                else if (highest.value in 180.0..240.0) changeVisuals("red")
+                else if (highest.value >= 240.0) changeVisuals("purple")
             }
-        }
+        }; aqiLevel.text = (highest?.value.toString() + " ug/m3")
+
     }
 }
+
