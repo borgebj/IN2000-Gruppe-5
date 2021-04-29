@@ -1,19 +1,28 @@
 package com.example.gruppe5.ui.location
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-<<<<<<< Updated upstream
 import androidx.navigation.fragment.navArgs
-=======
 import androidx.navigation.findNavController
->>>>>>> Stashed changes
 import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
+import com.github.mikephil.charting.charts.HorizontalBarChart
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+
 
 class LocationFragment : Fragment() {
 
@@ -23,16 +32,41 @@ class LocationFragment : Fragment() {
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
     lateinit var verdiNivaer : TextView
+    lateinit var barchart : HorizontalBarChart
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    lateinit var stasjon: Stasjon
+
+    @SuppressLint("UseRequireInsteadOfGet")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
 
         val root: View = inflater.inflate(R.layout.fragment_location, container, false)
 
         assignId(root)
+        setOnClickers(root)
+        setupBarchart(root)
 
-        val navn = LocationFragmentArgs.fromBundle(requireArguments()).stationName
-        val kortNavn = navn.substring(navn.indexOf("[") + 1, navn.indexOf("]"))
-        stasjonNavn.text = kortNavn
+        val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
+
+        if (stasjon != null) { // fra Map
+            this.stasjon = stasjon
+            stasjonNavn.text = stasjon.name
+
+            Log.d("mine verdier", stasjon.verdier.toString())
+        }
+        else { // fra Favorite
+            val args = arguments
+            if (args != null) {
+                val myStasjon: Stasjon? = args?.getParcelable("location") as Stasjon?
+                this.stasjon = myStasjon!!
+                stasjonNavn.text = myStasjon?.name
+                Log.d("fra favorite", myStasjon.toString())
+            }
+            else Log.d("bundle == null", "HER")
+        }
 
         return root
     }
@@ -50,8 +84,6 @@ class LocationFragment : Fragment() {
         aqiLevel = root.findViewById(R.id.aqiLevel_location)
         aqiSentence = root.findViewById(R.id.aqiSentence_location)
         verdiNivaer = root.findViewById(R.id.verdiNivaer_location)
-<<<<<<< Updated upstream
-=======
         barchart = root.findViewById(R.id.chart)
     }
 
@@ -121,6 +153,52 @@ class LocationFragment : Fragment() {
             }
         }
         slideShow(command, builder)
+            alertView(getString(R.string.str_info))
+        }
+        val infoButton2 : ImageButton = root.findViewById(R.id.info2_location)
+        infoButton2.setOnClickListener(){
+            alertValuesView(getString(R.string.str_info_values))
+        }
+    }
+
+    //test for Location sin infoknapp om ulike nivåer. Gir en liste man kan velge i.
+    private fun alertValuesView(message: String) {
+        val dialog = AlertDialog.Builder(context)
+
+        dialog.setTitle("AQI nivåer")
+            .setIcon(R.drawable.ic_info)
+            .setMessage(message)
+            .setPositiveButton("Lukk") { dialoginterface, i -> }
+            .setNeutralButton("les mer") { dialog, which -> openValueList() }
+        dialog.show()
+    }
+
+    //kalles i metoden ovenfor. Åpner liste med ulike verdier, som man kan velge i for deretter å få en forklaring.
+    private fun openValueList(){
+        // setter opp alert builder
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Velg en type")
+
+        // TODO endre til stasjon.verdi
+        val values = arrayOf("no2", "pm10", "pm25", "o3")
+        builder.setItems(values) { dialog, which ->
+            when (which) {
+                0 -> {
+                    displayTypeFact("no2 er ikke bra for lungene")
+                }           //disse utdypes senere
+                1 -> {
+                    displayTypeFact("pm10 er ikke bra for lungene")
+                }
+                2 -> {
+                    displayTypeFact("pm25 er ikke bra for lungene")
+                }
+                3 -> {
+                    displayTypeFact("o3 er heller ikke bra for lungene")
+                }
+            }
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     //for hver av typene i lista.
@@ -197,6 +275,19 @@ class LocationFragment : Fragment() {
                 alertView(getString(R.string.str_info), root, "back")}
         //newDialog.show()
         slideShow("nextNext", newDialog)
+            .setNeutralButton("Tilbake") { dialog, which -> openValueList() }
+        dialog.show()
+    }
+
+
+    //viser dialog/pop up vindu. brukes for infoknapper
+    private fun alertView(message: String) {
+        val dialog = AlertDialog.Builder(context)
+        dialog.setTitle("Hva er AQI?")
+            .setIcon(R.drawable.ic_info)
+            .setMessage(message)
+            .setPositiveButton("Lukk",
+                { dialoginterface, i -> }).show()
     }
 
     fun setAqiInformer(root: View) {
@@ -237,6 +328,5 @@ class LocationFragment : Fragment() {
             aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
         }
         aqiLevel.text = (highestIndex.toString() + " AQI")
->>>>>>> Stashed changes
     }
 }

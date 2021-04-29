@@ -1,8 +1,11 @@
 package com.example.gruppe5
 
 import android.os.Parcelable
+import com.google.android.gms.maps.model.Marker
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
+import java.io.Serializable
 
 @Parcelize
 data class Stasjon(
@@ -15,7 +18,8 @@ data class Stasjon(
     val grunnkrets: Grunnkets,
     val delomrade: Delomrade,
     val kommune: Kommune,
-    var verdier : HashMap<String, Double>) : Parcelable // key:type : value:verdi -> (o3, pm10, pm25, no2)
+    var verdier : HashMap<String, Double>) : Parcelable,
+    Serializable // key:type : value:verdi -> (o3, pm10, pm25, no2)
 {
     override fun toString(): String {
         return "[$eoi] $name [Lat($latitude) Lng($longitude)] - - Verdier[${verdier}]"

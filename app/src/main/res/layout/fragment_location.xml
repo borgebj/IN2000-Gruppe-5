@@ -49,7 +49,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
         android:gravity="center"
-        android:textSize="40dp" />
+        android:textSize="40sp" />
 
     <ImageButton
         android:id="@+id/info1_location"
@@ -67,10 +67,10 @@
         android:text="Luftkvaliteten er bra"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="385dp"
+        android:layout_below="@id/donut_view_location"
         android:gravity="center"
         android:textColor="@color/black"
-        android:textSize="25dp" />
+        android:textSize="25sp" />
 
     <View
         style="@style/Divider.Horizontal"
@@ -85,10 +85,8 @@
         android:layout_marginTop="450dp"
         android:foregroundGravity="center"
         android:gravity="center"
-<<<<<<< Updated upstream
         android:textStyle="bold"
         android:textSize="25dp" />
-=======
         android:text="VERDINIVÅER"
         android:textColor="@color/black"
         android:textSize="25sp"
@@ -107,7 +105,7 @@
         android:layout_marginEnd="127dp"
         android:layout_marginBottom="52dp"
         android:background="@drawable/ic_smiley_lvl1" />
->>>>>>> Stashed changes
+        android:textSize="25sp" />
 
     <ImageButton
         android:id="@+id/info2_location"
@@ -123,10 +121,10 @@
     <com.github.mikephil.charting.charts.HorizontalBarChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/verdiNivaer_location"
-        android:background="@drawable/textview_border"
-        android:layout_margin="10dp"
-        />
+        android:layout_height="250dp"
+        android:layout_margin="8dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/verdiNivaer_location"
+        android:background="@drawable/textview_border" />
 
 </RelativeLayout>

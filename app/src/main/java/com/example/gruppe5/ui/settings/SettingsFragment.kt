@@ -12,14 +12,15 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.example.gruppe5.R
+import com.example.gruppe5.ui.favorites.FavoritesFragment
 
 
 class SettingsFragment : Fragment() {
 
     private lateinit var settingsModel: SettingsViewModel
 
-    private lateinit var innstillinger: TextView
     private lateinit var lokasjonKnapp: Button
     private lateinit var informasjon: TextView
     private lateinit var luftkvalitetKnapp: Button
@@ -38,6 +39,8 @@ class SettingsFragment : Fragment() {
         setCondition(root)
         setLocation(root)
         setAboutAirquality(root)
+        setAboutApp(root)
+        setAboutData(root)
 
         return root
     }
@@ -51,16 +54,15 @@ class SettingsFragment : Fragment() {
     }
 
     fun assignId(root: View) {
-        innstillinger = root.findViewById(R.id.innstillinger)
         lokasjonKnapp = root.findViewById(R.id.location_button)
         informasjon = root.findViewById(R.id.informasjon)
-        luftkvalitetKnapp = root.findViewById(R.id.button1)
-        appKnapp = root.findViewById(R.id.button2)
-        dataKnapp = root.findViewById(R.id.button3)
+        luftkvalitetKnapp = root.findViewById(R.id.about_airquality)
+        appKnapp = root.findViewById(R.id.about_app)
+        dataKnapp = root.findViewById(R.id.about_data)
     }
 
 
-    fun setLocation(root: View) {
+    private fun setLocation(root: View) {
         lokasjonKnapp.setOnClickListener{
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
             setCondition(root)
@@ -68,17 +70,22 @@ class SettingsFragment : Fragment() {
     }
 
 
-    fun setCondition(root: View) {
+    private fun setCondition(root: View) {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
         if (location) {
-            lokasjonKnapp.setText("På")
+            lokasjonKnapp.text = "På"
         } else {
-            lokasjonKnapp.setText("Av")
+            lokasjonKnapp.text = "Av"
         }
     }
 
-        /*
+    private fun refresh(root: View) {
+        root.findNavController().navigate(R.id.navigation_settings)
+    }
+
+        /* FORSØK PÅ Å FJERNE POSISJONSKNAPPEN PÅ KARTET:
+
         val mMap : GoogleMap = root.findViewById(R.id.map)
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -104,9 +111,21 @@ class SettingsFragment : Fragment() {
         */
 
 
-    fun setAboutAirquality(root: View) {
-        luftkvalitetKnapp.setOnClickListener() {
-            //root.findNavController().navigate(R.id.navigation_luftkvalitet)
+    private fun setAboutAirquality(root: View) {
+        luftkvalitetKnapp.setOnClickListener {
+            root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAirqualityFragment)
+        }
+    }
+
+    private fun setAboutApp(root: View) {
+        appKnapp.setOnClickListener {
+            root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAppFragment)
+        }
+    }
+
+    private fun setAboutData(root: View) {
+        dataKnapp.setOnClickListener {
+            root.findNavController().navigate(R.id.action_navigation_settings_to_aboutDataFragment)
         }
     }
 }
