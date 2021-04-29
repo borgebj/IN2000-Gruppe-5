@@ -2,6 +2,7 @@ package com.example.gruppe5.ui.home
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Color.*
 import android.location.LocationManager
 import android.os.Bundle
@@ -46,35 +47,8 @@ class HomeFragment : Fragment(){
         getPollutionLevel()
         assignId(root)
         setOnClickers(root)
-        setAqiInformer()
 
         return root
-    }
-
-    fun donutChartSetup(amount: Float) {
-        var color: Int = 1
-        //Dere kan bare erstatte denne switch statement med deres!!!
-        when {
-            amount < 50 -> {
-                color = GREEN
-                aqiLevel.setTextColor(GREEN)
-                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
-                aqiSentence.text = "AQI nivået er bra"
-            } amount > 50 && amount < 100 -> {
-                color = YELLOW
-                aqiLevel.setTextColor(YELLOW)
-                aqiSentence.text = "AQI nivået er moderat"
-                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-            }; else -> BLUE
-        }
-        aqiLevel.text = amount.toString()
-        val section1 = DonutSection(
-            name = "pollution level",
-            color = color,
-            amount = amount,
-        )
-        donutView.cap = 400f
-        donutView.submitData(listOf(section1))
     }
 
     @JvmName("getPollutionLevel1")
@@ -86,7 +60,7 @@ class HomeFragment : Fragment(){
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
                 if (highest != null) {
                     //TODO endres til den farligste for øyeblikket (?) - IDK finn ut - Børge
-                    nearest.verdier[highest.key]?.let { donutChartSetup(it.toFloat()) }
+                    nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
                 }
                 textView.text = "${nearest.name}"
             })
@@ -235,11 +209,9 @@ class HomeFragment : Fragment(){
         slideShow("nextNext", newDialog)
     }
 
-    //TODO bruk av LiveData fra ViewModel for aa hente stasjoner, og lokasjon for aa hente naermeste stasjon (begge disse blir gjort i MapFragment ;)
-    fun setAqiInformer() {
-        val map = mapOf<String, Double>("no2" to 6.00, "pm10" to 250.00, "pm25" to 12.00, "o3" to 36.00)
+    fun setAqiInformer(map: Map<String, Double>) {
         val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
-        //TODO endre til høyeste PROSENTMESSIG ikke direkte høyeste verdi
+        var donut_color : String = "#808080"
 
         fun changeVisuals(level : String)   {
             when(level) {
@@ -248,23 +220,34 @@ class HomeFragment : Fragment(){
                     aqiSentence.text = "AQI nivået er bra"
                     //recommendation.text = "Det er lite luftforurensning"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                    donut_color = "#3F9F41"
                 } "orange" -> {
                     aqiLevel.setTextColor(parseColor("#FFCB00"))
                     aqiSentence.text = "AQI nivået er moderat"
                     //recommendation.text ="Utendørs aktivitet anbefales for de fleste"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+                    donut_color = "#FFCB00"
                 } "red" -> {
                     aqiLevel.setTextColor(parseColor("#C13500"))
                     aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
                     //recommendation.text ="Barn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
+                    donut_color = "#C13500"
                 } "purple" -> {
                     aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
                     aqiSentence.text = "AQI nivået er usunt"
                     //recommendation.text ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
+                    donut_color = "#4900AC"
                 }
             }
+        }
+
+        // donutview-seksjonen for nivaaet
+        fun createDonut() {
+            val donut_section = highest?.value?.let { DonutSection("pollution level", parseColor(donut_color), it.toFloat()) }
+            donutView.cap = 500f
+            if (donut_section != null) donutView.submitData(listOf(donut_section))
         }
 
         if (highest != null)
@@ -293,7 +276,10 @@ class HomeFragment : Fragment(){
                 else if (highest.value in 180.0..240.0) changeVisuals("red")
                 else if (highest.value >= 240.0) changeVisuals("purple")
             }
-        }; aqiLevel.text = (highest?.value.toString() + " ug/m3")
+        }
+        // endrer tekst midt i donut og lager donut
+        aqiLevel.text = (highest?.value.toString() + " ug/m3")
+        createDonut()
     }
 }
 
