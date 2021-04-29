@@ -1,7 +1,10 @@
 package com.example.gruppe5.ui.map
+
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Location
+import android.graphics.Bitmap
+import android.graphics.Camera
+import android.graphics.Canvas
 import android.location.LocationManager
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
@@ -10,14 +13,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.example.gruppe5.ui.home.HomeViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -36,9 +43,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // elementer
     lateinit var mMap: GoogleMap
-    lateinit var overlay : TileOverlay
     lateinit var root : View
     lateinit var switch : SwitchCompat
+    lateinit var custom_marker : View
 
     // viewmodel
     lateinit var viewModel : ViewModel
@@ -70,22 +77,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         addOnClickers()
         addSwitchFunction()
 
-        /*
-        //TODO fjern! - dette er bare en fremvisning av hvordan hente Nearest og Nearby
-        viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
-            viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
-            viewModel.findNearbyStations(fusedLocationClient, stasjoner, GpsStatus)
-            viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
-                Log.d("Nearest", nearest.toString())
-            })
-            viewModel.nearby_stations.observe(viewLifecycleOwner, Observer { nearby ->
-                Log.d("nearby", nearby.toString())
-            })
-        })
-
-
-         */
-
 
         //region [midlertidig] TODO: fjern?
         viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
@@ -104,8 +95,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                         if (y.eoi == x.eoi) {
                             like.add(x)
                             antLike++
-                        }
-                        else ulike.add(y)
+                        } else ulike.add(y)
                     }
                 }
                 Log.d("Antall like stasjoner", antLike.toString())
@@ -118,8 +108,13 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         //endregion
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
+
         this.root = root
         return root
     }
@@ -131,7 +126,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         mapFragment?.getMapAsync(callback)
     }
 
-    fun assignId(root : View) {
+    fun assignId(root: View) {
         switch = root.findViewById(R.id.heatmap_Switch)
     }
 
@@ -161,11 +156,55 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // legger til hver stasjon paa kartet
     fun addMarkers() {
+
+        // endrer farge/ikon paa kartet avhengig av markoerenes nivaa
+        fun alterMarker(level: String, marker: MarkerOptions) {
+            when(level) {
+                "green" -> marker.icon(bitMapFromVector(R.drawable.ic_level_one))
+                "orange" -> marker.icon(bitMapFromVector(R.drawable.ic_level_two))
+                "red" -> marker.icon(bitMapFromVector(R.drawable.ic_level_three))
+                "purple" -> marker.icon(bitMapFromVector(R.drawable.ic_level_four))
+            }
+        }
+
+        // sjekker hvilke forurensnings-type det er, deres nivaaer, og kaller hjelpemetode videre
+        fun checkValues(highest: Map.Entry<String, Double>?, marker: MarkerOptions) {
+            if (highest != null)
+            when (highest.key) {
+                "no2" -> {
+                    if (highest.value <= 100.0) alterMarker("green", marker)
+                    else if (highest.value in 100.0..200.0) alterMarker("orange", marker)
+                    else if (highest.value in 200.0..400.0) alterMarker("red", marker)
+                    else if (highest.value >= 400.0) alterMarker("purple", marker)
+                }
+                "pm10" -> {
+                    if (highest.value <= 60.0) alterMarker("green", marker)
+                    else if (highest.value in 60.0..120.0) alterMarker("orange", marker)
+                    else if (highest.value in 120.0..400.0) alterMarker("red", marker)
+                    else if (highest.value >= 400.0) alterMarker("purple", marker)
+                }
+                "pm25" -> {
+                    if (highest.value <= 30.0) alterMarker("green", marker)
+                    else if (highest.value in 30.0..50.0) alterMarker("orange", marker)
+                    else if (highest.value in 50.0..150.0) alterMarker("red", marker)
+                    else if (highest.value >= 150.0) alterMarker("purple", marker)
+                }
+                "o3" -> {
+                    if (highest.value <= 100.0) alterMarker("green", marker)
+                    else if (highest.value in 100.0..180.0) alterMarker("orange", marker)
+                    else if (highest.value in 180.0..240.0) alterMarker("red", marker)
+                    else if (highest.value >= 240.0) alterMarker("purple", marker)
+                }
+            }
+        }
+
         viewModel.stations.observe(viewLifecycleOwner, Observer { stations ->
             for (station in stations) {
-                val highest : Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
+                val highest: Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
                 val title = "[${station.name}] - ${highest?.value} ug/m3 [${highest?.key}]"
-                val marker : MarkerOptions = MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title)
+                val marker: MarkerOptions = MarkerOptions().position(
+                    LatLng(station.latitude, station.longitude)).title(title)
+                checkValues(highest, marker)
                 mMap.addMarker(marker)
             }
         })
@@ -178,9 +217,16 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
             // lager LatLng og WeightedLatLng av hver stasjon for heatmap
             for (station in list) {
-                val highest : Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
+                val highest: Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
                 val verdi = station.verdier[highest?.key]
-                if (verdi != null) weightedData.add(WeightedLatLng(LatLng(station.latitude, station.longitude), verdi))
+                if (verdi != null) weightedData.add(
+                    WeightedLatLng(
+                        LatLng(
+                            station.latitude,
+                            station.longitude
+                        ), verdi
+                    )
+                )
             }
 
             // lager selve heatmap og starter
@@ -194,12 +240,12 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             // endrer heatmap naar kartet endres - bevegelser / zoom
             mMap.setOnCameraIdleListener {
                 val newZoom = mMap.cameraPosition.zoom.toInt()
-                mProvider.setRadius((10 + newZoom * 2)*4)
+                mProvider.setRadius((10 + newZoom * 2) * 4)
 
-                if (newZoom in 10..20) { mProvider.setMaxIntensity(500.0)}
-                if (newZoom in 9..9) { mProvider.setMaxIntensity(1000.0)}
-                if (newZoom in 5..8) { mProvider.setMaxIntensity(2000.0)}
-                if (newZoom in 0..4) { mProvider.setMaxIntensity(4000.0)}
+                if (newZoom in 10..20) mProvider.setMaxIntensity(500.0)
+                if (newZoom in 9..9) mProvider.setMaxIntensity(1000.0)
+                if (newZoom in 5..8) mProvider.setMaxIntensity(2000.0)
+                if (newZoom in 0..4) mProvider.setMaxIntensity(4000.0)
             }
         })
     }
@@ -207,22 +253,35 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     // setter onClicker for infoWindow til hver markoer
     @SuppressLint("PotentialBehaviorOverride")
     fun addOnClickers() {
+
+        // onclick til infovindu, aapner location-fragment
         mMap.setOnInfoWindowClickListener { marker ->
             viewModel.stations.observe(viewLifecycleOwner) { list ->
 
                 for (stasjon in list) {
-                    val navn = marker.title.substring(marker.title.indexOf("[") + 1, marker.title.indexOf("]"))
+                    val navn = marker.title.substring(
+                        marker.title.indexOf("[") + 1, marker.title.indexOf(
+                            "]"
+                        )
+                    )
 
                     if (navn == stasjon.name) {
                         // tts-test
-                        if (ttsStatus) tts!!.speak("Opening page $navn", TextToSpeech.QUEUE_FLUSH, null, "")
+                        if (ttsStatus) tts!!.speak(
+                            "Opening page $navn",
+                            TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            ""
+                        )
 
                         Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
                         root.postDelayed({
                             val action =
-                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(stasjon)
+                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(
+                                    stasjon
+                                )
                             root.findNavController().navigate(action)
                         }, 1500)
 
@@ -230,6 +289,14 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                     }
                 }
             }
+        }
+
+        // onclick til markers - zoomer inn
+        mMap.setOnMarkerClickListener {
+            val latlng = LatLng(it.position.latitude, it.position.longitude)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10F), 2500, null)
+            it.showInfoWindow()
+            return@setOnMarkerClickListener true
         }
     }
 
@@ -258,7 +325,17 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             }
         } else { Log.e("TTS", "Initialization failed") }
     }
+
+    private fun bitMapFromVector(vectorResID:Int):BitmapDescriptor {
+        val vectorDrawable= this.context?.let { ContextCompat.getDrawable(it,vectorResID) }
+        vectorDrawable!!.setBounds(0,0, vectorDrawable.intrinsicWidth,vectorDrawable.intrinsicHeight)
+        val bitmap=Bitmap.createBitmap(vectorDrawable.intrinsicWidth,vectorDrawable.intrinsicHeight,Bitmap.Config.ARGB_8888)
+        val canvas=Canvas(bitmap)
+        vectorDrawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
 }
+
 
 // for koordinater (nøyaktighet)
 /*decimal
