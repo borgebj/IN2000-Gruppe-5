@@ -1,13 +1,10 @@
 package com.example.gruppe5.ui.home
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Color.*
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,21 +13,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations.map
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
-import com.example.gruppe5.Stasjon
 import com.example.gruppe5.ui.map.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import java.util.*
-import kotlin.collections.HashMap
-import kotlin.math.max
-import kotlin.math.min
-import kotlin.properties.Delegates
 
 
 class HomeFragment : Fragment(){
@@ -75,8 +65,7 @@ class HomeFragment : Fragment(){
                 aqiLevel.setTextColor(YELLOW)
                 aqiSentence.text = "AQI nivået er moderat"
                 aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-            }
-            else -> BLUE
+            }; else -> BLUE
         }
         aqiLevel.text = amount.toString()
         val section1 = DonutSection(
@@ -96,8 +85,10 @@ class HomeFragment : Fragment(){
             viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
                 if (highest != null) {
+                    //TODO endres til den farligste for øyeblikket (?) - IDK finn ut - Børge
                     nearest.verdier[highest.key]?.let { donutChartSetup(it.toFloat()) }
                 }
+                textView.text = "${nearest.name}"
             })
         })
     }
@@ -303,7 +294,6 @@ class HomeFragment : Fragment(){
                 else if (highest.value >= 240.0) changeVisuals("purple")
             }
         }; aqiLevel.text = (highest?.value.toString() + " ug/m3")
-
     }
 }
 
