@@ -27,6 +27,7 @@
         android:textColor="@color/black"
         android:textSize="25dp" />
 
+
     <app.futured.donut.DonutProgressView
         android:id="@+id/donut_view_location"
         android:layout_width="230dp"
@@ -38,7 +39,16 @@
         app:donut_bgLineColor="@color/light_gray"
         app:donut_gapAngle="270"
         app:donut_gapWidth="80"
+        android:layout_centerInParent="true"
         app:donut_strokeWidth="25dp" />
+
+    <TextView
+        android:layout_width="385dp"
+        android:layout_height="39dp"
+        android:foregroundGravity="center"
+        android:text="400                                                                      100"
+        android:textColor="@color/gray"
+        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/donutNmbrsLocation"
@@ -56,13 +66,7 @@
         android:gravity="center"
         android:text="500             0"
         android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/aqiLevel_location"
-        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
-        app:layout_constraintTop_toTopOf="@+id/donut_view_location"
-        app:layout_constraintVertical_bias="0.232" />
+        android:textSize="15sp"/>
 
     <TextView
         android:id="@+id/aqiLevel_location"
@@ -72,6 +76,7 @@
         android:layout_marginTop="78dp"
         android:foregroundGravity="center"
         android:gravity="center"
+        android:layout_centerInParent="true"
         android:text="180 AQI"
         android:textColor="@color/green"
         android:textSize="40sp" />
@@ -126,6 +131,7 @@
         android:layout_marginTop="150dp"
         android:layout_marginEnd="91dp"
         android:layout_marginBottom="33dp"
+        android:layout_centerInParent="true"
         android:background="@drawable/ic_smiley_lvl1" />
 
     <ImageButton
