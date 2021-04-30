@@ -23,7 +23,8 @@
 
     <!-- Infoknapp -->
     <string name="str_info">AQI er forkortelsen for Air Quality Index. Som navnet antyder, er dette en indikator som lar deg vurdere den helhetlige luftkvaliteten. AQI nivået går fra 0 til 500, der 500 er særdeles helseskadelig luftkvalitet. </string>
-    <string name="str_info_values">Luftforurensning påvirkes av flere verdier, og den høyeste verdien bestemmer aqi nivået. no2, pm10, pm25 og 03 er ulike typer luftforurensende partikler som gir oss nøkkelinformasjon om luftkvaliteten, og måles i milligram per kubikkmeter luft.</string>
+    <string name="str_info_values">Luftforurensning påvirkes av flere verdier, slik som O3, NO2, PM2.5, og PM10. Verdiene måles i mikrogram per kubikkmeter (mg/m3), og har ulike grenser for hvor høy konsentrasjon av mg/m3 som er farlig. Verdiene illustreres ved søyler som viser hvor mange prosent av maks forurensningsnivå, verdien er. Grønn søyle viser at konsentrasjonen av luftforurensningen i timesmiddel utgjør en minimal helserisiko, gul viser moderat, rød viser alvorlig, og lilla viser svært alvorlig,
+    </string>
 
     <string-array name="aqiFunfactList">
     <item>funfact 1</item>
