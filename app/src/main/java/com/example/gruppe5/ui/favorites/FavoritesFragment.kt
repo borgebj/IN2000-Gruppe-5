@@ -39,6 +39,14 @@ class FavoritesFragment : Fragment() {
     lateinit var editor : SharedPreferences.Editor// = pref.edit()
     var antKeys = 0 // antall lagrede favorittstasjoner
 
+    override fun onCreate(savedInstanceState: Bundle?) { // dette blir kalt kun når noe besøker favoritefragment vba navigation
+        super.onCreate(savedInstanceState)
+
+        Log.d("onCreate()", "KALT")
+        Log.d("andKeys",antKeys.toString())
+        toastMsg("Loading ..")
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +65,7 @@ class FavoritesFragment : Fragment() {
         assignId(root)
         addAdapter()
 
+        Log.d("antKeys", antKeys.toString())
         /*viewModel.fav_stations.observe(viewLifecycleOwner,{
             fav_adapter = StasjonAdapter(it.toMutableList())
             fav_recycler.adapter = fav_adapter
@@ -65,7 +74,7 @@ class FavoritesFragment : Fragment() {
         setResetBut(root)
         setSearchFrag(root)
 
-        //toastMsg("Henter favorittstasjoner ..")
+        //toastMsg("Loading ..")
         viewModel.stations.observe(viewLifecycleOwner, Observer {
             Log.d("I OBSERVE", "KALT")
 
@@ -96,6 +105,7 @@ class FavoritesFragment : Fragment() {
 
     fun setFavStations(stasjoner: MutableList<Stasjon>){
 
+        Log.d("antKey", antKeys.toString())
         if (antKeys != 0){ // fav_statioins er ikke tom
             for (i in 1 .. antKeys){
                 val st : String = getElem(i)
@@ -190,7 +200,7 @@ class FavoritesFragment : Fragment() {
 
         addBut.setOnClickListener {
             tilSearch(root)  // navigere til SearchFragment
-            if (antKeys == 3) toastMsg("List is full! Reset favorite stations to add new favorite.")
+            if (antKeys == 5) toastMsg("List is full! Reset favorite stations to add new favorite.")
         }
     }
 
@@ -207,7 +217,7 @@ class FavoritesFragment : Fragment() {
 
         Log.d("getdatatilbake()", "${station}")
 
-        if (antKeys != 3) { // kan lagre MAKS TRE favorittstasjoner -- antall elementer som kan legges til kan endres
+        if (antKeys != 5) { // kan lagre MAKS TRE favorittstasjoner -- antall elementer som kan legges til kan endres
             if (station != null && !inFavStations(station)) addToFavStations(station, stasjoner)
             //else if (inFavStations(station.toString())) toastMsg("${station} is already in fav_stasjoner!!!!")
             else Log.d("STATION", "IS NULL")

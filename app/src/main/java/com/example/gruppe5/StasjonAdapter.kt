@@ -18,6 +18,7 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textEn: TextView = view.findViewById(R.id.textEn)
+        val textTo: TextView = view.findViewById(R.id.textTo)
         val star: ImageButton = view.findViewById(R.id.star_but)
         val location : ImageButton = view.findViewById(R.id.to_location)
 
@@ -34,10 +35,13 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textEn.text = "${liste[position].name}"
+        viewHolder.textTo.text = "Kommune: ${liste[position].kommune.name}"
+
+
         viewHolder.star.setOnClickListener {
-            // TODO fjerne stasjonen fra fav_stasjoner (cardview)
-            //liste.remove(liste[position])
-            //notifyDataSetChanged()
+            liste.remove(liste[position])
+            notifyDataSetChanged()
+            // TODO fjerne stasjonen fra sharedpreferences
         }
 
         viewHolder.location.setOnClickListener(View.OnClickListener {
