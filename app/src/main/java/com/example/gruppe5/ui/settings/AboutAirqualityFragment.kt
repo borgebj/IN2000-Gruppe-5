@@ -36,9 +36,12 @@ class AboutAirqualityFragment : Fragment() {
 
     private fun setText() {
         val bulletedList = listOf(
-            "God luftkvalitet er viktig for å bevare god helse.",
-            "Det finnes mange forskjellige luftforurensningskomponenter, inkludert ulike typer svevestøv og gasser, som kan gi uønskede helseeffekter.",
-            "Informasjonen er hentet fra: https://www.fhi.no/nettpub/luftkvalitet/sammendrag-og-bakgrunnsinformasjon/hva-mener-vi-med-luftkvalitetskriterier/"
+            "\nDet finnes mange forskjellige luftforurensningskomponenter, inkludert ulike typer svevestøv og gasser, som kan gi uønskede helseeffekter.",
+            "Luftkvaliteten måles med flere ulike forurensingsklasser. De tre forurensningsklassene gjelder stoffene: " +
+                    "svevestøv (PM10 og PM2,5), nitrogendioksid (NO2), og bakkenær ozon (O3).",
+            "\nInformasjonen er hentet fra:",
+            "https://www.fhi.no/nettpub/luftkvalitet/sammendrag-og-bakgrunnsinformasjon/hva-mener-vi-med-luftkvalitetskriterier/",
+            "\nhttps://luftkvalitet.miljodirektoratet.no/artikkel/artikler/varslingsklasser/"
         )
             .toBulletedList()
         textView.text = bulletedList
