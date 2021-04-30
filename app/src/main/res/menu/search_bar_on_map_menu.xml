@@ -6,7 +6,7 @@
         android:id="@+id/nav_search2"
         android:icon="@drawable/ic_search"
         android:title="Search"
-        app:actionViewClass="android.widget.Button"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom"/>
 
 </menu>
+

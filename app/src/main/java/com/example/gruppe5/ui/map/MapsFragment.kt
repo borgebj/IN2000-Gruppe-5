@@ -3,28 +3,21 @@ package com.example.gruppe5.ui.map
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Camera
 import android.graphics.Canvas
 import android.location.LocationManager
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.*
-import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.annotation.ColorInt
-import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.example.gruppe5.ui.search.SearchFragmentDirections
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -347,18 +340,22 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    //search
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-
-        inflater.inflate(R.menu.search_bar_on_map_menu, menu)
-        val search = menu.findItem(R.id.nav_search2)
-
-
-        val searchView = search?.actionView as Button
-        searchView.setOnClickListener(){
-            root.findNavController().navigate(R.id.action_navigation_map_to_navigation_search)
-
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.nav_search2 -> {
+            val map = "map"
+            val action = MapsFragmentDirections.actionNavigationMapToNavigationSearch(map)
+            root.findNavController().navigate(action)
+            true
         }
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_bar_on_map_menu, menu)
+
     }
 }
 

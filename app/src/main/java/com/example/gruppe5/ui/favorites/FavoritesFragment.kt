@@ -12,6 +12,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
 import com.example.gruppe5.ui.map.ViewModel
+import com.example.gruppe5.ui.search.SearchFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -197,9 +199,14 @@ class FavoritesFragment : Fragment() {
 
     fun tilSearch(root: View){
 
-        root.findNavController().navigate(
-            FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2()
-        )
+            //FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2()
+            val fragment = SearchFragment()
+            val bundle = Bundle()
+            bundle.putString("fav", "fav")
+            fragment.arguments = bundle
+
+        Navigation.findNavController(root).navigate(R.id.navigation_search, bundle)
+
     }
 
     fun getDataTilbake(stasjoner: MutableList<Stasjon>){

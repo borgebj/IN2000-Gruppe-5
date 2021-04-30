@@ -34,6 +34,12 @@
         <action
             android:id="@+id/action_navigation_map_to_navigation_search"
             app:destination="@id/navigation_search" />
+        <argument
+            android:name="map"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
     </fragment>
 
     <fragment
@@ -143,7 +149,16 @@
             app:destination="@id/navigation_favorites"
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"/>
+        <action
+            android:id="@+id/action_navigation_search_to_navigation_map"
+            app:destination="@id/navigation_map" />
+        <argument
+            android:name="map"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
+
     <fragment
         android:id="@+id/aboutAirqualityFragment"
         android:name="com.example.gruppe5.ui.settings.AboutAirqualityFragment"
