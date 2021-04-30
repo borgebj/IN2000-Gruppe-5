@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gruppe5.ui.favorites.FavoritesFragment
 import com.example.gruppe5.ui.location.LocationFragment
 
 
@@ -39,9 +40,19 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
 
 
         viewHolder.star.setOnClickListener {
-            liste.remove(liste[position])
-            notifyDataSetChanged()
+
+
             // TODO fjerne stasjonen fra sharedpreferences
+
+            val fragment = FavoritesFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("station", liste[position] )
+            Log.d("position", position.toString())
+            fragment.arguments = bundle
+            Log.d("STAR trykket", liste[position].name )
+
+            Navigation.findNavController(it).navigate(R.id.navigation_favorites, bundle)
+
         }
 
         viewHolder.location.setOnClickListener(View.OnClickListener {

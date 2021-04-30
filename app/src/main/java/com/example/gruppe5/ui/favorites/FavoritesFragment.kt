@@ -19,11 +19,9 @@ import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
 import com.example.gruppe5.ui.map.ViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
+@Suppress("UsePropertyAccessSyntax")
 class FavoritesFragment : Fragment() {
 
     // globale variabler
@@ -48,13 +46,16 @@ class FavoritesFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         Log.d("onCreate()", "KALT")
-        Log.d("andKeys",antKeys.toString())
+        Log.d("andKeys i onCreate", antKeys.toString())
         toastMsg("Loading ..")
     }
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Log.d("onCreateView", "KALT")
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
         this.root = root
         return root
@@ -63,14 +64,16 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
+
         assignId(root)
         addAdapter()
 
-        Log.d("antKeys", antKeys.toString())
+        Log.d("antKeys i onViewCreate", antKeys.toString())
         /*viewModel.fav_stations.observe(viewLifecycleOwner,{
             fav_adapter = StasjonAdapter(it.toMutableList())
             fav_recycler.adapter = fav_adapter
         })*/
+
 
         setResetBut(root)
         setSearchFrag(root)
@@ -82,6 +85,37 @@ class FavoritesFragment : Fragment() {
             setFavStations(it)
             getDataTilbake(it)
         })
+
+        checkDeleteElem()
+    }
+
+
+    fun checkDeleteElem(){
+
+        Log.d("checkDeleteElem()", "KALT")
+
+        val args = arguments // station as Stasjon som skal slettes fra pref
+        if (args != null) {
+            val slettes: Stasjon? = args?.getParcelable("station") as Stasjon?
+            Log.d("fra adapter SLETTES", slettes?.name.toString())
+
+            val keys: Map<String, *> = pref.getAll()
+            for ((key, value) in keys) {
+                Log.d("map values", key + ": " + value.toString())
+
+                if (slettes?.name == value) {
+                    editor.remove(key)
+                    editor.commit()
+                    antKeys--
+
+                    fav_stations.remove(slettes)
+                    fav_adapter.notifyDataSetChanged()
+
+                    break
+                }
+            }
+        }
+        else Log.d("bundle for slettes", "NULL")
     }
 
     fun assignId(root: View) {
@@ -106,16 +140,15 @@ class FavoritesFragment : Fragment() {
 
     fun setFavStations(stasjoner: MutableList<Stasjon>){
 
-        Log.d("antKey", antKeys.toString())
-        if (antKeys != 0){ // fav_statioins er ikke tom
-            for (i in 1 .. antKeys){
-                val st : String = getElem(i)
-                Log.d("setFavStations()", st)
+        Log.d("antKey i setFavStation", antKeys.toString())
 
-                if (st != null ) addToFavStations(st, stasjoner)
-                else break
-            }
+        val keys: Map<String, *> = pref.getAll()
+        for ((key, value) in keys) {
+            Log.d("map values", key + ": " + value.toString())
+
+            addToFavStations(value as String,stasjoner)
         }
+
     }
 
     fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>){
@@ -134,7 +167,10 @@ class FavoritesFragment : Fragment() {
                     fav_adapter.notifyDataSetChanged()
                     Log.d("ADDED TO FAV", st.name)
 
-                    if (!inPref(station)) setElem(station, ++antKeys) // ikke satt til pref ennaa = ny favorittby
+                    if (!inPref(station)) {
+                        setElem(station, station)
+                        antKeys++
+                    }//++antKeys) // ikke satt til pref ennaa = ny favorittby
                     //else toastMsg("${station} is already in pref.")
                 } else //toastMsg("${station} is already in fav_stasjoner.")
                 break
@@ -142,14 +178,13 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    /*fun getElem(key: Int) : String {
 
-    fun getElem(key: Int) : String {
-
-        val station : String? = pref.getString(key.toString(), "")
+        val station : String? = pref.getString(key.toString(), null)
         Log.d("getElem() station", station.toString())
 
         return station.toString()
-    }
+    }*/
 
     @SuppressLint("ApplySharedPref")
     fun setResetBut(root: View){
@@ -173,9 +208,11 @@ class FavoritesFragment : Fragment() {
 
     private fun inPref(station: String) : Boolean {
 
-        val favs : Map<String, String> = pref.all as Map<String, String>
-        for (s in favs){
-            if (s.value == station) return true
+        val keys: Map<String, *> = pref.getAll()
+        for ((key, value) in keys) {
+            Log.d("map values", key + ": " + value.toString())
+
+            if (station == value) return true
         }
         return false
     }
@@ -190,8 +227,8 @@ class FavoritesFragment : Fragment() {
 
 
     @SuppressLint("CommitPrefEdits")
-    fun setElem(station: String, key: Int){
-        editor.putString(key.toString(), station)
+    fun setElem(station: String, key: String){
+        editor.putString(key, station)
         editor.commit()
     }
 
