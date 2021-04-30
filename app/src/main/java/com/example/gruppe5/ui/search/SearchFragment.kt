@@ -12,6 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.favorites.FavoritesFragmentArgs
+import com.example.gruppe5.ui.location.LocationFragmentArgs
+import com.example.gruppe5.ui.map.MapsFragment
+import com.example.gruppe5.ui.map.MapsFragmentArgs
 
 class SearchFragment : Fragment() {
 
@@ -74,11 +79,19 @@ class SearchFragment : Fragment() {
             //toastMsg(station)
             closeKeyboard(listView)
 
-            val action = SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
 
-            root.findNavController().navigate(action)
-            Log.d("SENDE STATION TIL FAV", station)
-            //toastMsg("Legger til ${station} i lista ..")
+            val arg: String? = SearchFragmentArgs.fromBundle(requireArguments()).map
+
+            if (arg != null) { // fra Map
+                val action =
+                    SearchFragmentDirections.actionNavigationSearchToNavigationMap(station)
+                    root.findNavController().navigate(action)
+            } else { // fra Favorite
+                val action =
+                    SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
+                    root.findNavController().navigate(action)
+            }
+
         }
         listView.emptyView = root.findViewById(R.id.empy_text_view)
     }
