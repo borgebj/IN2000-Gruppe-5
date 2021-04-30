@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -33,19 +34,21 @@ class HomeFragment : Fragment(){
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
     lateinit var aqiSmiley : ImageView
+    lateinit var recommendation : Button
 
     lateinit var root : View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var locationManager: LocationManager? = null
     var GpsStatus = false
+    var current_status: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 
+        assignId(root)
         CheckGpsStatus()
         getPollutionLevel()
-        assignId(root)
         setOnClickers(root)
 
         return root
@@ -73,6 +76,7 @@ class HomeFragment : Fragment(){
         aqiLevel = root.findViewById(R.id.aqiLvlHome)
         aqiSentence = root.findViewById(R.id.aqiSentence_home)
         aqiSmiley = root.findViewById(R.id.smiley_home)
+        recommendation = root.findViewById(R.id.recommendation)
     }
 
     open fun CheckGpsStatus() {
@@ -88,6 +92,15 @@ class HomeFragment : Fragment(){
         val infoButton : ImageButton = root.findViewById(R.id.info_home)
         infoButton.setOnClickListener{
             alertView(getString(R.string.str_info), root, "open")
+        }
+        //knapp for visning av anbefalinger for current luftnivaa status
+        recommendation.setOnClickListener {
+            val dialog = AlertDialog.Builder(context)
+            dialog.setTitle("Anbefaling til nåværende luftnivå")
+                .setIcon(R.drawable.ic_info)
+                .setMessage(current_status)
+                .setPositiveButton("Lukk") { dialoginterface, i -> } //TODO legge til animasjon senere
+                .show()
         }
     }
 
@@ -108,7 +121,7 @@ class HomeFragment : Fragment(){
         dialog.setTitle("AQI nivåer")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
-            .setPositiveButton("Lukk") { dialoginterface, i -> } //legge til animasjon senere
+            .setPositiveButton("Lukk") { dialoginterface, i -> } //TODO legge til animasjon senere
             .setNeutralButton("les mer") { dialog, which -> openValueList("next") }
         //dialog.show()
         slideShow(command, dialog)
@@ -213,30 +226,38 @@ class HomeFragment : Fragment(){
         val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
         var donut_color : String = "#808080"
 
+        fun recommendationOnClicker(level: String) {
+            recommendation.setOnClickListener {
+                when(level) {
+                    "green" -> recommendationOnClicker("Det er lite luftforurensning")
+                }
+            }
+        }
+
         fun changeVisuals(level : String)   {
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(parseColor("#3F9F41"))
                     aqiSentence.text = "AQI nivået er bra"
-                    //recommendation.text = "Det er lite luftforurensning"
+                    current_status = "Det er lite luftforurensning\nIkke nødvendig med noen spesielle tiltak."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
                     donut_color = "#3F9F41"
                 } "orange" -> {
                     aqiLevel.setTextColor(parseColor("#FFCB00"))
                     aqiSentence.text = "AQI nivået er moderat"
-                    //recommendation.text ="Utendørs aktivitet anbefales for de fleste"
+                    current_status = "Utendørs aktivitet anbefales for de fleste"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
                     donut_color = "#FFCB00"
-                } "red" -> {
+            } "red" -> {
                     aqiLevel.setTextColor(parseColor("#C13500"))
                     aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
-                    //recommendation.text ="Barn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
+                    current_status ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
                     donut_color = "#C13500"
                 } "purple" -> {
                     aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
                     aqiSentence.text = "AQI nivået er usunt"
-                    //recommendation.text ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
+                    current_status ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
                     donut_color = "#4900AC"
                 }
