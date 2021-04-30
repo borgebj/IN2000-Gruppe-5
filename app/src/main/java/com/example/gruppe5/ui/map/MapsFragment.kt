@@ -52,7 +52,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     var ttsStatus = true
 
     // info
-    var type = "o3"
     private var tts: TextToSpeech? = null //TODO fjern?
 
     // search

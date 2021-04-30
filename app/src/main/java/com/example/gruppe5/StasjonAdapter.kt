@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gruppe5.ui.favorites.FavoritesFragment
 import com.example.gruppe5.ui.location.LocationFragment
 
 
@@ -18,6 +19,7 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textEn: TextView = view.findViewById(R.id.textEn)
+        val textTo: TextView = view.findViewById(R.id.textTo)
         val star: ImageButton = view.findViewById(R.id.star_but)
         val location : ImageButton = view.findViewById(R.id.to_location)
 
@@ -34,10 +36,23 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
     // Replace the contents of a view (invoked by the layout manager)
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textEn.text = "${liste[position].name}"
+        viewHolder.textTo.text = "Kommune: ${liste[position].kommune.name}"
+
+
         viewHolder.star.setOnClickListener {
-            // TODO fjerne stasjonen fra fav_stasjoner (cardview)
-            //liste.remove(liste[position])
-            //notifyDataSetChanged()
+
+
+            // TODO fjerne stasjonen fra sharedpreferences
+
+            val fragment = FavoritesFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("station", liste[position] )
+            Log.d("position", position.toString())
+            fragment.arguments = bundle
+            Log.d("STAR trykket", liste[position].name )
+
+            Navigation.findNavController(it).navigate(R.id.navigation_favorites, bundle)
+
         }
 
         viewHolder.location.setOnClickListener(View.OnClickListener {

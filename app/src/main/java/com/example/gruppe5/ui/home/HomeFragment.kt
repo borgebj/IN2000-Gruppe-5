@@ -1,11 +1,14 @@
 package com.example.gruppe5.ui.home
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Color.*
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +16,7 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -65,7 +69,8 @@ class HomeFragment : Fragment(){
                     //TODO endres til den farligste for øyeblikket (?) - IDK finn ut - Børge
                     nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
                 }
-                textView.text = "${nearest.name}"
+                if (nearest.name.length > 8) textView.textSize = 32F
+                textView.text = nearest.name
             })
         })
     }
@@ -299,7 +304,7 @@ class HomeFragment : Fragment(){
             }
         }
         // endrer tekst midt i donut og lager donut
-        aqiLevel.text = (highest?.value.toString() + " ug/m3")
+        aqiLevel.text = (highest?.value?.toInt().toString() + " ug/m3")
         createDonut()
     }
 }
