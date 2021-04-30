@@ -31,6 +31,9 @@
             app:destination="@id/navigation_location"
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"/>
+        <action
+            android:id="@+id/action_navigation_map_to_navigation_search"
+            app:destination="@id/navigation_search" />
     </fragment>
 
     <fragment

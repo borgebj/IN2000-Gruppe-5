@@ -9,10 +9,9 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
 import androidx.appcompat.widget.SwitchCompat
@@ -25,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.search.SearchFragmentDirections
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -62,6 +62,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     var type = "o3"
     private var tts: TextToSpeech? = null //TODO fjern?
 
+    // search
+    lateinit var adapter : ArrayAdapter<*>
+
 
     private val callback = OnMapReadyCallback { Map ->
         mMap = Map
@@ -71,7 +74,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         mMap.setPadding(0, 0, 0, 120)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
-        assignId(root)
+        //assignId(root)
         addMapFunctions()
         addMarkers()
         addOnClickers()
@@ -115,6 +118,10 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     ): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
 
+        //search
+        setHasOptionsMenu(true)
+        assignId(root)
+
         this.root = root
         return root
     }
@@ -128,6 +135,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     fun assignId(root: View) {
         switch = root.findViewById(R.id.heatmap_Switch)
+        adapter = ArrayAdapter(
+            root.context, android.R.layout.simple_list_item_1, resources.getStringArray(
+                R.array.search_bar_strings
+            )
+        )
     }
 
 
@@ -333,6 +345,20 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         val canvas=Canvas(bitmap)
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
+    }
+
+    //search
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+
+        inflater.inflate(R.menu.search_bar_on_map_menu, menu)
+        val search = menu.findItem(R.id.nav_search2)
+
+
+        val searchView = search?.actionView as Button
+        searchView.setOnClickListener(){
+            root.findNavController().navigate(R.id.action_navigation_map_to_navigation_search)
+
+        }
     }
 }
 
