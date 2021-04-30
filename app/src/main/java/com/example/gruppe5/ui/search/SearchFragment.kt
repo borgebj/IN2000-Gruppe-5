@@ -78,7 +78,7 @@ class SearchFragment : Fragment() {
 
             root.findNavController().navigate(action)
             Log.d("SENDE STATION TIL FAV", station)
-            toastMsg("Legger til ${station} i lista ..")
+            //toastMsg("Legger til ${station} i lista ..")
         }
         listView.emptyView = root.findViewById(R.id.empy_text_view)
     }
