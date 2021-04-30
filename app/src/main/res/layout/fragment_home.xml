@@ -89,7 +89,7 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="@+id/donut_view"
         app:layout_constraintTop_toTopOf="@+id/donut_view"
-        app:layout_constraintVertical_bias="0.602" />
+        app:layout_constraintVertical_bias="0.642" />
 
     <TextView
         android:layout_width="305dp"
@@ -103,7 +103,7 @@
         app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="@+id/donut_view"
         app:layout_constraintTop_toTopOf="@+id/donut_view"
-        app:layout_constraintVertical_bias="1.072" />
+        app:layout_constraintVertical_bias="1.272" />
 
     <TextView
         android:id="@+id/aqiSentence_home"

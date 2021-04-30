@@ -14,19 +14,24 @@
         android:layout_height="match_parent"
         tools:context=".ui.map.MapsFragment" />
 
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:gravity="center"
+        android:background="#07000000"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:text="Trykk på markører for å se mer info"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
+
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/heatmap_Switch"
         android:text="Heatmap"
         android:layout_marginStart="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
-
-    <SeekBar
-        android:id="@+id/seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="15dp"/>
-
 
 </RelativeLayout>
