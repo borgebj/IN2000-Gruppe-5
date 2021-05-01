@@ -12,6 +12,7 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,10 @@ import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
 import com.example.gruppe5.ui.map.ViewModel
+import com.example.gruppe5.ui.search.SearchFragment
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Suppress("UsePropertyAccessSyntax")
@@ -64,7 +69,6 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
-
         assignId(root)
         addAdapter()
 
@@ -73,7 +77,6 @@ class FavoritesFragment : Fragment() {
             fav_adapter = StasjonAdapter(it.toMutableList())
             fav_recycler.adapter = fav_adapter
         })*/
-
 
         setResetBut(root)
         setSearchFrag(root)
@@ -148,7 +151,6 @@ class FavoritesFragment : Fragment() {
 
             addToFavStations(value as String,stasjoner)
         }
-
     }
 
     fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>){
@@ -244,9 +246,14 @@ class FavoritesFragment : Fragment() {
 
     fun tilSearch(root: View){
 
-        root.findNavController().navigate(
-            FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2()
-        )
+            //FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2()
+            val fragment = SearchFragment()
+            val bundle = Bundle()
+            bundle.putString("fav", "fav")
+            fragment.arguments = bundle
+
+        Navigation.findNavController(root).navigate(R.id.navigation_search, bundle)
+
     }
 
     fun getDataTilbake(stasjoner: MutableList<Stasjon>){

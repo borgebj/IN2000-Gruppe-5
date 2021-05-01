@@ -11,18 +11,20 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.navArgs
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.github.mikephil.charting.charts.HorizontalBarChart
+import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-
+import com.github.mikephil.charting.formatter.ValueFormatter
 
 class LocationFragment : Fragment() {
 
@@ -32,9 +34,13 @@ class LocationFragment : Fragment() {
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
     lateinit var verdiNivaer : TextView
-    lateinit var barchart : HorizontalBarChart
-
     lateinit var stasjon: Stasjon
+    lateinit var barDataSet : BarDataSet
+    lateinit var HorBarChart : HorizontalBarChart          //  NYESTE BAR CHART
+    private var pm10Percentage : Float = 0.0f
+    private var pm25Percentage : Float = 0.0f
+    private var no2Percentage : Float = 0.0f
+    private var o3percentage : Float = 0.0f
 
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onCreateView(
@@ -47,7 +53,9 @@ class LocationFragment : Fragment() {
 
         assignId(root)
         setOnClickers(root)
-        setupBarchart(root)
+        //setupBarchart(root)
+
+        setSkillGraph(root)
 
         val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
 
@@ -67,7 +75,6 @@ class LocationFragment : Fragment() {
             }
             else Log.d("bundle == null", "HER")
         }
-
         return root
     }
 
@@ -84,24 +91,134 @@ class LocationFragment : Fragment() {
         aqiLevel = root.findViewById(R.id.aqiLevel_location)
         aqiSentence = root.findViewById(R.id.aqiSentence_location)
         verdiNivaer = root.findViewById(R.id.verdiNivaer_location)
-        barchart = root.findViewById(R.id.chart)
+        //barchart = root.findViewById(R.id.ski)
     }
 
-    fun setupBarchart(root: View) {
-        val data = BarData(getDataSet())
-        barchart.data = data
-        barchart.animateXY(2000, 2000)
-        barchart.invalidate()
+    //setter oppa aksene og andre nødvendige detaljer for det horisontale bar chartet
+    fun setSkillGraph(root : View) {
+        HorBarChart = root.findViewById(R.id.hor_bar_chart)
+        HorBarChart.setDrawBarShadow(false)
+        val description = Description()
+        description.text = "Verdiene vises i %"
+        description.textSize = 15f
+        HorBarChart.description = description
+        HorBarChart.legend.setEnabled(false)
+        HorBarChart.setPinchZoom(false)
+        HorBarChart.setDrawValueAboveBar(false)
+
+        //Display the axis on the left (contains the labels 1*, 2* and so on)
+        //viser aksen på venstre side med labels: pm25, pm10 osv..
+        val xAxis = HorBarChart.getXAxis()
+        xAxis.setDrawGridLines(false)
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM)
+        xAxis.setEnabled(true)
+        xAxis.setDrawAxisLine(false)
+        xAxis.textSize = 15f
+        val yLeft = HorBarChart.axisLeft
+
+        //setter minimum og maximum lengde for verdiene parene representerer. Siden verdier skal vises i prosent, går det til 100
+        yLeft.axisMaximum = 100f
+        yLeft.axisMinimum = 0f
+        yLeft.isEnabled = true      //Var på false før, ser ikke forskjell
+        xAxis.setLabelCount(4)      //setter antallet til 4, siden vi har 4 verdier
+
+        //Legger til labels som legges til på den vertikale aksen
+        val values = arrayOf("PM10", "PM2.5", "NO2", "O3")
+        xAxis.setValueFormatter(object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String? {
+                return values.get(value.toInt())
+            }
+        })
+
+        val yRight = HorBarChart.axisRight
+        yRight.setDrawAxisLine(true)
+        yRight.setDrawGridLines(false)
+        yRight.isEnabled = false
+        setGraphData()                                  //setter plasseringen, og annen formattering
+        HorBarChart.animateY(2000)    //animasjon
     }
 
-    fun getDataSet() : BarDataSet {
+    //metoden returnerer et dangerLevel fra 1-4(4=farligst), ved å regne ut. setter samtidig hver enkelte prosent.
+    private fun calculateDangerLevel(liveValue : Int, polType : String) : Int{
+        //initaliserer verdier som brukes til å kalkulere prosent, og hvor farlig prosenten er for den gitte typen.
+        var topValue = 0                         //verdien viser max eksponering av ug/m3 i timesmiddel før det blir svært alvorlig. Kan hete maxvalue, men blir misvisende siden verdien kan overstige nivået
+        var percentage : Float                   //prosenten for anbefalt eksponering
+        var dangerLimit1 = 0                     //hvor mange prosent som må til for å være "lite farlig", "moderat", "alvorlig" og "svært alvorlig".
+        var dangerLimit2 = 0
+        val dangerLimit3  = 100                 //farenivå "alvorlig" vil alltid være 100%. Farenivået over vil alltid være over 100%. Det er altså kun prosentene for lite farlig og moderat som er relevant her.
+        var dangerLevel = 0                     //settes til et tall fra 1 - 4, som forteller hvor farlig nivået er (4 er farligst)
+
+        //setter verdiene som er initalisert, til sin type. Hver type har forskjellige prosentmessige grenseverdier.
+        if (polType == "pm10"){ topValue = 400; dangerLimit1 = 15; dangerLimit2 = 30; }
+        else if (polType == "pm25"){ topValue = 150; dangerLimit1 = 20; dangerLimit2 = 33 }
+        else if (polType == "no2"){ topValue = 400; dangerLimit1 = 25; dangerLimit2 = 50 }
+        else if (polType == "o3"){ topValue = 240; dangerLimit1 = 41; dangerLimit2 = 75 }
+
+        //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
+        percentage = (liveValue.toFloat() / topValue.toFloat()) * 100f
+        if (polType == "pm10"){ pm10Percentage = percentage }
+        else if (polType == "pm25"){ pm25Percentage = percentage }
+        else if (polType == "no2"){ no2Percentage = percentage }
+        else if (polType == "o3"){ o3percentage = percentage }
+
+        //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
+        if (percentage < dangerLimit1){ dangerLevel = 1 }
+        else if (percentage > dangerLimit1 && percentage < dangerLimit2){ dangerLevel = 2 }
+        else if (percentage > dangerLimit2 && percentage < dangerLimit3){ dangerLevel = 3 }
+        else if (percentage > dangerLimit3){ dangerLevel = 4 }
+
+        return dangerLevel
+    }
+
+    //metoden tar inn dangerLevelet fra 1-4, og returnerer fargen, som settes i setValues.
+    private fun setColor(dangerLevel : Int): Int{
+        var color = R.color.black
+        if (dangerLevel == 1){ color = R.color.green }
+        else if (dangerLevel == 2){ color = R.color.yellow }
+        else if (dangerLevel == 3){ color = R.color.gray}           //endres til rød etter merge
+        else if (dangerLevel == 4){ color = R.color.purple_700}
+        return color
+    }
+
+    //metoden setter opp ting
+    private fun setValues(){
+        //her settes verdiene fra APIet i søylene.
+        val pm10lvl = calculateDangerLevel(60, "pm10")
+        val pm25lvl = calculateDangerLevel(80, "pm25")
+        val no2lvl = calculateDangerLevel(180, "no2")
+        val o3lvl = calculateDangerLevel(60, "o3")
+
+        //liste over innganger/startplassring       - OBS, disse kan endres med apinivået
         val entries = ArrayList<BarEntry>()
-        entries.add(BarEntry(4f, 0f))
-        entries.add(BarEntry(8f, 1f))
-        entries.add(BarEntry(16f, 2f))
-        val dataset = BarDataSet(entries, "hi")
-        return dataset
+        entries.add(BarEntry(0f, pm10Percentage))
+        entries.add(BarEntry(1f, pm25Percentage))
+        entries.add(BarEntry(2f, no2Percentage))
+        entries.add(BarEntry(3f, o3percentage))
+
+        //initialiserer en instans av barDataSet, for å kunne vise dataen i barchartet
+        barDataSet = BarDataSet(entries, "Bar Data Set")
+
+        //setter fargene
+        barDataSet.setColors(
+            ContextCompat.getColor(HorBarChart.context, setColor(pm10lvl)),    //pm10lvl
+            ContextCompat.getColor(HorBarChart.context, setColor(pm25lvl)),    //pm25lvl
+            ContextCompat.getColor(HorBarChart.context, setColor(no2lvl)),     //no2lvl
+            ContextCompat.getColor(HorBarChart.context, setColor(o3lvl)),      //o3lvl
+        )
     }
+
+    private fun setGraphData() {
+        setValues()
+        barDataSet.setDrawValues(true)              //tekst oppå søylene som viser antall prosent
+        barDataSet.valueTextSize = 13f              //endrer tekststørrelsen til teksten oppå søylene
+        barDataSet.barBorderColor = R.color.black
+        HorBarChart.setDrawBarShadow(true)          //setter skygger
+        barDataSet.barShadowColor = Color.argb(40, 150, 150, 150)
+        val data = BarData(barDataSet)
+        data.barWidth = 0.6f                        //setter breddet på søylene  OBS: for å øke mellomrommet mellom søylene, set verdien til barwidt til <1f
+        HorBarChart.data = data                     //avslutningsvis: sett dataen og refresh grafen
+        HorBarChart.invalidate()
+        }
 
     fun setOnClickers(root: View){
         val infoButton1 : ImageButton = root.findViewById(R.id.info1_location)
