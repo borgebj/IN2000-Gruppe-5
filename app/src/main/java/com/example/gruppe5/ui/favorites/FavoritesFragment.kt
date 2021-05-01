@@ -31,7 +31,6 @@ class FavoritesFragment : Fragment() {
 
     // globale variabler
     private lateinit var viewModel: ViewModel
-    lateinit var textView: TextView
 
     lateinit var addBut: ImageButton
     lateinit var resetB : Button
@@ -40,21 +39,18 @@ class FavoritesFragment : Fragment() {
 
     lateinit var root: View
 
-    private val path: String = "https://api.met.no/weatherapi/airqualityforecast/0.1/stations"
-
     var fav_stations: MutableList<Stasjon> = mutableListOf()
     lateinit var pref : SharedPreferences// = requireContext().getSharedPreferences("my_pref", MODE_PRIVATE)
     lateinit var editor : SharedPreferences.Editor// = pref.edit()
-    var antKeys = 0 // antall lagrede favorittstasjoner
+    var antKeys = 0 // antall lagrede favorittstasjoner - maks5
 
-    /*override fun onCreate(savedInstanceState: Bundle?) { // dette blir kalt kun når noe besøker favoritefragment vba navigation
+    /*override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         Log.d("onCreate()", "KALT")
         Log.d("andKeys i onCreate", antKeys.toString())
         toastMsg("Loading ..")
     }*/
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
