@@ -47,13 +47,13 @@ class FavoritesFragment : Fragment() {
     lateinit var editor : SharedPreferences.Editor// = pref.edit()
     var antKeys = 0 // antall lagrede favorittstasjoner
 
-    override fun onCreate(savedInstanceState: Bundle?) { // dette blir kalt kun når noe besøker favoritefragment vba navigation
+    /*override fun onCreate(savedInstanceState: Bundle?) { // dette blir kalt kun når noe besøker favoritefragment vba navigation
         super.onCreate(savedInstanceState)
 
         Log.d("onCreate()", "KALT")
         Log.d("andKeys i onCreate", antKeys.toString())
         toastMsg("Loading ..")
-    }
+    }*/
 
 
     override fun onCreateView(
@@ -88,37 +88,7 @@ class FavoritesFragment : Fragment() {
             setFavStations(it)
             getDataTilbake(it)
         })
-
         checkDeleteElem()
-    }
-
-
-    fun checkDeleteElem(){
-
-        Log.d("checkDeleteElem()", "KALT")
-
-        val args = arguments // station as Stasjon som skal slettes fra pref
-        if (args != null) {
-            val slettes: Stasjon? = args?.getParcelable("station") as Stasjon?
-            Log.d("fra adapter SLETTES", slettes?.name.toString())
-
-            val keys: Map<String, *> = pref.getAll()
-            for ((key, value) in keys) {
-                Log.d("map values", key + ": " + value.toString())
-
-                if (slettes?.name == value) {
-                    editor.remove(key)
-                    editor.commit()
-                    antKeys--
-
-                    fav_stations.remove(slettes)
-                    fav_adapter.notifyDataSetChanged()
-
-                    break
-                }
-            }
-        }
-        else Log.d("bundle for slettes", "NULL")
     }
 
     fun assignId(root: View) {
@@ -141,53 +111,6 @@ class FavoritesFragment : Fragment() {
         fav_recycler.adapter = fav_adapter
     }
 
-    fun setFavStations(stasjoner: MutableList<Stasjon>){
-
-        Log.d("antKey i setFavStation", antKeys.toString())
-
-        val keys: Map<String, *> = pref.getAll()
-        for ((key, value) in keys) {
-            Log.d("map values", key + ": " + value.toString())
-
-            addToFavStations(value as String,stasjoner)
-        }
-    }
-
-    fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>){
-
-        Log.d("addToFavStations", "KALT med ${station}")
-
-        for (st in stasjoner){
-            if (st.name.equals(station, ignoreCase = true)){ // finner match
-
-                Log.d("FANT MATCH I addToFav", st.name)
-
-                //if (!viewModel.inFavStations(station)){
-                if (!inFavStations(station)){ // ikke satt til CardView ennaa
-                    //viewModel.addStatToFav(st)
-                    fav_stations.add(st) // TODO
-                    fav_adapter.notifyDataSetChanged()
-                    Log.d("ADDED TO FAV", st.name)
-
-                    if (!inPref(station)) {
-                        setElem(station, station)
-                        antKeys++
-                    }//++antKeys) // ikke satt til pref ennaa = ny favorittby
-                    //else toastMsg("${station} is already in pref.")
-                } else //toastMsg("${station} is already in fav_stasjoner.")
-                break
-            }
-        }
-    }
-
-    /*fun getElem(key: Int) : String {
-
-        val station : String? = pref.getString(key.toString(), null)
-        Log.d("getElem() station", station.toString())
-
-        return station.toString()
-    }*/
-
     @SuppressLint("ApplySharedPref")
     fun setResetBut(root: View){
 
@@ -206,6 +129,60 @@ class FavoritesFragment : Fragment() {
         root.findNavController().navigate(
             FavoritesFragmentDirections.actionNavigationFavoritesSelf()
         )
+    }
+
+    fun setSearchFrag(root: View){
+
+        Log.d("setSearchFrag", "KALT")
+
+        addBut.setOnClickListener {
+            tilSearch(root)  // navigere til SearchFragment
+            if (antKeys == 5) toastMsg("List is full! Reset favorite stations to add new favorite.")
+        }
+    }
+
+    fun tilSearch(root: View){
+
+        root.findNavController().navigate(FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
+        /*val fragment = SearchFragment()
+        val bundle = Bundle()
+        bundle.putString("fav", "fav")
+        fragment.arguments = bundle
+
+    Navigation.findNavController(root).navigate(R.id.navigation_search, bundle)*/
+    }
+
+    fun setFavStations(stasjoner: MutableList<Stasjon>){
+
+        val keys: Map<String, *> = pref.getAll()
+        for ((key, value) in keys) {
+            Log.d("map values", key + ": " + value.toString())
+            addToFavStations(value as String,stasjoner)
+        }
+    }
+
+    fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>){
+
+        Log.d("addToFavStations", "KALT med ${station}")
+
+        for (st in stasjoner){
+            if (st.name.equals(station, ignoreCase = true)){ // finner match
+
+                //if (!viewModel.inFavStations(station)){
+                if (!inFavStations(station)){ // ikke satt til CardView ennaa
+                    //viewModel.addStatToFav(st)
+                    fav_stations.add(st)
+                    fav_adapter.notifyDataSetChanged()
+                    Log.d("ADDED TO FAV", st.name)
+
+                    if (!inPref(station)) { // ikke satt til pref ennaa = ny favorittby
+                        setElem(station, station)
+                        antKeys++
+                    }
+                } else //toastMsg("${station} is already in fav_stasjoner.")
+                break
+            }
+        }
     }
 
     private fun inPref(station: String) : Boolean {
@@ -234,43 +211,51 @@ class FavoritesFragment : Fragment() {
         editor.commit()
     }
 
-    fun setSearchFrag(root: View){
-
-        Log.d("setSearchFrag", "KALT")
-
-        addBut.setOnClickListener {
-            tilSearch(root)  // navigere til SearchFragment
-            if (antKeys == 5) toastMsg("List is full! Reset favorite stations to add new favorite.")
-        }
-    }
-
-    fun tilSearch(root: View){
-
-            //FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2()
-            val fragment = SearchFragment()
-            val bundle = Bundle()
-            bundle.putString("fav", "fav")
-            fragment.arguments = bundle
-
-        Navigation.findNavController(root).navigate(R.id.navigation_search, bundle)
-
-    }
 
     fun getDataTilbake(stasjoner: MutableList<Stasjon>){
 
         val station: String? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation //args.favoriteStation
-
         Log.d("getdatatilbake()", "${station}")
-
-        if (antKeys != 5) { // kan lagre MAKS TRE favorittstasjoner -- antall elementer som kan legges til kan endres
+        if (antKeys != 5) { // kan lagre MAKS FEM favorittstasjoner -- antall elementer som kan legges til kan endres
             if (station != null && !inFavStations(station)) addToFavStations(station, stasjoner)
             //else if (inFavStations(station.toString())) toastMsg("${station} is already in fav_stasjoner!!!!")
             else Log.d("STATION", "IS NULL")
         }
     }
 
+    fun checkDeleteElem(){
+        Log.d("checkDeleteElem()", "KALT")
+
+        val args = arguments // station as Stasjon som skal slettes fra pref
+        if (args != null) {
+            val slettes: Stasjon? = args?.getParcelable("station") as Stasjon?
+
+            val keys: Map<String, *> = pref.getAll()
+            for ((key, value) in keys) {
+                Log.d("map values", key + ": " + value.toString())
+                if (slettes?.name == value) {
+                    editor.remove(key)
+                    editor.commit()
+                    antKeys--
+                    fav_stations.remove(slettes)
+                    fav_adapter.notifyDataSetChanged()
+                    break
+                }
+            }
+        }
+        else Log.d("bundle for slettes", "NULL")
+    }
+
     fun toastMsg(msg: String){
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
+
+    /*fun getElem(key: Int) : String {
+
+    val station : String? = pref.getString(key.toString(), null)
+    Log.d("getElem() station", station.toString())
+
+    return station.toString()
+}*/
 
 }
