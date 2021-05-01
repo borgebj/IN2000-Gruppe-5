@@ -175,7 +175,7 @@ class LocationFragment : Fragment() {
         var color = R.color.black
         if (dangerLevel == 1){ color = R.color.green }
         else if (dangerLevel == 2){ color = R.color.yellow }
-        else if (dangerLevel == 3){ color = R.color.gray}           //endres til rød etter merge
+        else if (dangerLevel == 3){ color = R.color.red}           //endres til rød etter merge
         else if (dangerLevel == 4){ color = R.color.purple_700}
         return color
     }
@@ -183,10 +183,10 @@ class LocationFragment : Fragment() {
     //metoden setter opp ting
     private fun setValues(){
         //her settes verdiene fra APIet i søylene.
-        val pm10lvl = calculateDangerLevel(60, "pm10")
-        val pm25lvl = calculateDangerLevel(80, "pm25")
-        val no2lvl = calculateDangerLevel(180, "no2")
-        val o3lvl = calculateDangerLevel(60, "o3")
+        val pm10lvl = calculateDangerLevel(50, "pm10")
+        val pm25lvl = calculateDangerLevel(40, "pm25")
+        val no2lvl = calculateDangerLevel(300, "no2")
+        val o3lvl = calculateDangerLevel(250, "o3")
 
         //liste over innganger/startplassring       - OBS, disse kan endres med apinivået
         val entries = ArrayList<BarEntry>()
