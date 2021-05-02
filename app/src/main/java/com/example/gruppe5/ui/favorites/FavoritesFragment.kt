@@ -1,6 +1,7 @@
 package com.example.gruppe5.ui.favorites
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -76,6 +77,7 @@ class FavoritesFragment : Fragment() {
 
         setResetBut(root)
         setSearchFrag(root)
+        setInfoBut()
 
         //toastMsg("Loading ..")
         viewModel.stations.observe(viewLifecycleOwner, Observer {
@@ -244,6 +246,31 @@ class FavoritesFragment : Fragment() {
 
     fun toastMsg(msg: String){
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    fun setInfoBut() {
+        val infoButton: ImageButton = root.findViewById(R.id.info_favorites)
+        infoButton.setOnClickListener {
+            alertView(getString(R.string.str_info_favorites), root, "open")
+        }
+    }
+
+    //infoknapp
+    private fun alertView(message: String, root : View, command : String) {
+        val dialogB = AlertDialog.Builder(context)
+        dialogB.setTitle("Hvordan fungerer det?")
+            .setIcon(R.drawable.ic_info_green)
+            .setMessage(message)
+            .setPositiveButton("Lukk") {
+                    dialoginterface,i ->}
+        slideShow(command, dialogB)
+    }
+
+    private fun slideShow(command : String, dialog : AlertDialog.Builder){
+        val animasjonsDialog : AlertDialog = dialog.create()
+        if (command == "open") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen //animasjon
+        else if (command == "close") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose //animasjon
+        return (animasjonsDialog.show())
     }
 
     /*fun getElem(key: Int) : String {
