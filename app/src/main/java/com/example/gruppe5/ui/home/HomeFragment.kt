@@ -123,7 +123,7 @@ class HomeFragment : Fragment(){
     private fun alertValuesView(message: String, command : String) {
         val dialog = AlertDialog.Builder(context)
 
-        dialog.setTitle("AQI nivåer")
+        dialog.setTitle("Luftkvalitets-nivåer")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { dialoginterface, i -> } //TODO legge til animasjon senere
@@ -243,25 +243,25 @@ class HomeFragment : Fragment(){
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(parseColor("#3F9F41"))
-                    aqiSentence.text = "AQI nivået er bra"
+                    aqiSentence.text = "Luftnivået er bra"
                     current_status = "Det er lite luftforurensning\nIkke nødvendig med noen spesielle tiltak."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
                     donut_color = "#3F9F41"
                 } "orange" -> {
                     aqiLevel.setTextColor(parseColor("#FFCB00"))
-                    aqiSentence.text = "AQI nivået er moderat"
+                    aqiSentence.text = "Luftnivået er moderat"
                     current_status = "Utendørs aktivitet anbefales for de fleste"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
                     donut_color = "#FFCB00"
             } "red" -> {
                     aqiLevel.setTextColor(parseColor("#C13500"))
-                    aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
+                    aqiSentence.text = "Luftnivået nivået er usunt for utsatte grupper"
                     current_status ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
                     donut_color = "#C13500"
                 } "purple" -> {
                     aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
-                    aqiSentence.text = "AQI nivået er usunt"
+                    aqiSentence.text = "Luftnivået nivået er usunt"
                     current_status ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
                     donut_color = "#4900AC"

@@ -66,7 +66,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         mMap.setPadding(0, 0, 0, 120)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
-        //assignId(root)
+        assignId(root)
+        //search
+        setHasOptionsMenu(true)
         addMapFunctions()
         addMarkers()
         addOnClickers()
@@ -109,10 +111,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         savedInstanceState: Bundle?
     ): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
-
-        //search
-        setHasOptionsMenu(true)
-        assignId(root)
 
         this.root = root
         return root
