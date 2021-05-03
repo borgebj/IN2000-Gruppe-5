@@ -216,8 +216,8 @@ class FavoritesFragment : Fragment() {
         Log.d("getdatatilbake()", "${station}")
         if (antKeys != 5) { // kan lagre MAKS FEM favorittstasjoner -- antall elementer som kan legges til kan endres
             if (station != null && !inFavStations(station)) addToFavStations(station, stasjoner)
-            //else if (inFavStations(station.toString())) toastMsg("${station} is already in fav_stasjoner!!!!")
-            else Log.d("STATION", "IS NULL")
+            else if (inFavStations(station.toString())) toastMsg("${station} is already in your favorite list")
+            else Log.d("STATION(Favorite)", "IS NULL")
         }
     }
 

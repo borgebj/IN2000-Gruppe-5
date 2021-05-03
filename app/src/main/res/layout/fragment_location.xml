@@ -79,7 +79,7 @@
         android:layout_centerInParent="true"
         android:text="180 AQI"
         android:textColor="@color/green"
-        android:textSize="40sp" />
+        android:textSize="35sp" />
 
     <ImageButton
         android:id="@+id/info1_location"

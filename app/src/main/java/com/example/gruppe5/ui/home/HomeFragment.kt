@@ -66,7 +66,6 @@ class HomeFragment : Fragment(){
             viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
                 if (highest != null) {
-                    //TODO endres til den farligste for øyeblikket (?) - IDK finn ut - Børge
                     nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
                 }
                 if (nearest.name.length > 8) textView.textSize = 32F

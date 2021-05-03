@@ -25,22 +25,17 @@ class ViewModel : ViewModel() {
     init {
         Log.d("Viewmodel", "init")
         parseData()
-        parseNiluData()
     }
 
     val nearest_station: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
-    val nearby_stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
+    val nearby_stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() } //TODO: fjern om ikke bruker
     
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
-
-    val niluStations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() } //TODO: fjern?
-
 
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
 
 
-    //region OVERFØR TIL VIEWMODEL !
     // henter JSON/XML via KHTTP -> til String
     fun getData(base: String, del: String): String {
         val full = "$base$del"
@@ -110,20 +105,23 @@ class ViewModel : ViewModel() {
         }
     }
 
-    //region [midlertidig] TODO: fjern?
-    fun parseNiluData() {
-        val baseURL: String = "https://api.nilu.no/" // Nilu API url
+    // setter default-state til stasjon (i Oslo) med høyeste verdi
+    fun setDefaultState(stations: MutableList<Stasjon>) {
+        var current_highest_station: Stasjon? = stations.random()
+        var current_highest_value = 0.0
 
-        fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURL, "/lookup/stations"), Array<Stasjon>::class.java).toMutableList()
-
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val stations = getStations()
-            niluStations.postValue(stations)
-        }
+        for (stasjon in stations) {
+            if (stasjon.kommune.name == "Oslo") {
+                val highest = stasjon.verdier.maxBy { it.value }
+                if (highest != null)
+                    if (highest.value > current_highest_value) {
+                        current_highest_value = highest.value
+                        current_highest_station = stasjon
+                    }
+            }
+        };
+        nearest_station.postValue(current_highest_station)
     }
-    //endregion
-
 
     //region [nearby stations]
     @SuppressLint("MissingPermission")
@@ -131,29 +129,13 @@ class ViewModel : ViewModel() {
         var nearest : Stasjon? = null
         var closest: Float = 100000.00F
 
-        // setter default-state til stasjon (i Oslo) med høyeste verdi
-        fun setDefaultState() {
-            var current_highest_station: Stasjon? = stations.random()
-            var current_highest_value = 0.0
-
-            for (stasjon in stations) {
-                if (stasjon.kommune.name == "Oslo") {
-                    val highest = stasjon.verdier.maxBy { it.value }
-                    if (highest != null)
-                        if (highest.value > current_highest_value) {
-                            current_highest_value = highest.value
-                            current_highest_station = stasjon
-                        }
-                }
-            };
-            nearest_station.postValue(current_highest_station)
-        }
 
         if (GpsStatus) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 for (stasjon in stations) {
                     if (location == null) {
-                        setDefaultState(); break
+                        setDefaultState(stations); break
+                        Log.d("Nearest", "station is null")
                     }
                     else {
                         // oppretter Location-objekter
@@ -175,7 +157,7 @@ class ViewModel : ViewModel() {
                 }
             }
         }
-        else setDefaultState()
+        else setDefaultState(stations)
     }
 
 //    @SuppressLint("MissingPermission")
