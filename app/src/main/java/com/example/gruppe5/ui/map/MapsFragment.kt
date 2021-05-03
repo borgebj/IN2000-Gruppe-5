@@ -13,11 +13,9 @@ import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
-import com.example.gruppe5.Stasjon
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,7 +36,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     lateinit var mMap: GoogleMap
     lateinit var root : View
     lateinit var switch : SwitchCompat
-    lateinit var custom_marker : View
 
     // viewmodel
     lateinit var viewModel : ViewModel
@@ -73,36 +70,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         addMarkers()
         addOnClickers()
         addSwitchFunction()
-
-
-        //region [midlertidig] TODO: fjern?
-        viewModel.stations.observe(viewLifecycleOwner, Observer { aq ->
-            viewModel.niluStations.observe(viewLifecycleOwner, Observer { nilu ->
-                var antLike = 0
-                var antNilu = 0
-                var antAq = 0
-                val like: MutableList<Stasjon> = mutableListOf()
-                val ulike: MutableList<Stasjon> = mutableListOf()
-
-                for (y in nilu) antNilu++
-                for (x in aq) antAq++
-
-                for (x in aq) {
-                    for (y in nilu) {
-                        if (y.eoi == x.eoi) {
-                            like.add(x)
-                            antLike++
-                        } else ulike.add(y)
-                    }
-                }
-                Log.d("Antall like stasjoner", antLike.toString())
-                Log.d("Antall NILU", antNilu.toString())
-                Log.d("Antall Aq", antAq.toString())
-                Log.d("like", like.toString())
-                Log.d("ulike", ulike.toString())
-            })
-        })
-        //endregion
     }
 
     override fun onCreateView(
@@ -133,7 +100,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
 
-    open fun CheckGpsStatus() {
+    fun CheckGpsStatus() {
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
@@ -200,12 +167,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             }
         }
 
-        viewModel.stations.observe(viewLifecycleOwner, Observer { stations ->
+        viewModel.stations.observe(viewLifecycleOwner, { stations ->
             for (station in stations) {
-                val highest: Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
+                val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
                 val title = "[${station.name}] - ${highest?.value} ug/m3 [${highest?.key}]"
-                val marker: MarkerOptions = MarkerOptions().position(
-                    LatLng(station.latitude, station.longitude)).title(title)
+                val marker: MarkerOptions = MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title)
                 checkValues(highest, marker)
                 mMap.addMarker(marker)
             }
@@ -213,13 +179,14 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     }
 
-    fun addHeatmap() {
-        viewModel.stations.observe(viewLifecycleOwner, Observer { list ->
+    // legger til heatmap overlay for google map
+    private fun addHeatmap() {
+        viewModel.stations.observe(viewLifecycleOwner, { list ->
             val weightedData: MutableList<WeightedLatLng> = mutableListOf()
 
             // lager LatLng og WeightedLatLng av hver stasjon for heatmap
             for (station in list) {
-                val highest: Map.Entry<String, Double>? = station.verdier.maxBy { it.value }
+                val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
                 val verdi = station.verdier[highest?.key]
                 if (verdi != null) weightedData.add(
                     WeightedLatLng(
@@ -237,7 +204,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                 .weightedData(weightedData)
                 .build()
 
-            val overlay = mMap.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
+            // selve overlayen
+            mMap.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
 
             // endrer heatmap naar kartet endres - bevegelser / zoom
             mMap.setOnCameraIdleListener {
@@ -276,7 +244,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                             ""
                         )
 
-                        Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT).show() // informerer bruker
+                        Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT)
+                            .show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
                         root.postDelayed({
