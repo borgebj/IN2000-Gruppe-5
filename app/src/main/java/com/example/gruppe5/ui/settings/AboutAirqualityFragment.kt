@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BulletSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +36,7 @@ class AboutAirqualityFragment : Fragment() {
     private fun setText() {
         val bulletedList = listOf(
             "\nDet finnes mange forskjellige luftforurensningskomponenter, inkludert ulike typer svevestøv og gasser, som kan gi uønskede helseeffekter.",
-            "Luftkvaliteten måles med flere ulike forurensingsklasser. De tre forurensningsklassene gjelder stoffene: " +
+            "\nLuftkvaliteten måles med flere ulike forurensingsklasser. De tre forurensningsklassene gjelder stoffene: " +
                     "svevestøv (PM10 og PM2,5), nitrogendioksid (NO2), og bakkenær ozon (O3).",
             "\nInformasjonen er hentet fra:",
             "https://www.fhi.no/nettpub/luftkvalitet/sammendrag-og-bakgrunnsinformasjon/hva-mener-vi-med-luftkvalitetskriterier/",
