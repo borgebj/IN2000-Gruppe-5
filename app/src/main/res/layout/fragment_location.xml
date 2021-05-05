@@ -17,7 +17,6 @@
     <TextView
         android:id="@+id/stationName_location"
         android:foregroundGravity="center"
-        android:text="STASJONSNAVN"
         android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,14 +40,6 @@
         app:donut_gapWidth="80"
         android:layout_centerInParent="true"
         app:donut_strokeWidth="25dp" />
-
-    <TextView
-        android:layout_width="385dp"
-        android:layout_height="39dp"
-        android:foregroundGravity="center"
-        android:text="400                                                                      100"
-        android:textColor="@color/gray"
-        android:textSize="18sp" />
 
     <TextView
         android:id="@+id/donutNmbrsLocation"
@@ -77,7 +68,7 @@
         android:foregroundGravity="center"
         android:gravity="center"
         android:layout_centerInParent="true"
-        android:text="180 AQI"
+        android:text=""
         android:textColor="@color/green"
         android:textSize="35sp" />
 
@@ -115,7 +106,7 @@
         android:layout_marginTop="350dp"
         android:foregroundGravity="center"
         android:gravity="center"
-        android:text="VERDINIVÅER"
+        android:text="@string/verdiniv_er"
         android:textColor="@color/black"
         android:textSize="25sp"
         android:textStyle="bold" />
