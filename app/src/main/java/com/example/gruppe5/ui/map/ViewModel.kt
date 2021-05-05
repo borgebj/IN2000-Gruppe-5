@@ -23,7 +23,6 @@ import kotlin.collections.HashMap
 
 class ViewModel : ViewModel() {
     init {
-        Log.d("Viewmodel", "init")
         parseData()
     }
 
@@ -99,8 +98,6 @@ class ViewModel : ViewModel() {
             val stasjoner = getStations()
             getValues(stasjoner)
             stations.postValue(stasjoner)
-            Log.d("høyest", highestValueInNorway.toString())
-            Log.d("lavest", lowestValueInNorway.toString())
 
         }
     }
@@ -135,7 +132,6 @@ class ViewModel : ViewModel() {
                 for (stasjon in stations) {
                     if (location == null) {
                         setDefaultState(stations); break
-                        Log.d("Nearest", "station is null")
                     }
                     else {
                         // oppretter Location-objekter

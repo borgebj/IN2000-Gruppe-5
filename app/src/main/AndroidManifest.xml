@@ -33,14 +33,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <!-- test-filer -->
-        <activity android:name=".testFiler.MainTestActivity" />
-        <activity android:name=".testFiler.API_test" />
-        <activity android:name=".testFiler.MapTest" />
-        <activity
-            android:name=".testFiler.StasjonVerdier"
-            android:windowSoftInputMode="adjustResize" />
-
         <!-- main-filer -->
         <activity android:name=".MainActivity">
             <intent-filter>
