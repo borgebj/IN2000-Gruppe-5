@@ -1,6 +1,7 @@
 package com.example.gruppe5
 
 import android.R.attr.key
+import android.R.attr.onClick
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -38,11 +39,17 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
         viewHolder.textEn.text = "${liste[position].name}"
         viewHolder.textTo.text = "Kommune: ${liste[position].kommune.name}"
 
+        viewHolder.itemView.setOnClickListener{
+            val fragment = LocationFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("location", liste[position] )
+            fragment.arguments = bundle
+            Log.d("SNEDER FRA adap", liste[position].name )
+
+            Navigation.findNavController(it).navigate(R.id.navigation_location, bundle)
+        }
 
         viewHolder.star.setOnClickListener {
-
-
-            // TODO fjerne stasjonen fra sharedpreferences
 
             val fragment = FavoritesFragment()
             val bundle = Bundle()
@@ -55,7 +62,7 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
 
         }
 
-        viewHolder.location.setOnClickListener(View.OnClickListener {
+        /*viewHolder.location.setOnClickListener(View.OnClickListener {
 
             val fragment = LocationFragment()
             val bundle = Bundle()
@@ -64,7 +71,7 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
             Log.d("SNEDER FRA adap", liste[position].name )
 
             Navigation.findNavController(it).navigate(R.id.navigation_location, bundle)
-        })
+        })*/
     }
 
     // Return the size of your dataset (invoked by the layout manager)

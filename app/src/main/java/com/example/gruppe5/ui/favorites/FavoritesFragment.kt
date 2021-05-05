@@ -3,6 +3,7 @@ package com.example.gruppe5.ui.favorites
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +14,6 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,10 +21,6 @@ import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
 import com.example.gruppe5.ui.map.ViewModel
-import com.example.gruppe5.ui.search.SearchFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 
 @Suppress("UsePropertyAccessSyntax")
@@ -104,6 +100,12 @@ class FavoritesFragment : Fragment() {
 
     }
 
+    private fun onClick(root: View) {
+        if (root.id === R.id.cardView) {
+            // TODO
+        }
+    }
+
     fun addAdapter() {
         fav_adapter = StasjonAdapter(fav_stations)
         fav_recycler.adapter = fav_adapter
@@ -142,12 +144,6 @@ class FavoritesFragment : Fragment() {
     fun tilSearch(root: View){
 
         root.findNavController().navigate(FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
-        /*val fragment = SearchFragment()
-        val bundle = Bundle()
-        bundle.putString("fav", "fav")
-        fragment.arguments = bundle
-
-    Navigation.findNavController(root).navigate(R.id.navigation_search, bundle)*/
     }
 
     fun setFavStations(stasjoner: MutableList<Stasjon>){
@@ -155,7 +151,7 @@ class FavoritesFragment : Fragment() {
         val keys: Map<String, *> = pref.getAll()
         for ((key, value) in keys) {
             Log.d("map values", key + ": " + value.toString())
-            addToFavStations(value as String,stasjoner)
+            addToFavStations(value as String, stasjoner)
         }
     }
 
@@ -256,17 +252,16 @@ class FavoritesFragment : Fragment() {
     }
 
     //infoknapp
-    private fun alertView(message: String, root : View, command : String) {
+    private fun alertView(message: String, root: View, command: String) {
         val dialogB = AlertDialog.Builder(context)
         dialogB.setTitle("Hvordan fungerer det?")
             .setIcon(R.drawable.ic_info_green)
             .setMessage(message)
-            .setPositiveButton("Lukk") {
-                    dialoginterface,i ->}
+            .setPositiveButton("Lukk") { dialoginterface, i ->}
         slideShow(command, dialogB)
     }
 
-    private fun slideShow(command : String, dialog : AlertDialog.Builder){
+    private fun slideShow(command: String, dialog: AlertDialog.Builder){
         val animasjonsDialog : AlertDialog = dialog.create()
         if (command == "open") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen //animasjon
         else if (command == "close") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose //animasjon

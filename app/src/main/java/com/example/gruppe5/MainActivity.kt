@@ -70,7 +70,8 @@ class MainActivity : AppCompatActivity() {
 //                    intent.setData(uri);
 //                    startActivity(intent);
 
-                        checkMyPermission()
+                        //checkMyPermission() // TODO
+
                     }
 
                     override fun onPermissionRationaleShouldBeShown(
