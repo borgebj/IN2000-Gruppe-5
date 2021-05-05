@@ -59,13 +59,13 @@ class LocationFragment : Fragment() {
 
         assignId(root)
         setOnClickers(root)
-        //setupBarchart(root)
 
 
         if (stasjon != null) { // fra Map
             this.stasjon = stasjon
             stasjonNavn.text = stasjon.name
             setAqiInformer(stasjon.verdier)
+            Log.d("mine verdier", stasjon.verdier.toString())
         }
         else { // fra Favorite
             val args = arguments

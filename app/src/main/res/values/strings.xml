@@ -29,7 +29,10 @@
     <string name="verdiniv_er">VERDINIVÅER</string>
     <string name="trykk_p_mark_rer_for_se_mer_info">Trykk på markører for å se mer info</string>
     <string name="heatmap">Heatmap</string>
-=======
+    <string name="luftnivaa_bra">Luftnivået er bra</string>
+    <string name="luftnivaa_moderat">Luftnivået er moderat</string>
+    <string name="luftnivaa_utsatte">Luftnivået nivået er usunt for utsatte grupper</string>
+    <string name="luftnivaa_usunt">Luftnivået nivået er usunt</string>
     <string name="lokasjon">Lokasjon</string>
     <string name="av">Av</string>
     <string name="informasjon">INFORMASJON</string>
@@ -39,7 +42,6 @@
     <string name="informasjon_om_luftkvalitet">Informasjon om luftkvalitet</string>
     <string name="informasjon_om_appen">Informasjon om appen</string>
     <string name="informasjon_om_dataen">Informasjon om dataen</string>
->>>>>>> Stashed changes
 
     <string-array name="aqiFunfactList">
     <item>funfact 1</item>
