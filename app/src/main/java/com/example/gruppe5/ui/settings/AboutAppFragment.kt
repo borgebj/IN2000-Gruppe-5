@@ -15,7 +15,7 @@ import com.example.gruppe5.R
 
 class AboutAppFragment : Fragment() {
 
-    lateinit var textView: TextView
+    private lateinit var textView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,10 +37,10 @@ class AboutAppFragment : Fragment() {
     private fun setText() {
         val bulletedList = listOf(
             "\nGod luftkvalitet er viktig for å bevare god helse.",
-            "Denne appen er derfor her for å hjelpe folk med å vurdere luftkvaliteten og eventuelle steder de vil unngå.",
-            "Mange tror kanskje at luftkvaliteten ikke er noe vi trenger å tenke på her i Norge, men for mange er luftkvaliteten" +
+            "\nDenne appen er derfor her for å hjelpe folk med å vurdere luftkvaliteten og eventuelle steder de vil unngå.",
+            "\nMange tror kanskje at luftkvaliteten ikke er noe vi trenger å tenke på her i Norge, men for mange er luftkvaliteten" +
                     "et stort problem.",
-            "Denne appen er laget for alle, både deg med luftveisproblemer og du som bare har lyst til å unngå de mest forurensede områdene i byen."
+            "\nDenne appen er laget for alle, både deg med luftveisproblemer og du som bare har lyst til å unngå de mest forurensede områdene i byen."
         )
             .toBulletedList()
         textView.text = bulletedList

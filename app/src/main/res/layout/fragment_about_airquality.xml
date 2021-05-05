@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="40dp"
-        android:text="Informasjon om luftkvalitet"
+        android:text="@string/informasjon_om_luftkvalitet"
         android:textSize="20sp"
         android:textStyle="bold"
         android:autoLink="all"
