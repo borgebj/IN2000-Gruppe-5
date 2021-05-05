@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
+import com.example.gruppe5.ui.favorites.FavoritesFragmentArgs
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -45,7 +46,6 @@ class MapsFragment : Fragment() {
 
     // status
     var GpsStatus = false
-    var ttsStatus = true
 
     // search
     lateinit var adapter : ArrayAdapter<*>
@@ -290,9 +290,11 @@ class MapsFragment : Fragment() {
             val map = "map"
             val action = MapsFragmentDirections.actionNavigationMapToNavigationSearch(map)
             root.findNavController().navigate(action)
+            Log.d("test", "en")
             true
         }
         else -> {
+            Log.d("test",  "to")
             super.onOptionsItemSelected(item)
         }
     }

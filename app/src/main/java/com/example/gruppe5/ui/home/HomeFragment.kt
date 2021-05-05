@@ -20,6 +20,8 @@ import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.map.MapsFragmentDirections
 import com.example.gruppe5.ui.map.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -35,11 +37,13 @@ class HomeFragment : Fragment(){
     lateinit var aqiSentence : TextView
     lateinit var aqiSmiley : ImageView
     lateinit var recommendation : Button
+    lateinit var locationIcon : ImageButton
 
     lateinit var root : View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var locationManager: LocationManager? = null
     var GpsStatus = false
+    var nearest_station: Stasjon? = null
     var current_status: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -60,6 +64,7 @@ class HomeFragment : Fragment(){
         viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
             viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
             viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
+                nearest_station = nearest
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
                 Log.d("highest", highest.toString())
                 if (highest != null) {
@@ -79,9 +84,10 @@ class HomeFragment : Fragment(){
         aqiSentence = root.findViewById(R.id.aqiSentence_home)
         aqiSmiley = root.findViewById(R.id.smiley_home)
         recommendation = root.findViewById(R.id.recommendation)
+        locationIcon = root.findViewById(R.id.iconLocation_home)
     }
 
-    open fun CheckGpsStatus() {
+    fun CheckGpsStatus() {
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
@@ -89,7 +95,6 @@ class HomeFragment : Fragment(){
 
     // setter onClickers for kart og API_test
     fun setOnClickers(root: View){
-        //TODO: Implementer fremtids-onclickers
         //infoknapp
         val infoButton : ImageButton = root.findViewById(R.id.info_home)
         infoButton.setOnClickListener{
@@ -101,11 +106,19 @@ class HomeFragment : Fragment(){
             dialog.setTitle("Anbefaling til nåværende luftnivå")
                 .setIcon(R.drawable.ic_info)
                 .setMessage(current_status)
-                .setPositiveButton("Lukk") { dialoginterface, i -> } //TODO legge til animasjon senere
+                .setPositiveButton("Lukk") { dialoginterface, i -> }
                 .show()
+        }
+
+        // navigerer til nearest_station sin location-fragment
+        locationIcon.setOnClickListener {
+            Log.d("Du har", "klikket meg")
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationLocation(nearest_station)
+            root.findNavController().navigate(action)
         }
     }
 
+    //region [funfacts]
     private fun slideShow(command : String, dialog : AlertDialog.Builder){
         val animasjonsDialog : AlertDialog = dialog.create()
         if (command == "open") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen //animasjon
@@ -123,7 +136,7 @@ class HomeFragment : Fragment(){
         dialog.setTitle("Luftkvalitets-nivåer")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
-            .setPositiveButton("Lukk") { dialoginterface, i -> } //TODO legge til animasjon senere
+            .setPositiveButton("Lukk") { dialoginterface, i -> }
             .setNeutralButton("les mer") { dialog, which -> openValueList("next") }
         //dialog.show()
         slideShow(command, dialog)
@@ -155,7 +168,7 @@ class HomeFragment : Fragment(){
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { dialoginterface, i -> }
-            .setNeutralButton("Tilbake") { dialog, which ->
+            .setNeutralButton("Tilbake") { dialo, which ->
                 openValueList("back")}
         //dialog.show()
         slideShow("next", dialog)
@@ -223,6 +236,7 @@ class HomeFragment : Fragment(){
         //newDialog.show()
         slideShow("nextNext", newDialog)
     }
+    //endregion
 
     fun setAqiInformer(map: Map<String, Double>) {
         val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
@@ -234,25 +248,25 @@ class HomeFragment : Fragment(){
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(parseColor("#3F9F41"))
-                    aqiSentence.text = "Luftnivået er bra"
+                    aqiSentence.text = getString(R.string.luftnivaa_bra)
                     current_status = "Det er lite luftforurensning\nIkke nødvendig med noen spesielle tiltak."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
                     donut_color = "#3F9F41"
                 } "orange" -> {
                     aqiLevel.setTextColor(parseColor("#FFCB00"))
-                    aqiSentence.text = "Luftnivået er moderat"
+                    aqiSentence.text = getString(R.string.luftnivaa_moderat)
                     current_status = "Utendørs aktivitet anbefales for de fleste"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
                     donut_color = "#FFCB00"
             } "red" -> {
                     aqiLevel.setTextColor(parseColor("#C13500"))
-                    aqiSentence.text = "Luftnivået nivået er usunt for utsatte grupper"
+                    aqiSentence.text = getString(R.string.luftnivaa_utsatte)
                     current_status ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
                     donut_color = "#C13500"
                 } "purple" -> {
                     aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
-                    aqiSentence.text = "Luftnivået nivået er usunt"
+                    aqiSentence.text = getString(R.string.luftnivaa_usunt)
                     current_status ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
                     donut_color = "#4900AC"
@@ -295,7 +309,6 @@ class HomeFragment : Fragment(){
             }
         }
         // endrer tekst midt i donut og lager donut
-        Log.d("value", highest?.value.toString())
         aqiLevel.text = ("${highest?.value?.toInt().toString()} ug/m3")
         createDonut()
     }

@@ -32,7 +32,7 @@
         android:layout_width="230dp"
         android:layout_height="230dp"
         android:layout_below="@+id/stationName_location"
-        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="11dp"
         android:gravity="center"
         app:donut_bgLineColor="@color/light_gray"
@@ -110,6 +110,7 @@
         android:textColor="@color/black"
         android:textSize="25sp"
         android:textStyle="bold" />
+    
 
     <ImageView
         android:id="@+id/smiley_location"

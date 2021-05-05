@@ -17,6 +17,11 @@
             app:destination="@id/aboutAirqualityFragment"
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"/>
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_location"
+            app:destination="@id/navigation_location"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
 
     <fragment
