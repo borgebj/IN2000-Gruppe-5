@@ -43,6 +43,7 @@
     <string name="informasjon_om_appen">Informasjon om appen</string>
     <string name="informasjon_om_dataen">Informasjon om dataen</string>
 
+
     <string-array name="aqiFunfactList">
     <item>funfact 1</item>
     <item>funfact 2</item>
