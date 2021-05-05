@@ -110,7 +110,7 @@
         android:textColor="@color/black"
         android:textSize="25sp"
         android:textStyle="bold" />
-    
+
 
     <ImageView
         android:id="@+id/smiley_location"
