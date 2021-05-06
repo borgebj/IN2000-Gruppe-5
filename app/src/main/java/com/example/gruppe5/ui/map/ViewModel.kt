@@ -9,9 +9,9 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gruppe5.Stasjon
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -24,22 +24,17 @@ import kotlin.collections.HashMap
 class ViewModel : ViewModel() {
     init {
         parseData()
-        parseNiluData()
     }
 
     val nearest_station: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
-    val nearby_stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
+    val nearby_stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() } //TODO: fjern om ikke bruker
     
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
-
-    val niluStations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() } //TODO: fjern?
-
 
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
 
 
-    //region OVERFØR TIL VIEWMODEL !
     // henter JSON/XML via KHTTP -> til String
     fun getData(base: String, del: String): String {
         val full = "$base$del"
@@ -65,7 +60,6 @@ class ViewModel : ViewModel() {
                 val objekt = JSONObject(valueJson)
 
                 // main-data
-                val meta = objekt.getJSONObject("meta")
                 val data = objekt.getJSONObject("data")
 
                 // gaar gjennom listen med tidspunkter
@@ -104,23 +98,27 @@ class ViewModel : ViewModel() {
             val stasjoner = getStations()
             getValues(stasjoner)
             stations.postValue(stasjoner)
+
         }
     }
 
-    //region [midlertidig] TODO: fjern?
-    fun parseNiluData() {
-        val baseURL: String = "https://api.nilu.no/" // Nilu API url
+    // setter default-state til stasjon (i Oslo) med høyeste verdi
+    fun setDefaultState(stations: MutableList<Stasjon>) {
+        var current_highest_station: Stasjon? = stations.random()
+        var current_highest_value = 0.0
 
-        fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURL, "/lookup/stations"), Array<Stasjon>::class.java).toMutableList()
-
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val stations = getStations()
-            niluStations.postValue(stations)
-        }
+        for (stasjon in stations) {
+            if (stasjon.kommune.name == "Oslo") {
+                val highest = stasjon.verdier.maxBy { it.value }
+                if (highest != null)
+                    if (highest.value > current_highest_value) {
+                        current_highest_value = highest.value
+                        current_highest_station = stasjon
+                    }
+            }
+        };
+        nearest_station.postValue(current_highest_station)
     }
-    //endregion
-
 
     //region [nearby stations]
     @SuppressLint("MissingPermission")
@@ -128,54 +126,59 @@ class ViewModel : ViewModel() {
         var nearest : Stasjon? = null
         var closest: Float = 100000.00F
 
+
         if (GpsStatus) {
-            fusedLocationClient.lastLocation.addOnSuccessListener {
+            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 for (stasjon in stations) {
-
-                    // oppretter Location-objekter
-                    val myLocation = Location("")
-                    myLocation.latitude = it.latitude
-                    myLocation.longitude = it.longitude
-
-                    val stationLocation = Location("")
-                    stationLocation.latitude = stasjon.latitude
-                    stationLocation.longitude = stasjon.longitude
-
-                    // sammenligner avstand mellom "her" og markoer, og sjekker hvem er naermest
-                    val distance = myLocation.distanceTo(stationLocation)
-                    if (distance <= closest) {
-                        closest = distance
-                        nearest = stasjon
+                    if (location == null) {
+                        setDefaultState(stations); break
                     }
-                }; nearest_station.postValue(nearest)
-            }
-        } else {
-        //TODO default state
-        }
-    }
+                    else {
+                        // oppretter Location-objekter
+                        val myLocation = Location("")
+                        myLocation.latitude = location.latitude
+                        myLocation.longitude = location.longitude
 
-    @SuppressLint("MissingPermission")
-    fun findNearbyStations(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
-        val nearby: MutableList<Stasjon> = mutableListOf()
+                        val stationLocation = Location("")
+                        stationLocation.latitude = stasjon.latitude
+                        stationLocation.longitude = stasjon.longitude
 
-        if (GpsStatus) {
-            fusedLocationClient.lastLocation.addOnSuccessListener {
-
-                for (stasjon in stations) {
-                    val myCoordinates = LatLng(it.latitude, it.longitude)
-                    val stationCoordiantes = LatLng(stasjon.latitude, stasjon.longitude)
-
-                    // henter stasjoner innen en 10km radius (ca, ish 11.1 km)
-                    if (stationCoordiantes.latitude <= myCoordinates.latitude + 0.1 && stationCoordiantes.latitude >= myCoordinates.latitude - 0.1) {
-                        if (stationCoordiantes.longitude <= myCoordinates.longitude + 0.1 && stationCoordiantes.longitude >= myCoordinates.longitude - 0.1) {
-                            nearby.add(stasjon)
+                        // sammenligner avstand mellom "her" og markoer, og sjekker hvem er naermest
+                        val distance = myLocation.distanceTo(stationLocation)
+                        if (distance <= closest) {
+                            closest = distance
+                            nearest = stasjon
                         }
-                    }
-                }; nearby_stations.postValue(nearby)
+                    }; nearest_station.postValue(nearest)
+                }
             }
-        } else {
-        //TODO default state (?)
         }
+        else setDefaultState(stations)
     }
+
+//    @SuppressLint("MissingPermission")
+//    fun findNearbyStations(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
+//        val nearby: MutableList<Stasjon> = mutableListOf()
+//
+//        if (GpsStatus) {
+//            fusedLocationClient.lastLocation.addOnSuccessListener {
+//
+//                for (stasjon in stations) {
+//                    val myCoordinates = LatLng(it.latitude, it.longitude)
+//                    val stationCoordiantes = LatLng(stasjon.latitude, stasjon.longitude)
+//
+//                    // henter stasjoner innen en 10km radius (ca, ish 11.1 km)
+//                    if (stationCoordiantes.latitude <= myCoordinates.latitude + 0.1 && stationCoordiantes.latitude >= myCoordinates.latitude - 0.1) {
+//                        if (stationCoordiantes.longitude <= myCoordinates.longitude + 0.1 && stationCoordiantes.longitude >= myCoordinates.longitude - 0.1) {
+//                            nearby.add(stasjon)
+//                        }
+//                    }
+//                }; nearby_stations.postValue(nearby)
+//            }
+//        } else {
+//        //TODO default state (?)
+//        }
+//    }
+
     //endregion
 }

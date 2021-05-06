@@ -1,5 +1,6 @@
 package com.example.gruppe5.ui.settings
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
@@ -12,9 +13,9 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
-import com.example.gruppe5.ui.favorites.FavoritesFragment
 
 
 class SettingsFragment : Fragment() {
@@ -26,6 +27,7 @@ class SettingsFragment : Fragment() {
     private lateinit var luftkvalitetKnapp: Button
     private lateinit var appKnapp: Button
     private lateinit var dataKnapp: Button
+    private var teksten: String = ""
 
 
     override fun onCreateView(
@@ -36,8 +38,8 @@ class SettingsFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
-        setCondition(root)
-        setLocation(root)
+        setCondition()
+        setLocation()
         setAboutAirquality(root)
         setAboutApp(root)
         setAboutData(root)
@@ -45,12 +47,10 @@ class SettingsFragment : Fragment() {
         return root
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         settingsModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-        settingsModel.text.observe(viewLifecycleOwner, {
-        })
+        settingsModel.text.observe(viewLifecycleOwner) {}
     }
 
     fun assignId(root: View) {
@@ -62,27 +62,58 @@ class SettingsFragment : Fragment() {
     }
 
 
-    private fun setLocation(root: View) {
+    private fun setLocation() {
         lokasjonKnapp.setOnClickListener{
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            setCondition(root)
+            setCondition()
         }
     }
 
 
-    private fun setCondition(root: View) {
+    @SuppressLint("SetTextI18n")
+    private fun setCondition() {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (location) {
-            lokasjonKnapp.text = "På"
+        teksten = if (location) {
+            "På"
         } else {
+            "Av"
+        }
+    }
+
+    override fun onResume() {  // After a pause OR at startup
+        super.onResume()
+        lokasjonKnapp.text = teksten
+        //Refresh your stuff here
+    }
+
+    /*
+fun refresh() {
+    val intent = Intent(this.context, SettingsFragment::class.java)
+    startActivity(intent)
+}
+
+*/
+
+    /*
+    fun settLokasjon(){
+        if (sjekk){
+            lokasjonKnapp.text = "På"
+        } else{
             lokasjonKnapp.text = "Av"
         }
     }
 
+     */
+
+    /*
     private fun refresh(root: View) {
-        root.findNavController().navigate(R.id.navigation_settings)
+        root.refreshDrawableState()
+
     }
+
+     */
+
 
         /* FORSØK PÅ Å FJERNE POSISJONSKNAPPEN PÅ KARTET:
 

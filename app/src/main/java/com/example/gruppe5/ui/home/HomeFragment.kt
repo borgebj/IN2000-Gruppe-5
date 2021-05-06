@@ -1,14 +1,15 @@
 package com.example.gruppe5.ui.home
 
-import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.graphics.Color
+import android.content.Context
 import android.graphics.Color.*
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
@@ -19,54 +20,60 @@ import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
-import java.util.*
-import kotlin.math.max
+import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ui.map.MapsFragmentDirections
+import com.example.gruppe5.ui.map.ViewModel
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 
 
 class HomeFragment : Fragment(){
 
     // globale variabler
-    private lateinit var homeModel: HomeViewModel
+    private lateinit var viewModel: ViewModel
     lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
     lateinit var aqiSmiley : ImageView
+    lateinit var recommendation : Button
+    lateinit var locationIcon : ImageButton
+
+    lateinit var root : View
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+    var locationManager: LocationManager? = null
+    var GpsStatus = false
+    var nearest_station: Stasjon? = null
+    var current_status: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
-        val section1 = DonutSection(
-            name = "normal_pollution",
-            color = Color.parseColor("#FF46E33B"),
-            amount = 60f
-        )
-        val section2 = DonutSection(
-            name = "warning_pollution",
-            color = Color.parseColor("#FFDDE33B"),
-            amount = 20f
-        )
-        val section3 = DonutSection(
-            name = "dangerous_pollution",
-            color = Color.parseColor("#FFE33B3B"),
-            amount = 10f
-        )
+        this.root = root
 
         assignId(root)
+        CheckGpsStatus()
+        getPollutionLevel()
         setOnClickers(root)
-        setAqiInformer(root)
-        test2(root)
-
-        donutView.cap = 100f
-        donutView.submitData(listOf(section1,section2,section3))
 
         return root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        homeModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        homeModel.text.observe(viewLifecycleOwner, Observer {
-            textView.text = it
+    @JvmName("getPollutionLevel1")
+    fun getPollutionLevel(){
+        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
+        viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
+            viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
+            viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
+                nearest_station = nearest
+                val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
+                Log.d("highest", highest.toString())
+                if (highest != null) {
+                    nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
+                    Log.d("Start", "setter AQI informer")
+                }
+                if (nearest.name.length > 8) textView.textSize = 32F
+                textView.text = nearest.name
+            })
         })
     }
 
@@ -76,18 +83,42 @@ class HomeFragment : Fragment(){
         aqiLevel = root.findViewById(R.id.aqiLvlHome)
         aqiSentence = root.findViewById(R.id.aqiSentence_home)
         aqiSmiley = root.findViewById(R.id.smiley_home)
+        recommendation = root.findViewById(R.id.recommendation)
+        locationIcon = root.findViewById(R.id.iconLocation_home)
+    }
+
+    fun CheckGpsStatus() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
     // setter onClickers for kart og API_test
     fun setOnClickers(root: View){
-        //TODO: Implementer fremtids-onclickers
         //infoknapp
         val infoButton : ImageButton = root.findViewById(R.id.info_home)
         infoButton.setOnClickListener{
             alertView(getString(R.string.str_info), root, "open")
         }
+        //knapp for visning av anbefalinger for current luftnivaa status
+        recommendation.setOnClickListener {
+            val dialog = AlertDialog.Builder(context)
+            dialog.setTitle("Anbefaling til nåværende luftnivå")
+                .setIcon(R.drawable.ic_info)
+                .setMessage(current_status)
+                .setPositiveButton("Lukk") { dialoginterface, i -> }
+                .show()
+        }
+
+        // navigerer til nearest_station sin location-fragment
+        locationIcon.setOnClickListener {
+            Log.d("Du har", "klikket meg")
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationLocation(nearest_station)
+            root.findNavController().navigate(action)
+        }
     }
 
+    //region [funfacts]
     private fun slideShow(command : String, dialog : AlertDialog.Builder){
         val animasjonsDialog : AlertDialog = dialog.create()
         if (command == "open") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen //animasjon
@@ -102,10 +133,10 @@ class HomeFragment : Fragment(){
     private fun alertValuesView(message: String, command : String) {
         val dialog = AlertDialog.Builder(context)
 
-        dialog.setTitle("AQI nivåer")
+        dialog.setTitle("Luftkvalitets-nivåer")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
-            .setPositiveButton("Lukk") { dialoginterface, i -> } //legge til animasjon senere
+            .setPositiveButton("Lukk") { dialoginterface, i -> }
             .setNeutralButton("les mer") { dialog, which -> openValueList("next") }
         //dialog.show()
         slideShow(command, dialog)
@@ -137,7 +168,7 @@ class HomeFragment : Fragment(){
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { dialoginterface, i -> }
-            .setNeutralButton("Tilbake") { dialog, which ->
+            .setNeutralButton("Tilbake") { dialo, which ->
                 openValueList("back")}
         //dialog.show()
         slideShow("next", dialog)
@@ -205,90 +236,81 @@ class HomeFragment : Fragment(){
         //newDialog.show()
         slideShow("nextNext", newDialog)
     }
+    //endregion
 
-    //TODO bruk av LiveData fra ViewModel for aa hente stasjoner, og lokasjon for aa hente naermeste stasjon (begge disse blir gjort i MapFragment ;)
-    @SuppressLint("ResourceAsColor")
-    fun setAqiInformer(root: View) {
-        //skal finne hoyeste tallet bland aqiverdier, og sette det på homepage. farge og emoji skal endres etter verdien.
-        var aqiValuesList = listOf(6, 250, 12, 36) //midlertidig aqi liste
-        val highestIndex = aqiValuesList.maxOrNull() ?: 0
-
-        if (highestIndex < 50) { //bra verdi
-            aqiLevel.setTextColor(GREEN)
-            aqiSentence.text = "AQI nivået er bra"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
-        }
-        else if (highestIndex > 50 && highestIndex < 100){
-            aqiLevel.setTextColor(YELLOW)
-            aqiSentence.text = "AQI nivået er moderat"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-        }
-        else if (highestIndex > 100 && highestIndex < 150){
-            aqiLevel.setTextColor(YELLOW) //endres til oransje
-            aqiSentence.text = "AQI nivået er usunt for utsatte grupper"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
-        }
-        else if (highestIndex > 150 && highestIndex < 200){
-            aqiLevel.setTextColor(RED) //endres til oransje
-            aqiSentence.text = "AQI nivået er usunt"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
-        }
-        else if (highestIndex > 200 && highestIndex < 300){
-            aqiLevel.setTextColor(RED) //endres til LILLA
-            aqiSentence.text = "AQI nivået er veldig usunt"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
-        }
-        else if (highestIndex > 300){
-            aqiLevel.setTextColor(YELLOW) //endres til MAROON (?)
-            aqiSentence.text = "AQI nivået er helseskadelig"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
-        }
-        aqiLevel.text = (highestIndex.toString() + " AQI")
-    }
-
-    @SuppressLint("ResourceAsColor")
-    fun test2(root: View) {
-        val map = mapOf<String, Double>("no2" to 6.00, "pm10" to 250.00, "pm25" to 12.00, "o3" to 36.00)
+    fun setAqiInformer(map: Map<String, Double>) {
         val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
+        var donut_color : String = "#808080"
+
+
+        // endrer diverse visuelt, blant annet textview for å fortelle om luften er bra eller ikke, endre farger og ikoner
+        fun changeVisuals(level : String)   {
+            when(level) {
+                "green" -> {
+                    aqiLevel.setTextColor(parseColor("#3F9F41"))
+                    aqiSentence.text = getString(R.string.luftnivaa_bra)
+                    current_status = "Det er lite luftforurensning\nIkke nødvendig med noen spesielle tiltak."
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                    donut_color = "#3F9F41"
+                } "orange" -> {
+                    aqiLevel.setTextColor(parseColor("#FFCB00"))
+                    aqiSentence.text = getString(R.string.luftnivaa_moderat)
+                    current_status = "Utendørs aktivitet anbefales for de fleste"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+                    donut_color = "#FFCB00"
+            } "red" -> {
+                    aqiLevel.setTextColor(parseColor("#C13500"))
+                    aqiSentence.text = getString(R.string.luftnivaa_utsatte)
+                    current_status ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
+                    donut_color = "#C13500"
+                } "purple" -> {
+                    aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
+                    aqiSentence.text = getString(R.string.luftnivaa_usunt)
+                    current_status ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
+                    donut_color = "#4900AC"
+                }
+            }
+        }
+
+        // donutview-seksjonen for nivaaet
+        fun createDonut() {
+            val donut_section = highest?.value?.let { DonutSection("pollution level", parseColor(donut_color), it.toFloat()) }
+            donutView.cap = 500f
+            if (donut_section != null) donutView.submitData(listOf(donut_section))
+        }
 
         if (highest != null)
         when (highest.key) {
             "no2" -> {
-                if (highest.value <= 100.0) {
-
-                } else if (highest.value in 100.0..200.0) {
-
-                } else if (highest.value in 200.0..400.0) {
-
-                } else if (highest.value >= 400.0) { }
+                if (highest.value <= 100.0) changeVisuals("green")
+                else if (highest.value in 100.0..200.0) changeVisuals("orange")
+                else if (highest.value in 200.0..400.0) changeVisuals("red")
+                else if (highest.value >= 400.0) changeVisuals("purple")
             }
             "pm10" -> {
-                if (highest.value <= 60.0) {
-
-                } else if (highest.value in 60.0..120.0) {
-
-                } else if (highest.value in 120.0..400.0) {
-
-                } else if (highest.value >= 400.0) { }
+                if (highest.value <= 60.0) changeVisuals("green")
+                else if (highest.value in 60.0..120.0) changeVisuals("orange")
+                else if (highest.value in 120.0..400.0) changeVisuals("red")
+                else if (highest.value >= 400.0) changeVisuals("purple")
             }
             "pm25" -> {
-                if (highest.value <= 30.0) {
-
-                } else if (highest.value in 30.0..50.0) {
-
-                } else if (highest.value in 50.0..150.0) {
-
-                } else if (highest.value >= 150.0) { }
+                if (highest.value <= 30.0) changeVisuals("green")
+                else if (highest.value in 30.0..50.0) changeVisuals("orange")
+                else if (highest.value in 50.0..150.0) changeVisuals("red")
+                else if (highest.value >= 150.0) changeVisuals("purple")
             }
             "o3" -> {
-                if (highest.value <= 100.0) {
-
-                } else if (highest.value in 100.0..180.0) {
-
-                } else if (highest.value in 180.0..240.0) {
-
-                } else if (highest.value >= 240.0) { }
+                if (highest.value <= 100.0) changeVisuals("green")
+                else if (highest.value in 100.0..180.0) changeVisuals("orange")
+                else if (highest.value in 180.0..240.0) changeVisuals("red")
+                else if (highest.value >= 240.0) changeVisuals("purple")
             }
         }
+        // endrer tekst midt i donut og lager donut
+        aqiLevel.text = ("${highest?.value?.toInt().toString()} ug/m3")
+        createDonut()
     }
 }
+

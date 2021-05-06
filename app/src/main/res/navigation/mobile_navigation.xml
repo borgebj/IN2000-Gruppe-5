@@ -17,6 +17,11 @@
             app:destination="@id/aboutAirqualityFragment"
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"/>
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_location"
+            app:destination="@id/navigation_location"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit" />
     </fragment>
 
     <fragment
@@ -31,6 +36,15 @@
             app:destination="@id/navigation_location"
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"/>
+        <action
+            android:id="@+id/action_navigation_map_to_navigation_search"
+            app:destination="@id/navigation_search" />
+        <argument
+            android:name="map"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+
     </fragment>
 
     <fragment
@@ -50,6 +64,12 @@
         <action
             android:id="@+id/action_navigation_location_to_self"
             app:destination="@id/navigation_location"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"
+            />
+        <action
+            android:id="@+id/action_navigation_location_to_navigation_favorites"
+            app:destination="@id/navigation_favorites"
             app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i"
             />
@@ -86,6 +106,8 @@
         <action
             android:id="@+id/action_navigation_favorites_self"
             app:destination="@id/navigation_favorites"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"
             />
         <action
             android:id="@+id/action_navigation_favorites_to_navigation_location"
@@ -138,9 +160,17 @@
         <action
             android:id="@+id/action_navigation_search_to_navigation_favorites"
             app:destination="@id/navigation_favorites"
-            app:enterAnim="@transition/slide_left"
-            app:popEnterAnim="@transition/slide_left_i"/>
+            app:enterAnim="@transition/slide_right" />
+        <action
+            android:id="@+id/action_navigation_search_to_navigation_map"
+            app:destination="@id/navigation_map" />
+        <argument
+            android:name="map"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
+
     <fragment
         android:id="@+id/aboutAirqualityFragment"
         android:name="com.example.gruppe5.ui.settings.AboutAirqualityFragment"

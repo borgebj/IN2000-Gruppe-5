@@ -1,5 +1,16 @@
 package com.example.gruppe5.ui.location
 
+import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
+import com.github.mikephil.charting.charts.HorizontalBarChart
+import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.ValueFormatter
+import com.example.gruppe5.ui.location.LocationFragmentArgs.Companion as LocationFragmentArgs1
+
 //bibloteker som hører til søylediagrammet og sirkel/donut diagrammet
 import android.annotation.SuppressLint
 import android.app.AlertDialog
@@ -16,30 +27,21 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
-import com.example.gruppe5.R
-import com.example.gruppe5.Stasjon
-import com.github.mikephil.charting.charts.HorizontalBarChart
-import com.github.mikephil.charting.components.Description
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
-import com.example.gruppe5.ui.location.LocationFragmentArgs.Companion as LocationFragmentArgs1
+import app.futured.donut.DonutProgressView
+import app.futured.donut.DonutSection
 
 class LocationFragment : Fragment() {
-
-<<<<<<< Updated upstream
     private lateinit var viewModel : LocationViewModel
-
-    lateinit var stasjonNavn : TextView
-    lateinit var aqiLevel : TextView
-    lateinit var aqiSentence : TextView
-    lateinit var verdiNivaer : TextView
-    lateinit var stasjon: Stasjon
-    lateinit var barDataSet : BarDataSet
-    lateinit var HorBarChart : HorizontalBarChart          //  NYESTE BAR CHART
-    private var pm10Percentage : Float = 0.0f
+    private lateinit var stasjonNavn : TextView
+    private lateinit var aqiLevel : TextView                         //aqi = air quality index, sier noe om luftkvaliteten
+    private lateinit var aqiSentence : TextView
+    private lateinit var verdiNivaer : TextView                      //overskrift for horisontalt søylediagram
+    private lateinit var aqiSmiley : ImageView
+    private lateinit var donutView : DonutProgressView
+    private lateinit var stasjon: Stasjon                            //Fragmentets stasjon
+    private lateinit var barDataSet : BarDataSet
+    private lateinit var HorBarChart : HorizontalBarChart
+    private var pm10Percentage : Float = 0.0f                        //viser helserisikoen til forurensningstypene i %
     private var pm25Percentage : Float = 0.0f
     private var no2Percentage : Float = 0.0f
     private var o3percentage : Float = 0.0f
@@ -50,46 +52,26 @@ class LocationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         val root: View = inflater.inflate(R.layout.fragment_location, container, false)
+        val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
 
         assignId(root)
         setOnClickers(root)
-        //setupBarchart(root)
 
-        setSkillGraph(root)
-
-        val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
-
-        if (stasjon != null) { // fra Map
+        if (stasjon != null) {    // fra Map
             this.stasjon = stasjon
             stasjonNavn.text = stasjon.name
-
+            setAqiInformer(stasjon.verdier)
             Log.d("mine verdier", stasjon.verdier.toString())
         }
-        else { // fra Favorite
+        else {                    // fra Favorite
             val args = arguments
             if (args != null) {
-                val myStasjon: Stasjon? = args?.getParcelable("location") as Stasjon?
+                val myStasjon: Stasjon? = args.getParcelable("location") as Stasjon?
                 this.stasjon = myStasjon!!
                 stasjonNavn.text = myStasjon?.name
                 Log.d("fra favorite", myStasjon.toString())
-=======
-        private lateinit var viewModel : LocationViewModel
-        private lateinit var stasjonNavn : TextView
-        private lateinit var aqiLevel : TextView                         //aqi = air quality index, sier noe om luftkvaliteten
-        private lateinit var aqiSentence : TextView
-        private lateinit var verdiNivaer : TextView                      //overskrift for horisontalt søylediagram
-        private lateinit var aqiSmiley : ImageView
-        private lateinit var donutView : DonutProgressView
-        private lateinit var stasjon: Stasjon                            //Fragmentets stasjon
-        private lateinit var barDataSet : BarDataSet
-        private lateinit var HorBarChart : HorizontalBarChart
-        private var pm10Percentage : Float = 0.0f                //viser helserisikoen til forurensningstypene i %
-        private var pm25Percentage : Float = 0.0f
-        private var no2Percentage : Float = 0.0f
-        private var o3percentage : Float = 0.0f
-
+        
         override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -104,6 +86,8 @@ class LocationFragment : Fragment() {
                 this.stasjon = stasjon
                 stasjonNavn.text = stasjon.name
                 Log.d("mine verdier", stasjon.verdier.toString())
+                setAqiInformer(myStasjon.verdier)
+                stasjonNavn.text = myStasjon.name
             }
             //henter stasjon fra favorite fragmentet, og setter den til instansvariabelen.
             else {
@@ -116,21 +100,17 @@ class LocationFragment : Fragment() {
                     Log.d("fra favorite", myStasjon.toString())
                 }
                 else Log.d("bundle == null", "HER")
->>>>>>> Stashed changes
             }
             setChart() // oppretter søylediagrammet
             return root
         }
-<<<<<<< Updated upstream
+        seChart() // oppretter søylediagrammet
         return root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
-        viewModel.text.observe(viewLifecycleOwner, Observer {
-            //stasjonNavn.text = it
-        })
     }
 
     fun assignId(root: View) {
@@ -138,10 +118,10 @@ class LocationFragment : Fragment() {
         aqiLevel = root.findViewById(R.id.aqiLevel_location)
         aqiSentence = root.findViewById(R.id.aqiSentence_location)
         verdiNivaer = root.findViewById(R.id.verdiNivaer_location)
-        //barchart = root.findViewById(R.id.ski)
+        aqiSmiley = root.findViewById(R.id.smiley_location)
+        donutView = root.findViewById(R.id.donut_view_location)
     }
-=======
-
+          
         override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
             viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
@@ -156,7 +136,6 @@ class LocationFragment : Fragment() {
             donutView = root.findViewById(R.id.donut_view_location)
             HorBarChart = root.findViewById(R.id.hor_bar_chart)
         }
->>>>>>> Stashed changes
 
         //setter oppa aksene og andre nødvendige detaljer for det horisontale bar chartet
         private fun setChart() {
@@ -189,7 +168,6 @@ class LocationFragment : Fragment() {
                     return values[value.toInt()]
                 }
             }
-<<<<<<< Updated upstream
         })
 
         val yRight = HorBarChart.axisRight
@@ -197,11 +175,11 @@ class LocationFragment : Fragment() {
         yRight.setDrawGridLines(false)
         yRight.isEnabled = false
         setGraphData()                                  //setter plasseringen, og annen formattering
-        HorBarChart.animateY(2000)    //animasjon
+        HorBarChart.animateY(2000)                      //animasjon
     }
 
     //metoden returnerer et dangerLevel fra 1-4(4=farligst), ved å regne ut. setter samtidig hver enkelte prosent.
-    private fun calculateDangerLevel(liveValue : Int, polType : String) : Int{
+    private fun calculateDangerLevel(liveValue: Double?, polType: String) : Int{
         //initaliserer verdier som brukes til å kalkulere prosent, og hvor farlig prosenten er for den gitte typen.
         var topValue = 0                         //verdien viser max eksponering av ug/m3 i timesmiddel før det blir svært alvorlig. Kan hete maxvalue, men blir misvisende siden verdien kan overstige nivået
         var percentage : Float                   //prosenten for anbefalt eksponering
@@ -217,28 +195,28 @@ class LocationFragment : Fragment() {
         else if (polType == "o3"){ topValue = 240; dangerLimit1 = 41; dangerLimit2 = 75 }
 
         //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
-        percentage = (liveValue.toFloat() / topValue.toFloat()) * 100f
-        if (polType == "pm10"){ pm10Percentage = percentage }
-        else if (polType == "pm25"){ pm25Percentage = percentage }
-        else if (polType == "no2"){ no2Percentage = percentage }
-        else if (polType == "o3"){ o3percentage = percentage }
+        if (liveValue != null) {
+            percentage = (liveValue.toFloat() / topValue.toFloat()) * 100f
+            if (polType == "pm10") pm10Percentage = percentage
+            else if (polType == "pm25") pm25Percentage = percentage
+            else if (polType == "no2") no2Percentage = percentage
+            else if (polType == "o3") o3percentage = percentage
 
-        //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
-        if (percentage < dangerLimit1){ dangerLevel = 1 }
-        else if (percentage > dangerLimit1 && percentage < dangerLimit2){ dangerLevel = 2 }
-        else if (percentage > dangerLimit2 && percentage < dangerLimit3){ dangerLevel = 3 }
-        else if (percentage > dangerLimit3){ dangerLevel = 4 }
 
+            //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
+            if (percentage < dangerLimit1) dangerLevel = 1
+            else if (percentage > dangerLimit1 && percentage < dangerLimit2) dangerLevel = 2
+            else if (percentage > dangerLimit2 && percentage < dangerLimit3) dangerLevel = 3
+            else if (percentage > dangerLimit3) dangerLevel = 4
+        }
         return dangerLevel
     }
-=======
 
             val yRight = HorBarChart.axisRight
             yRight.isEnabled = false                        //hindrer at tekst kommer på nederste aksen
             setGraphData()                                  //egen metode. setter plasseringen, og annen formattering
             HorBarChart.animateY(2000)         //animasjon for når søylene "bygges"
         }
->>>>>>> Stashed changes
 
         //setter deler av designet og selve dataen.
         private fun setGraphData() {
@@ -254,14 +232,13 @@ class LocationFragment : Fragment() {
             HorBarChart.invalidate()
         }
 
-<<<<<<< Updated upstream
     //metoden setter opp ting
     private fun setValues(){
         //her settes verdiene fra APIet i søylene.
-        val pm10lvl = calculateDangerLevel(50, "pm10")
-        val pm25lvl = calculateDangerLevel(40, "pm25")
-        val no2lvl = calculateDangerLevel(300, "no2")
-        val o3lvl = calculateDangerLevel(250, "o3")
+        val pm10lvl = calculateDangerLevel(stasjon.verdier["pm10"], "pm10")
+        val pm25lvl = calculateDangerLevel(stasjon.verdier["pm25"], "pm25")
+        val no2lvl = calculateDangerLevel(stasjon.verdier["no2"], "no2")
+        val o3lvl = calculateDangerLevel(stasjon.verdier["o3"], "o3")
 
         //liste over innganger/startplassring       - OBS, disse kan endres med apinivået
         val entries = ArrayList<BarEntry>()
@@ -294,7 +271,7 @@ class LocationFragment : Fragment() {
         HorBarChart.data = data                     //avslutningsvis: sett dataen og refresh grafen
         HorBarChart.invalidate()
         }
-=======
+  
         //metoden returnerer et dangerLevel fra 1-4(4=farligst), ved å regne ut. setter samtidig hver enkelte globale prosentvariabel.
         private fun calculateDangerLevel(liveValue: Double?, polType: String) : Int{
             //initaliserer verdier som brukes til å kalkulere prosent, og hvor farlig prosenten er for den gitte typen.
@@ -314,6 +291,7 @@ class LocationFragment : Fragment() {
                 "o3" -> { topValue = 240; dangerLimit1 = 41; dangerLimit2 = 75 }
                 //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
             }
+    }
 
             //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
             if (liveValue != null) {
@@ -324,7 +302,6 @@ class LocationFragment : Fragment() {
                     "no2" -> no2Percentage = percentage
                     "o3" -> o3percentage = percentage
                 }
->>>>>>> Stashed changes
 
                 //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
                 if (percentage < dangerLimit1) dangerLevel = 1
@@ -374,7 +351,6 @@ class LocationFragment : Fragment() {
             )
         }
 
-<<<<<<< Updated upstream
     //kalles i metoden ovenfor. Åpner liste med ulike verdier, som man kan velge i for deretter å få en forklaring. åpnes når det trykkes "les mer"
     private fun openValueList(command : String, root : View){
         // setter opp alert builder
@@ -383,14 +359,15 @@ class LocationFragment : Fragment() {
             .setNeutralButton("Tilbake") { dialog, which -> alertValuesView(getString(R.string.str_info_values), "back", root)}
 
         //ToDO - endre til stasjon.verawidi
-        val values = arrayOf("NO2", "PM10", "PM2,5", "O3")
+        //val values = arrayOf("NO2", "PM10", "PM2,5", "O3")
+        val values = stasjon.verdier.keys.toTypedArray() //TODO: fra Børge: Idk hva du mente så sjekk om dette fungerer :)
         builder.setItems(values) { dialog, which ->
             when (which) {
                 0 -> {displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, er dager som oftest blir vi utsatt for de høyeste konsentrasjonene om vinteren på kalde dager med lite vind, og spesielt på trafikkerte veier og i tunneler. Oslo og Bergen har hatt de høyeste verdiene.", root )}           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
                 1 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000 000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.", root)}
                 2 -> {displayTypeFact("pm2,5 er betegnelse på partikler med diameter under 2,5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.", root)}
                 3 -> {displayTypeFact("o3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke luftveisfunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.", root)} //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
-=======
+
         //setter onclicklisteners for infoknappene. åpner hver sine dialoger, og sender med tekst fra Strings, kommando for animasjon og root
         private fun setOnClickers(root: View){
             val infoButton1 : ImageButton = root.findViewById(R.id.info1_location)
@@ -400,7 +377,6 @@ class LocationFragment : Fragment() {
             val infoButton2 : ImageButton = root.findViewById(R.id.info2_location)
             infoButton2.setOnClickListener{
                 alertValuesView(getString(R.string.str_info_values), "open", root)
->>>>>>> Stashed changes
             }
         }
 
@@ -429,6 +405,7 @@ class LocationFragment : Fragment() {
             slideShow(command, dialog)
         }
 
+        //åpner bildet som viser grenseverdiene i infovinduet
         private fun displayTable(root : View){
             val image = ImageView(context)
             image.setImageResource(R.drawable.health_risk_table)
@@ -457,7 +434,6 @@ class LocationFragment : Fragment() {
                 }
             }
 
-<<<<<<< Updated upstream
     //viser fram fun facts etter man har trykket på infoknappen og "les funfacts"
     private fun displayFunfacts(root: View) {
         val facts = listOf(
@@ -499,14 +475,10 @@ class LocationFragment : Fragment() {
             .setNegativeButton("tilbake") {
                     dialog, which ->
                 alertView(getString(R.string.str_info), root, "back")}
-        //newDialog.show()
         slideShow("nextNext", newDialog)
-            //.setNeutralButton("Tilbake") { dialog, which -> openValueList() }
     }
-=======
             slideShow(command, dialog)
         }
->>>>>>> Stashed changes
 
         //for hver av typene i lista.
         private fun displayTypeFact(message: String, root : View){
@@ -531,7 +503,6 @@ class LocationFragment : Fragment() {
             slideShow(command, dialogB)
         }
 
-<<<<<<< Updated upstream
     fun setAqiInformer(root: View) {
         //skal finne hoyeste tallet bland aqiverdier, og sette det på homepage. farge og emoji skal endres etter verdien.
         var aqiValuesList = listOf(6, 250, 12, 36) //midlertidig aqi liste
@@ -563,14 +534,55 @@ class LocationFragment : Fragment() {
             aqiLevel.setTextColor(Color.RED) //endres til LILLA
             aqiSentence.text = "AQI nivået er veldig usunt"
             aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
+
+    //viser dialog/pop up vindu. brukes for infoknapper
+    private fun alertView(message: String) {
+        val dialog = AlertDialog.Builder(context)
+        dialog.setTitle("Hva er AQI?")
+            .setIcon(R.drawable.ic_info)
+            .setMessage(message)
+            .setPositiveButton("Lukk",
+                { dialoginterface, i -> }).show()
+    }
+
+    fun setAqiInformer(map: Map<String, Double>) {
+        val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
+        var donut_color : String = "#808080"
+
+        fun changeVisuals(level : String)   {
+            when(level) {
+                "green" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#3F9F41"))
+                    aqiSentence.text = "Luftnivået er bra"
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                    donut_color = "#3F9F41"
+                } "orange" -> {
+                aqiLevel.setTextColor(Color.parseColor("#FFCB00"))
+                aqiSentence.text = "Luftnivået er moderat"
+                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+                donut_color = "#FFCB00"
+            } "red" -> {
+                aqiLevel.setTextColor(Color.parseColor("#C13500"))
+                aqiSentence.text = "Luftnivået nivået er usunt for utsatte grupper"
+                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
+                donut_color = "#C13500"
+            } "purple" -> {
+                aqiLevel.setTextColor(Color.parseColor("#4900AC")) //endres til oransje
+                aqiSentence.text = "Luftnivået nivået er usunt"
+                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
+                donut_color = "#4900AC"
+            }
+            }
         }
-        else if (highestIndex > 300){
-            aqiLevel.setTextColor(Color.YELLOW) //endres til MAROON (?)
-            aqiSentence.text = "AQI nivået er helseskadelig"
-            aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl5)
+
+        // donutview-seksjonen for nivaaet
+        fun createDonut() {
+            val donut_section = highest?.value?.let { DonutSection("pollution level", Color.parseColor(donut_color), it.toFloat()) }
+            donutView.cap = 500f
+            if (donut_section != null) donutView.submitData(listOf(donut_section))
         }
         aqiLevel.text = (highestIndex.toString() + " AQI")
-=======
+
         //viser fram fun facts etter man har trykket på infoknappen og "les funfacts"
         private fun displayFunfacts(root: View) {
             val facts = listOf(
@@ -680,7 +692,6 @@ class LocationFragment : Fragment() {
         // endrer tekst midt i donuten og lager donuten
         aqiLevel.text = (highest?.value?.toInt().toString() + " μg/m3")
         createDonut()
->>>>>>> Stashed changes
     }
 }
 

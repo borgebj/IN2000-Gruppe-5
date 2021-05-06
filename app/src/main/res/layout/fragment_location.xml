@@ -68,6 +68,8 @@
     <!-- Sentrert tekst -->
     <TextView
         android:id="@+id/stationName_location"
+        android:foregroundGravity="center"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="22dp"
         android:foregroundGravity="center"
@@ -82,8 +84,6 @@
         app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintTop_toTopOf="@id/HorGuideline" />
 
-<<<<<<< Updated upstream
-=======
     <!--
             <TextView
                 android:layout_width="385dp"
@@ -95,21 +95,25 @@
     -->
 
     <!-- Donut som viser luftkvalitetnivået.-->
->>>>>>> Stashed changes
     <app.futured.donut.DonutProgressView
         android:id="@+id/donut_view_location"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:donut_animationDuration="1500"
         android:layout_centerInParent="true"
+
+    <app.futured.donut.DonutProgressView
+        android:id="@+id/donut_view_location"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_below="@+id/stationName_location"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="11dp"
         android:gravity="center"
         app:donut_bgLineColor="@color/light_gray"
         app:donut_gapAngle="270"
         app:donut_gapWidth="80"
-<<<<<<< Updated upstream
-        app:donut_strokeWidth="25dp" />
-
-=======
+        android:layout_centerInParent="true"
         app:donut_strokeWidth="25dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
@@ -117,8 +121,6 @@
         app:layout_constraintTop_toBottomOf="@id/stationName_location" />
 
     <!-- teksten i mellom "gapet" i donuten: 100% .. 0% -->
->>>>>>> Stashed changes
-    <TextView
         android:id="@+id/donutNmbrsLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -127,19 +129,14 @@
         android:text="\n100%                  0%"
         android:textColor="@color/black"
         android:textSize="15sp"
-<<<<<<< Updated upstream
         app:layout_constraintBottom_toTopOf="@+id/aqiLevel_location"
         app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
-        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="@+id/donut_view_location"
         app:layout_constraintTop_toTopOf="@+id/donut_view_location"
-        app:layout_constraintVertical_bias="0.232" />
-=======
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/donut_view_location"
         app:layout_constraintTop_toTopOf="@id/donut_view_location"
         tools:ignore="HardcodedText" />
->>>>>>> Stashed changes
 
     <!-- Tekst som viser luftkvalitetnivået. teksten endrer farge etter nivå. -->
     <TextView
@@ -150,15 +147,15 @@
         android:text="180 AQI"
         tools:ignore="HardcodedText"
         android:textColor="@color/green"
-<<<<<<< Updated upstream
-        android:textSize="40sp" />
-=======
         android:textSize="35sp"
         app:layout_constraintBottom_toBottomOf="@+id/smiley_location"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/donutNmbrsLocation" />
->>>>>>> Stashed changes
+        app:layout_constraintTop_toBottomOf="@id/donutNmbrsLocation" 
+        android:layout_centerInParent="true"
+        android:text=""
+        android:textColor="@color/green"
+        android:textSize="35sp" />
 
     <!-- Infoknapp for å informere brukeren om tallene appen viser + mer (som funfacts)-->
     <ImageButton
@@ -219,27 +216,21 @@
         android:text="@string/verdiniv_er"
         android:textColor="@color/black"
         android:textSize="25sp"
-<<<<<<< Updated upstream
         android:textStyle="bold" />
 
     <ImageView
         android:id="@+id/smiley_location"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:layout_below="@+id/stationName_location"
         android:layout_alignStart="@+id/donut_view_location"
         android:layout_alignEnd="@+id/donut_view_location"
-        android:layout_marginStart="89dp"
-        android:layout_marginTop="150dp"
-        android:layout_marginEnd="91dp"
-        android:layout_marginBottom="33dp"
-        android:background="@drawable/ic_smiley_lvl1" />
-=======
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_smiley_lvl1"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider_line" />
->>>>>>> Stashed changes
 
     <!-- Infoknapp nummer 2, åpner alertdialog som forteller om verdiene i tabellen, og om forurensningstypene-->
     <ImageButton
