@@ -68,8 +68,6 @@
     <!-- Sentrert tekst -->
     <TextView
         android:id="@+id/stationName_location"
-        android:foregroundGravity="center"
-        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="22dp"
         android:foregroundGravity="center"
@@ -101,19 +99,10 @@
         android:layout_height="0dp"
         app:donut_animationDuration="1500"
         android:layout_centerInParent="true"
-
-    <app.futured.donut.DonutProgressView
-        android:id="@+id/donut_view_location"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_below="@+id/stationName_location"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="11dp"
         android:gravity="center"
         app:donut_bgLineColor="@color/light_gray"
         app:donut_gapAngle="270"
         app:donut_gapWidth="80"
-        android:layout_centerInParent="true"
         app:donut_strokeWidth="25dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline3"
@@ -121,6 +110,7 @@
         app:layout_constraintTop_toBottomOf="@id/stationName_location" />
 
     <!-- teksten i mellom "gapet" i donuten: 100% .. 0% -->
+    <TextView
         android:id="@+id/donutNmbrsLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -129,10 +119,6 @@
         android:text="\n100%                  0%"
         android:textColor="@color/black"
         android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/aqiLevel_location"
-        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
-        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
-        app:layout_constraintTop_toTopOf="@+id/donut_view_location"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/donut_view_location"
         app:layout_constraintTop_toTopOf="@id/donut_view_location"
@@ -151,11 +137,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/smiley_location"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/donutNmbrsLocation" 
-        android:layout_centerInParent="true"
-        android:text=""
-        android:textColor="@color/green"
-        android:textSize="35sp" />
+        app:layout_constraintTop_toBottomOf="@id/donutNmbrsLocation" />
 
     <!-- Infoknapp for å informere brukeren om tallene appen viser + mer (som funfacts)-->
     <ImageButton
@@ -216,17 +198,6 @@
         android:text="@string/verdiniv_er"
         android:textColor="@color/black"
         android:textSize="25sp"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:id="@+id/smiley_location"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_below="@+id/stationName_location"
-        android:layout_alignStart="@+id/donut_view_location"
-        android:layout_alignEnd="@+id/donut_view_location"
-        android:layout_centerInParent="true"
-        android:background="@drawable/ic_smiley_lvl1"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
