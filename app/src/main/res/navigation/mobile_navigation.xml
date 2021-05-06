@@ -74,6 +74,12 @@
             app:popEnterAnim="@transition/slide_left_i"
             />
 
+        <action
+            android:id="@+id/action_navigation_dialog_to_AboutAirQualityFragment"
+            app:destination="@id/aboutAirqualityFragment"
+            app:enterAnim="@transition/slide_left"
+            app:popEnterAnim="@transition/slide_left_i"/>
+
         <argument
             android:name="station"
             app:argType="com.example.gruppe5.Stasjon"

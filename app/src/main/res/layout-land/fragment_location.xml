@@ -5,10 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
+    <!-- Layout for når brukeren roterer mobilen-->
 
     <!-- Bruker guidelines som settes etter prosent av skjermens størrelse
-         Ved å koble views til guidelinen, vil de dynamisk tilpasse seg ulike skjermstørrelser.
-     -->
+     Ved å koble views til guidelinen, vil de dynamisk tilpasse seg ulike skjermstørrelser.
+ -->
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
@@ -21,21 +22,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
+        app:layout_constraintGuide_percent="0.10" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline3"
+        android:id="@+id/guideline3.5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
+        app:layout_constraintGuide_percent="0.35" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.95" />
+        app:layout_constraintGuide_percent="0.40"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.90"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.95"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/HorGuideline"
@@ -49,113 +64,110 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.4" />
+        app:layout_constraintGuide_percent="0.20" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/HorGuideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.50" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/HorGuideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70" />
 
     <!-- for å gjøre layoutet så dynamisk som mulig, unngås bruk av hardkode.
-         Høyde og bredde settes til 0, men ratioen for ikonet settes til 1:1.
-         Ved å deretter feste viewet til guidelinene, vil guidelinene bestemme ikonets størrelse.-->
+     Høyde og bredde settes til 0, men ratioen for ikonet settes til 1:1.
+     Ved å deretter feste viewet til guidelinene, vil guidelinene bestemme ikonets størrelse.-->
     <ImageView
         android:id="@+id/icon_location"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/ic_location_marker"
+        android:contentDescription="@string/location_icon"
+        app:layout_constraintBottom_toTopOf="@+id/HorGuideline2"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline"
-        app:layout_constraintTop_toTopOf="@id/HorGuideline"
-        android:contentDescription="@string/location_icon" />
+        app:layout_constraintTop_toTopOf="@id/HorGuideline" />
 
     <!-- Sentrert tekst -->
     <TextView
         android:id="@+id/stationName_location"
-        android:foregroundGravity="center"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="22dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:foregroundGravity="center"
         android:gravity="center"
         android:scaleType="centerCrop"
         android:text="@string/stasjonsnavn"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/icon_location"
-        app:layout_constraintEnd_toEndOf="@id/guideline2"
-        app:layout_constraintStart_toStartOf="@id/guideline"
-        app:layout_constraintTop_toTopOf="@id/HorGuideline" />
+        app:layout_constraintBottom_toTopOf="@+id/HorGuideline2"
+        app:layout_constraintEnd_toStartOf="@+id/verdiNivaer_location"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/HorGuideline" />
 
     <!--
-            <TextView
-                android:layout_width="385dp"
-                android:layout_height="39dp"
-                android:foregroundGravity="center"
-                android:text="400                                                                      100"
-                android:textColor="@color/gray"
-                android:textSize="18sp" />
-    -->
+                    <TextView
+                        android:layout_width="385dp"
+                        android:layout_height="39dp"
+                        android:foregroundGravity="center"
+                        android:text="400                                                                      100"
+                        android:textColor="@color/gray"
+                        android:textSize="18sp" />
+                        -->
 
     <!-- Donut som viser luftkvalitetnivået.-->
     <app.futured.donut.DonutProgressView
         android:id="@+id/donut_view_location"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:donut_animationDuration="1500"
         android:layout_centerInParent="true"
-
-    <app.futured.donut.DonutProgressView
-        android:id="@+id/donut_view_location"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_below="@+id/stationName_location"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="11dp"
         android:gravity="center"
         app:donut_bgLineColor="@color/light_gray"
         app:donut_gapAngle="270"
         app:donut_gapWidth="80"
-        android:layout_centerInParent="true"
         app:donut_strokeWidth="25dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toStartOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/stationName_location" />
+        app:layout_constraintEnd_toStartOf="@+id/guideline3.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@+id/HorGuideline2" />
 
     <!-- teksten i mellom "gapet" i donuten: 100% .. 0% -->
+    <TextView
         android:id="@+id/donutNmbrsLocation"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
         android:gravity="center"
-        android:text="\n100%                  0%"
+        android:text="100%           0%"
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/aqiLevel_location"
-        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
-        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toTopOf="@+id/donut_view_location"
-        app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
-        app:layout_constraintTop_toTopOf="@id/donut_view_location"
         tools:ignore="HardcodedText" />
-
     <!-- Tekst som viser luftkvalitetnivået. teksten endrer farge etter nivå. -->
     <TextView
         android:id="@+id/aqiLevel_location"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="180 AQI"
-        tools:ignore="HardcodedText"
         android:textColor="@color/green"
-        android:textSize="35sp"
-        app:layout_constraintBottom_toBottomOf="@+id/smiley_location"
-        app:layout_constraintEnd_toEndOf="@id/guideline2"
-        app:layout_constraintStart_toStartOf="@id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/donutNmbrsLocation" 
-        android:layout_centerInParent="true"
-        android:text=""
-        android:textColor="@color/green"
-        android:textSize="35sp" />
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@+id/HorGuideline4"
+        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
+        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
+        app:layout_constraintTop_toTopOf="@+id/donut_view_location"
+        tools:ignore="HardcodedText" />
 
     <!-- Infoknapp for å informere brukeren om tallene appen viser + mer (som funfacts)-->
     <ImageButton
@@ -163,11 +175,12 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/ic_info"
+        android:contentDescription="@string/infobutton2"
+        app:layout_constraintBottom_toBottomOf="@+id/verdiNivaer_location"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@id/guideline4"
-        app:layout_constraintStart_toStartOf="@id/guideline3"
-        app:layout_constraintTop_toBottomOf="@id/HorGuideline"
-        android:contentDescription="@string/info_button" />
+        app:layout_constraintEnd_toEndOf="@id/guideline2"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/HorGuideline2" />
 
     <!-- Smilefjesets humør følger luftkvaliteten. Ved godt nivå, er smilefjeset i godt humør. -->
     <ImageView
@@ -175,62 +188,53 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/ic_smiley_lvl1"
+        android:contentDescription="@string/smiley"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintBottom_toBottomOf="@id/HorGuideline2"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@id/aqiLevel_location"
-        android:contentDescription="@string/smiley" />
+        app:layout_constraintBottom_toBottomOf="@id/HorGuideline4"
+        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
+        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
+        app:layout_constraintTop_toBottomOf="@id/aqiLevel_location" />
 
     <!-- setning som forteller om nivået er bra, eller dårlig-->
     <TextView
         android:id="@+id/aqiSentence_location"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
         android:gravity="center"
         android:text="@string/setning_om_luftkvalitet"
         android:textColor="@color/black"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/divider_line"
-        app:layout_constraintEnd_toEndOf="@id/guideline3"
-        app:layout_constraintStart_toStartOf="@id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/donut_view_location" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/HorGuideline2"
+        app:layout_constraintEnd_toStartOf="@+id/guideline5"
+        app:layout_constraintStart_toEndOf="@+id/stationName_location"
+        app:layout_constraintTop_toTopOf="@+id/HorGuideline" />
 
-    <!-- linje som adskiller donuten og barchartet for ryddighet -->
+    <!-- linje som adskiller stedsnavn, og donuten og barchartet for ryddighet -->
     <View
         android:id="@+id/divider_line"
         style="@style/Divider.Horizontal"
-        android:layout_marginTop="20dp"
         android:background="@color/black"
+        app:layout_constraintTop_toTopOf="@id/HorGuideline2"
+        app:layout_constraintStart_toStartOf="@id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/aqiSentence_location" />
+        app:layout_constraintBottom_toBottomOf="@id/HorGuideline2" />
 
     <!-- Fungerer som overskrift for bar chartet-->
     <TextView
         android:id="@+id/verdiNivaer_location"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="@string/verdiniv_er"
         android:textColor="@color/black"
         android:textSize="25sp"
-        android:textStyle="bold" />
-
-    <ImageView
-        android:id="@+id/smiley_location"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_below="@+id/stationName_location"
-        android:layout_alignStart="@+id/donut_view_location"
-        android:layout_alignEnd="@+id/donut_view_location"
-        android:layout_centerInParent="true"
-        android:background="@drawable/ic_smiley_lvl1"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/HorGuideline3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/divider_line" />
+        app:layout_constraintStart_toStartOf="@id/guideline4"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Infoknapp nummer 2, åpner alertdialog som forteller om verdiene i tabellen, og om forurensningstypene-->
     <ImageButton
@@ -238,22 +242,24 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/ic_info"
-        android:contentDescription="@string/infobutton2"
-        app:layout_constraintBottom_toTopOf="@+id/hor_bar_chart"
+        android:contentDescription="@string/info_button"
+        app:layout_constraintBottom_toBottomOf="@+id/verdiNivaer_location"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@id/guideline4"
-        app:layout_constraintStart_toStartOf="@id/guideline3"
-        app:layout_constraintTop_toTopOf="@id/verdiNivaer_location" />
+        app:layout_constraintEnd_toEndOf="@id/guideline6"
+        app:layout_constraintStart_toStartOf="@id/guideline5"
+        app:layout_constraintTop_toTopOf="@+id/HorGuideline2" />
 
     <!-- Horisontalt søylediagram som viser verdien til pm10, pm2.5, no2 og o3 i prosent fra 0 - 100
          Barene endrer farge etter hvor farlig nivået er for den gitte typen. Hver type har ulike grenser.-->
     <com.github.mikephil.charting.charts.HorizontalBarChart
         android:id="@+id/hor_bar_chart"
-        android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_width="450dp"
+        android:layout_height="200dp"
         android:layout_below="@id/verdiNivaer_location"
         android:background="@drawable/textview_border"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/verdiNivaer_location" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toBottomOf="@+id/verdiNivaer_location" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
