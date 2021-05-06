@@ -15,7 +15,7 @@ import com.example.gruppe5.R
 
 class AboutDataFragment : Fragment() {
 
-    lateinit var textView: TextView
+    private lateinit var textView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
