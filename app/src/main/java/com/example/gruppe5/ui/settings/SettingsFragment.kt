@@ -27,8 +27,7 @@ class SettingsFragment : Fragment() {
     private lateinit var luftkvalitetKnapp: Button
     private lateinit var appKnapp: Button
     private lateinit var dataKnapp: Button
-    var sjekk: Boolean = true
-    var teksten: String = ""
+    private var teksten: String = ""
 
 
     override fun onCreateView(
@@ -39,8 +38,8 @@ class SettingsFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
-        setCondition(root)
-        setLocation(root)
+        setCondition()
+        setLocation()
         setAboutAirquality(root)
         setAboutApp(root)
         setAboutData(root)
@@ -63,23 +62,23 @@ class SettingsFragment : Fragment() {
     }
 
 
-    private fun setLocation(root: View) {
+    private fun setLocation() {
         lokasjonKnapp.setOnClickListener{
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            setCondition(root)
+            setCondition()
         }
     }
 
 
     @SuppressLint("SetTextI18n")
-    private fun setCondition(root: View) {
+    private fun setCondition() {
         val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (location) {
-            teksten = "På"
+        teksten = if (location) {
+            "På"
         } else {
-            teksten = "Av"
-            }
+            "Av"
+        }
     }
 
     override fun onResume() {  // After a pause OR at startup
