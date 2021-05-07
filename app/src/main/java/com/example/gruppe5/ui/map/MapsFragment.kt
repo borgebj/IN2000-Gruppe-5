@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
-import com.example.gruppe5.ui.favorites.FavoritesFragmentArgs
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -299,6 +298,7 @@ class MapsFragment : Fragment() {
         }
     }
 
+    //TODO legg til reset knapp ved siden av search
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_bar_on_map_menu, menu)

@@ -31,7 +31,7 @@ import com.example.gruppe5.ui.location.LocationFragmentArgs.Companion as Locatio
 
 class LocationFragment : Fragment() {
 
-    private lateinit var viewModel : LocationViewModel
+    private lateinit var viewModel : LocationViewModel //TODO Ubrukelig
     private lateinit var stasjonNavn : TextView
     private lateinit var aqiLevel : TextView                         //aqi = air quality index, sier noe om luftkvaliteten
     private lateinit var aqiSentence : TextView
@@ -79,7 +79,7 @@ class LocationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(LocationViewModel::class.java) //TODO Ubrukelig
     }
 
     fun assignId(root: View) {
@@ -119,7 +119,7 @@ class LocationFragment : Fragment() {
         //Legger til labels som legges til på den vertikale aksen til venstre
         val values = arrayOf("PM10", "PM2.5", "NO2", "O3")
         xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String? {
+            override fun getFormattedValue(value: Float): String {
                 return values[value.toInt()]
             }
         }
@@ -354,7 +354,8 @@ class LocationFragment : Fragment() {
 
     //setter views etter nivåene fra aqiet
     private fun setAqiInformer(map: Map<String, Double>) {
-        val highest : Map.Entry<String, Double>? = map.maxBy { it.value } //finner den høyeste verdien blant verdiene.
+        val highest : Map.Entry<String, Double>? =
+            map.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
         var donutColor = "#808080"
 
         @SuppressLint("SetTextI18n") //ignorerer advarsel på strings
@@ -362,22 +363,22 @@ class LocationFragment : Fragment() {
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(Color.parseColor("#3F9F41"))
-                    aqiSentence.text = "Luftnivået er bra"
+                    aqiSentence.text = getString(R.string.luftnivaa_bra)
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
                     donutColor = "#3F9F41"
                 } "orange" -> {
                 aqiLevel.setTextColor(Color.parseColor("#FFCB00"))
-                aqiSentence.text = "Luftnivået er moderat"
+                aqiSentence.text = getString(R.string.luftnivaa_moderat)
                 aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
                 donutColor = "#FFCB00"
             } "red" -> {
                 aqiLevel.setTextColor(Color.parseColor("#C13500"))
-                aqiSentence.text = "Luftnivået er usunt for utsatte grupper"
+                aqiSentence.text = getString(R.string.luftnivaa_utsatte)
                 aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
                 donutColor = "#C13500"
             } "purple" -> {
                 aqiLevel.setTextColor(Color.parseColor("#4900AC")) //endres til oransje
-                aqiSentence.text = "Luftnivået er usunt"
+                aqiSentence.text = getString(R.string.luftnivaa_usunt)
                 aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
                 donutColor = "#4900AC"
             }

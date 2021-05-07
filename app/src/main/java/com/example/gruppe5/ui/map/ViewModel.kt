@@ -16,30 +16,29 @@ import kotlin.collections.HashMap
 // skal inneholde logikk
 
 class ViewModel : ViewModel() {
-    init {
-        parseData()
-    }
+    init { parseData() }
 
     val nearest_station: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
 
+    @SuppressLint("SimpleDateFormat")
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
 
 
     // henter JSON/XML via KHTTP -> til String
     fun getData(base: String, del: String): String {
         val full = "$base$del"
-        return khttp.get(full).text
+        return khttp.get(full).text //TODO utdatert - bytt
     }
 
     // henter data fra AirQuality (metrologisk institutt API)
-    fun parseData() {
-        val baseURLMetro: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
+    private fun parseData() {
+        val baseURLMetro = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
 
         //TODO bruk disse ! (i funfacts?)
-        var highestValueInNorway : Double = 0.0
-        var lowestValueInNorway : Double = 500.0
+        var highestValueInNorway = 0.0
+        var lowestValueInNorway = 500.0
 
         // henter alle stasjoner
         fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURLMetro,"/stations"), Array<Stasjon>::class.java).toMutableList()
@@ -95,27 +94,27 @@ class ViewModel : ViewModel() {
 
     // setter default-state til stasjon (i Oslo) med høyeste verdi
     fun setDefaultState(stations: MutableList<Stasjon>) {
-        var current_highest_station: Stasjon? = stations.random()
-        var current_highest_value = 0.0
+        var currentHighestStation: Stasjon? = stations.random()
+        var currentHighestValue = 0.0
 
         for (stasjon in stations) {
             if (stasjon.kommune.name == "Oslo") {
-                val highest = stasjon.verdier.maxBy { it.value }
+                val highest = stasjon.verdier.maxByOrNull { it.value }
                 if (highest != null)
-                    if (highest.value > current_highest_value) {
-                        current_highest_value = highest.value
-                        current_highest_station = stasjon
+                    if (highest.value > currentHighestValue) {
+                        currentHighestValue = highest.value
+                        currentHighestStation = stasjon
                     }
             }
-        };
-        nearest_station.postValue(current_highest_station)
+        }
+        nearest_station.postValue(currentHighestStation)
     }
 
     //region [nearby stations]
     @SuppressLint("MissingPermission")
     fun findNearestStation(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
         var nearest : Stasjon? = null
-        var closest: Float = 100000.00F
+        var closest = 100000.00F
 
 
         if (GpsStatus) {

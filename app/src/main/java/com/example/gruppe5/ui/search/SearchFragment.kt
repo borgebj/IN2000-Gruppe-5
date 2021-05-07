@@ -6,17 +6,10 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
-import com.example.gruppe5.Stasjon
-import com.example.gruppe5.ui.favorites.FavoritesFragmentArgs
-import com.example.gruppe5.ui.location.LocationFragmentArgs
-import com.example.gruppe5.ui.map.MapsFragment
-import com.example.gruppe5.ui.map.MapsFragmentArgs
 
 class SearchFragment : Fragment() {
 
@@ -25,22 +18,16 @@ class SearchFragment : Fragment() {
     lateinit var textView: TextView
     lateinit var adapter : ArrayAdapter<*>
     lateinit var listView : ListView
-    /*lateinit var searchBar: EditText
-    lateinit var searchBut: ImageButton
-    lateinit var stasjoner : List<Stasjon>
-    private val path: String = "https://api.met.no/weatherapi/airqualityforecast/0.1/stations"
-    val gson = Gson()*/
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val root : View = inflater.inflate(R.layout.search_fragment, container, false)
 
         setHasOptionsMenu(true)
 
         assignId(root)
-        //setSearchBut(root)
         setOnListView(root)
 
         return root
@@ -50,7 +37,7 @@ class SearchFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
-        viewModel.text.observe(viewLifecycleOwner, Observer {
+        viewModel.text.observe(viewLifecycleOwner, {
             textView.text = it
         })
 
@@ -65,8 +52,6 @@ class SearchFragment : Fragment() {
             )
         )
         listView.adapter = adapter
-        //searchBar = root.findViewById(R.id.search_bar)
-        //searchBut = root.findViewById(R.id.search_but)
     }
 
     fun setOnListView(root: View){
@@ -119,57 +104,4 @@ class SearchFragment : Fragment() {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(e.windowToken, 0)
     }
-
-    fun toastMsg(msg: String){
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
-    }
-
-/*
-
-
-    fun getData(): String {
-        return khttp.get(path).text
-    }
-
-    fun setSearchBut(root : View){
-        searchBut.setOnClickListener {
-
-            val wanted = searchBar.text.toString() // henter det brukeren tastet inn
-            CoroutineScope(Dispatchers.IO).launch {
-
-                stasjoner = gson.fromJson(getData(), Array<Stasjon>::class.java).toList()
-                handleData(root, wanted)
-            }
-            searchBar.text.clear()
-            closeKeyboard(searchBar)
-        }
-    }
-
-    suspend fun handleData(root : View, wanted : String){
-
-        withContext(Dispatchers.Main){
-
-            if (wanted != "") {
-                for (station in stasjoner){
-                    //Log.d("I FOR_LOEKKE", station.name)
-                    if (station.name.equals(wanted, ignoreCase = true)){ // finner match
-                            //if (root.findNavController().currentDestination?.id == R.id.navigation_search)
-                            val action = SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
-                            root.findNavController().navigate(action)
-                            Log.d("SENDE STATION TIL FAV", station.name)
-
-                            return@withContext
-                    }
-                }
-                toastMsg("Station: ${wanted} does not exsist.")
-            }
-            else toastMsg("Enter a city name")
-        }
-    }
-
-    fun closeKeyboard(e : EditText){
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(e.windowToken, 0)
-    }
-*/
 }
