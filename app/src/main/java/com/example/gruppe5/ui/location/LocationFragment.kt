@@ -1,6 +1,7 @@
 package com.example.gruppe5.ui.location
 
 //bibloteker som hører til søylediagrammet og sirkel/donut diagrammet
+import com.example.gruppe5.ui.location.LocationViewModel
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
@@ -31,8 +32,7 @@ import com.example.gruppe5.ui.location.LocationFragmentArgs.Companion as Locatio
 
 class LocationFragment : Fragment() {
 
-    private lateinit var viewModel : LocationViewModel //TODO Ubrukelig
-
+    private lateinit var viewModel : LocationViewModel
     private lateinit var stasjonNavn : TextView
     private lateinit var aqiLevel : TextView                         //aqi = air quality index, sier noe om luftkvaliteten
     private lateinit var aqiSentence : TextView
@@ -80,7 +80,7 @@ class LocationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(LocationViewModel::class.java) //TODO Ubrukelig
+        viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
     }
 
     fun assignId(root: View) {
@@ -99,7 +99,8 @@ class LocationFragment : Fragment() {
         description.text = "Verdiene vises i %"
         description.textSize = 15f
         HorBarChart.description = description
-        HorBarChart.legend.isEnabled = false            //Default er true.
+        HorBarChart.legend.isEnabled = false            //Default er true
+        HorBarChart.setPinchZoom(false)                 //ønsker ikke at chartet skal være interaktivt.
         HorBarChart.setDrawValueAboveBar(true)          //gjør at søylenes verdi havner etter, og ikke på søyla. Ved lave verdier (under 10) ville dette ført til at teksten kræsjet med labelsene på Y aksen.
 
         //setter aksen på venstre side med labels: pm25, pm10 osv..
@@ -109,6 +110,7 @@ class LocationFragment : Fragment() {
         xAxis.labelCount = 4                            //setter antallet til 4, siden vi har 4 verdier
         xAxis.isEnabled = true
         xAxis.textSize = 15f
+
 
         //setter minimum og maximum lengde for verdiene parene representerer. Siden verdier skal vises i prosent, går det til 100
         val yLeft = HorBarChart.axisLeft
@@ -120,7 +122,7 @@ class LocationFragment : Fragment() {
         //Legger til labels som legges til på den vertikale aksen til venstre
         val values = arrayOf("PM10", "PM2.5", "NO2", "O3")
         xAxis.valueFormatter = object : ValueFormatter() {
-            override fun getFormattedValue(value: Float): String {
+            override fun getFormattedValue(value: Float): String? {
                 return values[value.toInt()]
             }
         }
@@ -130,7 +132,7 @@ class LocationFragment : Fragment() {
         setGraphData()                                  //egen metode. setter plasseringen, og annen formattering
         HorBarChart.animateY(2000)         //animasjon for når søylene "bygges"
     }
-  
+
     //setter deler av designet og selve dataen.
     private fun setGraphData() {
         setValues()
@@ -140,7 +142,7 @@ class LocationFragment : Fragment() {
         barDataSet.barBorderColor = R.color.black       //setter rammefarge på søylene
         barDataSet.barShadowColor = Color.argb(40, 150, 150, 150)   //gråfarge
         val data = BarData(barDataSet)                  //oppretter BarData objekt med bardatasettet som parameter.
-        data.barWidth = 0.6f                            //setter bredden på søylene  OBS: for å øke mellomrommet mellom søylene, sett verdien til barwidth til <1f
+        data.barWidth = 0.5f                            //setter bredden på søylene  OBS: for å øke mellomrommet mellom søylene, sett verdien til barwidth til <1f
         HorBarChart.data = data                         //avslutningsvis: sett dataen og refresh grafen
         HorBarChart.invalidate()
     }
@@ -287,7 +289,6 @@ class LocationFragment : Fragment() {
                 3 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.", root)}
             }
         }
-
         slideShow(command, dialog)
     }
 
@@ -355,8 +356,7 @@ class LocationFragment : Fragment() {
 
     //setter views etter nivåene fra aqiet
     private fun setAqiInformer(map: Map<String, Double>) {
-        val highest : Map.Entry<String, Double>? =
-            map.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
+        val highest : Map.Entry<String, Double>? = map.maxBy { it.value } //finner den høyeste verdien blant verdiene.
         var donutColor = "#808080"
 
         @SuppressLint("SetTextI18n") //ignorerer advarsel på strings
@@ -364,22 +364,22 @@ class LocationFragment : Fragment() {
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(Color.parseColor("#3F9F41"))
-                    aqiSentence.text = getString(R.string.luftnivaa_bra)
+                    aqiSentence.text = "Luftnivået er bra"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
                     donutColor = "#3F9F41"
                 } "orange" -> {
                 aqiLevel.setTextColor(Color.parseColor("#FFCB00"))
-                aqiSentence.text = getString(R.string.luftnivaa_moderat)
+                aqiSentence.text = "Luftnivået er moderat"
                 aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
                 donutColor = "#FFCB00"
             } "red" -> {
                 aqiLevel.setTextColor(Color.parseColor("#C13500"))
-                aqiSentence.text = getString(R.string.luftnivaa_utsatte)
+                aqiSentence.text = "Luftnivået er usunt for utsatte grupper"
                 aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
                 donutColor = "#C13500"
             } "purple" -> {
                 aqiLevel.setTextColor(Color.parseColor("#4900AC")) //endres til oransje
-                aqiSentence.text = getString(R.string.luftnivaa_usunt)
+                aqiSentence.text = "Luftnivået er usunt"
                 aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
                 donutColor = "#4900AC"
             }
@@ -426,4 +426,3 @@ class LocationFragment : Fragment() {
         createDonut()
     }
 }
-

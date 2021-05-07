@@ -136,7 +136,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/guideline3.5"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/HorGuideline2" />
 
     <!-- teksten i mellom "gapet" i donuten: 100% .. 0% -->
@@ -146,12 +146,12 @@
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
         android:gravity="center"
-        android:text="100%           0%"
+        android:text="100%      0%"
         android:textColor="@color/black"
         android:textSize="15sp"
         app:layout_constraintBottom_toTopOf="@+id/aqiLevel_location"
         app:layout_constraintEnd_toStartOf="@+id/guideline3.5"
-        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
         app:layout_constraintTop_toTopOf="@+id/donut_view_location"
         tools:ignore="HardcodedText" />
     <!-- Tekst som viser luftkvalitetnivået. teksten endrer farge etter nivå. -->
@@ -162,7 +162,7 @@
         android:gravity="center"
         android:text="180 AQI"
         android:textColor="@color/green"
-        android:textSize="25sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/HorGuideline4"
         app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
         app:layout_constraintStart_toStartOf="@+id/donut_view_location"
@@ -232,8 +232,8 @@
         android:textSize="25sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/HorGuideline3"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/guideline4"
+        app:layout_constraintEnd_toStartOf="@+id/guideline6"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Infoknapp nummer 2, åpner alertdialog som forteller om verdiene i tabellen, og om forurensningstypene-->
@@ -253,12 +253,13 @@
          Barene endrer farge etter hvor farlig nivået er for den gitte typen. Hver type har ulike grenser.-->
     <com.github.mikephil.charting.charts.HorizontalBarChart
         android:id="@+id/hor_bar_chart"
-        android:layout_width="450dp"
-        android:layout_height="200dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="5:2"
         android:layout_below="@id/verdiNivaer_location"
         android:background="@drawable/textview_border"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline6"
         app:layout_constraintStart_toStartOf="@+id/guideline4"
         app:layout_constraintTop_toBottomOf="@+id/verdiNivaer_location" />
 
