@@ -1,7 +1,6 @@
 package com.example.gruppe5
 
-import android.R.attr.key
-import android.R.attr.onClick
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -35,8 +34,9 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
     }
 
     // Replace the contents of a view (invoked by the layout manager)
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        viewHolder.textEn.text = "${liste[position].name}"
+        viewHolder.textEn.text = liste[position].name
         viewHolder.textTo.text = "Kommune: ${liste[position].kommune.name}"
 
         viewHolder.itemView.setOnClickListener{
@@ -61,17 +61,6 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
             Navigation.findNavController(it).navigate(R.id.navigation_favorites, bundle)
 
         }
-
-        /*viewHolder.location.setOnClickListener(View.OnClickListener {
-
-            val fragment = LocationFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("location", liste[position] )
-            fragment.arguments = bundle
-            Log.d("SNEDER FRA adap", liste[position].name )
-
-            Navigation.findNavController(it).navigate(R.id.navigation_location, bundle)
-        })*/
     }
 
     // Return the size of your dataset (invoked by the layout manager)

@@ -14,14 +14,12 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.example.gruppe5.ui.map.MapsFragmentDirections
 import com.example.gruppe5.ui.map.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -46,7 +44,7 @@ class HomeFragment : Fragment(){
     var nearest_station: Stasjon? = null
     var current_status: String = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 
@@ -61,15 +59,14 @@ class HomeFragment : Fragment(){
     @JvmName("getPollutionLevel1")
     fun getPollutionLevel(){
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
-        viewModel.stations.observe(viewLifecycleOwner, Observer { stasjoner ->
+        viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
             viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
-            viewModel.nearest_station.observe(viewLifecycleOwner, Observer { nearest ->
+            viewModel.nearest_station.observe(viewLifecycleOwner, { nearest ->
                 nearest_station = nearest
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
                 Log.d("highest", highest.toString())
                 if (highest != null) {
                     nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
-                    Log.d("Start", "setter AQI informer")
                 }
                 if (nearest.name.length > 8) textView.textSize = 32F
                 textView.text = nearest.name
@@ -87,14 +84,14 @@ class HomeFragment : Fragment(){
         locationIcon = root.findViewById(R.id.iconLocation_home)
     }
 
-    fun CheckGpsStatus() {
+    private fun CheckGpsStatus() {
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
     // setter onClickers for kart og API_test
-    fun setOnClickers(root: View){
+    private fun setOnClickers(root: View){
         //infoknapp
         val infoButton : ImageButton = root.findViewById(R.id.info_home)
         infoButton.setOnClickListener{
@@ -112,7 +109,6 @@ class HomeFragment : Fragment(){
 
         // navigerer til nearest_station sin location-fragment
         locationIcon.setOnClickListener {
-            Log.d("Du har", "klikket meg")
             val action = HomeFragmentDirections.actionNavigationHomeToNavigationLocation(nearest_station)
             root.findNavController().navigate(action)
         }
@@ -137,8 +133,7 @@ class HomeFragment : Fragment(){
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { dialoginterface, i -> }
-            .setNeutralButton("les mer") { dialog, which -> openValueList("next") }
-        //dialog.show()
+            .setNeutralButton("les mer") { _, _ -> openValueList("next") }
         slideShow(command, dialog)
     }
 
@@ -150,7 +145,7 @@ class HomeFragment : Fragment(){
             .setNeutralButton("Tilbake") { dialog, which -> alertValuesView(getString(R.string.str_info_values), "back")}
 
         val values = arrayOf("NO2", "PM10", "PM2,5", "O3")
-        builder.setItems(values) { dialog, which ->
+        builder.setItems(values) { _, which ->
             when (which) {
                 0 -> {displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, er dager som oftest blir vi utsatt for de høyeste konsentrasjonene om vinteren på kalde dager med lite vind, og spesielt på trafikkerte veier og i tunneler. Oslo og Bergen har hatt de høyeste verdiene." )}           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
                 1 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000 000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.")}
@@ -167,8 +162,8 @@ class HomeFragment : Fragment(){
         dialog.setTitle(((message.split(" ".toRegex(), 2).toTypedArray())[0]))  //setter første ord som tittel
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
-            .setPositiveButton("Lukk") { dialoginterface, i -> }
-            .setNeutralButton("Tilbake") { dialo, which ->
+            .setPositiveButton("Lukk") { _, _ -> }
+            .setNeutralButton("Tilbake") { _, _ ->
                 openValueList("back")}
         //dialog.show()
         slideShow("next", dialog)
@@ -181,12 +176,12 @@ class HomeFragment : Fragment(){
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") {
-                    dialoginterface,i -> }
+                    _, _ -> }
             .setNeutralButton("les mer") {
-                    dialog, which ->
+                    _, _ ->
                 root.findNavController().navigate(R.id.action_navigation_dialog_to_AboutAirQualityFragment)}
             .setNegativeButton("se funfact") {
-                dialog, which ->
+                    _, _ ->
                 displayFunfacts(root)
             }
         slideShow(command, dialogB)
@@ -217,31 +212,29 @@ class HomeFragment : Fragment(){
             "Noen typer luftbåren forurensning kan trenge seg inn i kroppen gjennom huden.",
             "Planter kan filtrere og rense forurenset luft")
 
-        var factIndex = (0 until facts.size).random()
+        var factIndex = (facts.indices).random()
         val newDialog = AlertDialog.Builder(context)
         newDialog.setTitle("Funfact om AQI")
         newDialog.setIcon(R.drawable.ic_funfact)
         newDialog.setMessage(facts.get(factIndex))
             .setPositiveButton("Lukk") {
-                    dialoginterface, i ->}
+                    _, _ ->}
             .setNeutralButton("Neste funfact") {
-                dialog, which ->
-                    factIndex = (0 until facts.size).random()
-                    newDialog.setMessage(facts.get(factIndex))
+                    _, _ ->
+                    factIndex = (facts.indices).random()
+                    newDialog.setMessage(facts[factIndex])
                     slideShow("next", newDialog)
             }
             .setNegativeButton("tilbake") {
-                dialog, which ->
+                    _, _ ->
                     alertView(getString(R.string.str_info), root, "back")}
-        //newDialog.show()
         slideShow("nextNext", newDialog)
     }
     //endregion
 
     fun setAqiInformer(map: Map<String, Double>) {
-        val highest : Map.Entry<String, Double>? = map.maxBy { it.value }
-        var donut_color : String = "#808080"
-
+        val highest : Map.Entry<String, Double>? = map.maxByOrNull { it.value }
+        var donutColor = "#808080"
 
         // endrer diverse visuelt, blant annet textview for å fortelle om luften er bra eller ikke, endre farger og ikoner
         fun changeVisuals(level : String)   {
@@ -251,32 +244,32 @@ class HomeFragment : Fragment(){
                     aqiSentence.text = getString(R.string.luftnivaa_bra)
                     current_status = "Det er lite luftforurensning\nIkke nødvendig med noen spesielle tiltak."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
-                    donut_color = "#3F9F41"
+                    donutColor = "#3F9F41"
                 } "orange" -> {
                     aqiLevel.setTextColor(parseColor("#FFCB00"))
                     aqiSentence.text = getString(R.string.luftnivaa_moderat)
                     current_status = "Utendørs aktivitet anbefales for de fleste"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-                    donut_color = "#FFCB00"
+                    donutColor = "#FFCB00"
             } "red" -> {
                     aqiLevel.setTextColor(parseColor("#C13500"))
                     aqiSentence.text = getString(R.string.luftnivaa_utsatte)
                     current_status ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
-                    donut_color = "#C13500"
+                    donutColor = "#C13500"
                 } "purple" -> {
                     aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
                     aqiSentence.text = getString(R.string.luftnivaa_usunt)
                     current_status ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
-                    donut_color = "#4900AC"
+                    donutColor = "#4900AC"
                 }
             }
         }
 
         // donutview-seksjonen for nivaaet
         fun createDonut() {
-            val donut_section = highest?.value?.let { DonutSection("pollution level", parseColor(donut_color), it.toFloat()) }
+            val donut_section = highest?.value?.let { DonutSection("pollution level", parseColor(donutColor), it.toFloat()) }
             donutView.cap = 500f
             if (donut_section != null) donutView.submitData(listOf(donut_section))
         }
