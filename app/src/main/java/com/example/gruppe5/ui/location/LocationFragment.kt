@@ -32,6 +32,7 @@ import com.example.gruppe5.ui.location.LocationFragmentArgs.Companion as Locatio
 class LocationFragment : Fragment() {
 
     private lateinit var viewModel : LocationViewModel //TODO Ubrukelig
+
     private lateinit var stasjonNavn : TextView
     private lateinit var aqiLevel : TextView                         //aqi = air quality index, sier noe om luftkvaliteten
     private lateinit var aqiSentence : TextView
@@ -129,7 +130,7 @@ class LocationFragment : Fragment() {
         setGraphData()                                  //egen metode. setter plasseringen, og annen formattering
         HorBarChart.animateY(2000)         //animasjon for når søylene "bygges"
     }
-
+  
     //setter deler av designet og selve dataen.
     private fun setGraphData() {
         setValues()
