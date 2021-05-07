@@ -1,17 +1,11 @@
 package com.example.gruppe5.ui.map
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.location.Location
-import android.location.LocationManager
-import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gruppe5.Stasjon
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -28,8 +22,6 @@ class ViewModel : ViewModel() {
 
     val nearest_station: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
-    val nearby_stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() } //TODO: fjern om ikke bruker
-    
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
 
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
@@ -44,9 +36,8 @@ class ViewModel : ViewModel() {
     // henter data fra AirQuality (metrologisk institutt API)
     fun parseData() {
         val baseURLMetro: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
-        val baseURLNilu: String = "https://api.nilu.no/" // Nilu API url
 
-        //TODO: Fjern eller spar - variabel som holder høyeste+lavest AQI-nivå i Norge
+        //TODO bruk disse ! (i funfacts?)
         var highestValueInNorway : Double = 0.0
         var lowestValueInNorway : Double = 500.0
 
@@ -155,30 +146,6 @@ class ViewModel : ViewModel() {
         }
         else setDefaultState(stations)
     }
-
-//    @SuppressLint("MissingPermission")
-//    fun findNearbyStations(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
-//        val nearby: MutableList<Stasjon> = mutableListOf()
-//
-//        if (GpsStatus) {
-//            fusedLocationClient.lastLocation.addOnSuccessListener {
-//
-//                for (stasjon in stations) {
-//                    val myCoordinates = LatLng(it.latitude, it.longitude)
-//                    val stationCoordiantes = LatLng(stasjon.latitude, stasjon.longitude)
-//
-//                    // henter stasjoner innen en 10km radius (ca, ish 11.1 km)
-//                    if (stationCoordiantes.latitude <= myCoordinates.latitude + 0.1 && stationCoordiantes.latitude >= myCoordinates.latitude - 0.1) {
-//                        if (stationCoordiantes.longitude <= myCoordinates.longitude + 0.1 && stationCoordiantes.longitude >= myCoordinates.longitude - 0.1) {
-//                            nearby.add(stasjon)
-//                        }
-//                    }
-//                }; nearby_stations.postValue(nearby)
-//            }
-//        } else {
-//        //TODO default state (?)
-//        }
-//    }
 
     //endregion
 }
