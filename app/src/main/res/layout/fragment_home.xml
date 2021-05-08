@@ -67,12 +67,12 @@
         app:layout_constraintVertical_bias="0.203" />
 
     <TextView
-        android:id="@+id/donutNmbrsHome"
+        android:id="@+id/donutNmbrsHomeMin"
         android:layout_width="130dp"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
-        android:gravity="center"
-        android:text="500+             0"
+        android:gravity="right"
+        android:text="0"
         android:textColor="@color/gray"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/aqiLvlHome"
@@ -82,6 +82,23 @@
         app:layout_constraintTop_toTopOf="@+id/donut_view"
         app:layout_constraintVertical_bias="0.232" />
 
+    <TextView
+        android:id="@+id/donutNmbrsHomeMax"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        android:gravity="left"
+        android:text="500+"
+        android:textColor="@color/gray"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/aqiLvlHome"
+        app:layout_constraintEnd_toEndOf="@+id/donut_view"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="@+id/donut_view"
+        app:layout_constraintTop_toTopOf="@+id/donut_view"
+        app:layout_constraintVertical_bias="0.232" />
+
+    <!--
     <TextView
         android:layout_width="385dp"
         android:layout_height="39dp"
@@ -109,6 +126,7 @@
         app:layout_constraintStart_toStartOf="@+id/donut_view"
         app:layout_constraintTop_toTopOf="@+id/donut_view"
         app:layout_constraintVertical_bias="1.272" />
+        -->
 
     <TextView
         android:id="@+id/aqiSentence_home"
@@ -124,6 +142,7 @@
         app:layout_constraintTop_toBottomOf="@+id/donut_view"
         app:layout_constraintVertical_bias="0.347" />
 
+
     <Button
         android:id="@+id/recommendation"
         android:layout_width="match_parent"
@@ -131,7 +150,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp"
         android:backgroundTint="@color/gray"
-        android:text="Anbefalinger"
+        android:text="@string/anbefalinger"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -160,6 +179,21 @@
         android:textColor="@color/black"
         android:textSize="31sp"
         app:layout_constraintBottom_toTopOf="@+id/smiley_home"
+        app:layout_constraintEnd_toEndOf="@+id/donut_view"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="@+id/donut_view" />
+
+    <TextView
+        android:id="@+id/aqiTypeHome"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@id/aqiLvlHome"
         app:layout_constraintEnd_toEndOf="@+id/donut_view"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="@+id/donut_view" />

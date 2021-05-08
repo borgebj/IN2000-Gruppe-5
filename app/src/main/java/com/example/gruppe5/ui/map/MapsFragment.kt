@@ -258,7 +258,7 @@ class MapsFragment : Fragment() {
 
     // legger til funksjon for heatmap switch on/off
     fun addSwitchFunction() {
-        switch.setOnCheckedChangeListener { buttonView, isChecked ->
+        switch.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 mMap.clear()
                 root.postDelayed({

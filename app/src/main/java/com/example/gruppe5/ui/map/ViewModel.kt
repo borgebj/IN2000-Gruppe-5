@@ -36,11 +36,7 @@ class ViewModel : ViewModel() {
     private fun parseData() {
         val baseURLMetro = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
 
-        //TODO bruk disse ! (i funfacts?)
-        var highestValueInNorway = 0.0
-        var lowestValueInNorway = 500.0
-
-        // henter alle stasjoner
+        // [indre metode] henter alle stasjoner
         fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURLMetro,"/stations"), Array<Stasjon>::class.java).toMutableList()
 
         // henter og tildeler verdier til alle stasjoner
@@ -72,12 +68,6 @@ class ViewModel : ViewModel() {
                         map["pm25"] = String.format("%.2f", variables.getJSONObject("pm25_concentration").get("value")).toDouble()
                         map["o3"] = String.format("%.2f", variables.getJSONObject("o3_concentration").get("value")).toDouble()
                         station.verdier = map
-
-                        // skaffer hoyeste og lavest
-                        for (verdi in map) {
-                            if (verdi.value > highestValueInNorway) highestValueInNorway = verdi.value
-                            if (verdi.value < lowestValueInNorway) lowestValueInNorway = verdi.value
-                        }
                     }
                 }
             }
