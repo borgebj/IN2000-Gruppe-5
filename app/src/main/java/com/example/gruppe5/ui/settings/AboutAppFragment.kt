@@ -36,11 +36,11 @@ class AboutAppFragment : Fragment() {
 
     private fun setText() {
         val bulletedList = listOf(
-            "\nGod luftkvalitet er viktig for å bevare god helse.",
-            "\nDenne appen er derfor her for å hjelpe folk med å vurdere luftkvaliteten og eventuelle steder de vil unngå.",
-            "\nMange tror kanskje at luftkvaliteten ikke er noe vi trenger å tenke på her i Norge, men for mange er luftkvaliteten" +
-                    "et stort problem.",
-            "\nDenne appen er laget for alle, både deg med luftveisproblemer og du som bare har lyst til å unngå de mest forurensede områdene i byen."
+            "\nLuft, mat og vann er essensielt for menneskers eksistens, og behovet for god luft er konstant. All forskning viser at inhalering av forurenset luft er dårlig for helsa, og for utsatte grupper kan svært usunn luft være livsfarlig.",
+            "\nGod luftkvalitet er viktig for å bevare god helse, og denne appen skal bidra med å skape forståelse for luftkvalitetens effekt på egen helse, og ",
+            "gjøre det mulig å enkelt avgjøre om det er sunt og trygt å bevege seg utendørs i området man befinner seg i, eller skal oppsøke.",
+            "\nI Norge er luftkvaliteten generelt tilfredsstillende, men utsatte grupper anbefales å ta hensyn i perioder med dårlig luftkvalitet.",
+            "\nDenne appen til alle. Både de med luftveisproblemer, de som syns luftkvalitet er interessant, og de som bare har lyst til å unngå byens mest forurensede områder."
         )
             .toBulletedList()
         textView.text = bulletedList
