@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.BulletSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -36,9 +35,17 @@ class AboutAirqualityFragment : Fragment() {
 
     private fun setText() {
         val bulletedList = listOf(
+            /*
             "\nDet finnes mange forskjellige luftforurensningskomponenter, inkludert ulike typer svevestøv og gasser, som kan gi uønskede helseeffekter.",
-            "Luftkvaliteten måles med flere ulike forurensingsklasser. De tre forurensningsklassene gjelder stoffene: " +
+            "\nLuftkvaliteten måles med flere ulike forurensingsklasser. De tre forurensningsklassene gjelder stoffene: " +
                     "svevestøv (PM10 og PM2,5), nitrogendioksid (NO2), og bakkenær ozon (O3).",
+            "De mest aktuelle i Norge er svevestøv (PM10 og PM2,5), nitrogendioksid (NO2), og bakkenær ozon (O3)."
+
+             */
+            "Luftkvaliteten styres av ulike typer luftforurensningskomponenter, og varierer lokalt. Byer, industrialiserte og tettbefolkede områder, og trafikkerte veier er steder som ofte har dårligere luftkvalitet.",
+            "\nDårlig luftkvalitet er både dårlig for miljøet, og for helsa. Svevestøv (PM10 og PM2,5), nitrogendioksid (NO2), og bakkenær ozon (O3) er blant de mest relevante komponentene for målinger i Norge.",
+            "\nDe måles i μg/m3 (mikrogram per kubikkmeter), og har ulike grenseverdier for når nivået utgjør en helserisiko.",
+            "\nLuftkvaliteten er som regel tilfredsstillende i alle Norges byer, men utsatte grupper som eldre, barn, og mennesker med lungesykdommer, anbefales å ta hensyn i perioder med mye luftforurensning. Dette er gjerne på kalde og tørre dager med lite nedbør og vind.",
             "\nInformasjonen er hentet fra:",
             "https://www.fhi.no/nettpub/luftkvalitet/sammendrag-og-bakgrunnsinformasjon/hva-mener-vi-med-luftkvalitetskriterier/",
             "\nhttps://luftkvalitet.miljodirektoratet.no/artikkel/artikler/varslingsklasser/"

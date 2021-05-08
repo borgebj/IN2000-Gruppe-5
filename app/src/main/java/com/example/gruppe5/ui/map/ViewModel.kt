@@ -1,17 +1,11 @@
 package com.example.gruppe5.ui.map
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.location.Location
-import android.location.LocationManager
-import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gruppe5.Stasjon
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import org.json.JSONObject
@@ -22,39 +16,29 @@ import kotlin.collections.HashMap
 // skal inneholde logikk
 
 class ViewModel : ViewModel() {
-    init {
-        Log.d("Viewmodel", "init")
-        parseData()
-        parseNiluData()
-    }
+    init { parseData() }
 
     val nearest_station: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
-    val nearby_stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
-    
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
 
-    val niluStations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() } //TODO: fjern?
-
-
+    @SuppressLint("SimpleDateFormat")
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
 
 
-    //region OVERFØR TIL VIEWMODEL !
     // henter JSON/XML via KHTTP -> til String
     fun getData(base: String, del: String): String {
         val full = "$base$del"
-        return khttp.get(full).text
+        return khttp.get(full).text //TODO utdatert - bytt
     }
 
     // henter data fra AirQuality (metrologisk institutt API)
-    fun parseData() {
-        val baseURLMetro: String = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
-        val baseURLNilu: String = "https://api.nilu.no/" // Nilu API url
+    private fun parseData() {
+        val baseURLMetro = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
 
-        //TODO: Fjern eller spar - variabel som holder høyeste+lavest AQI-nivå i Norge
-        var highestValueInNorway : Double = 0.0
-        var lowestValueInNorway : Double = 500.0
+        //TODO bruk disse ! (i funfacts?)
+        var highestValueInNorway = 0.0
+        var lowestValueInNorway = 500.0
 
         // henter alle stasjoner
         fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURLMetro,"/stations"), Array<Stasjon>::class.java).toMutableList()
@@ -104,56 +88,40 @@ class ViewModel : ViewModel() {
             val stasjoner = getStations()
             getValues(stasjoner)
             stations.postValue(stasjoner)
-            Log.d("høyest", highestValueInNorway.toString())
-            Log.d("lavest", lowestValueInNorway.toString())
 
         }
     }
 
-    //region [midlertidig] TODO: fjern?
-    fun parseNiluData() {
-        val baseURL: String = "https://api.nilu.no/" // Nilu API url
+    // setter default-state til stasjon (i Oslo) med høyeste verdi
+    fun setDefaultState(stations: MutableList<Stasjon>) {
+        var currentHighestStation: Stasjon? = stations.random()
+        var currentHighestValue = 0.0
 
-        fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURL, "/lookup/stations"), Array<Stasjon>::class.java).toMutableList()
-
-
-        CoroutineScope(Dispatchers.IO).launch {
-            val stations = getStations()
-            niluStations.postValue(stations)
+        for (stasjon in stations) {
+            if (stasjon.kommune.name == "Oslo") {
+                val highest = stasjon.verdier.maxByOrNull { it.value }
+                if (highest != null)
+                    if (highest.value > currentHighestValue) {
+                        currentHighestValue = highest.value
+                        currentHighestStation = stasjon
+                    }
+            }
         }
+        nearest_station.postValue(currentHighestStation)
     }
-    //endregion
-
 
     //region [nearby stations]
     @SuppressLint("MissingPermission")
     fun findNearestStation(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
         var nearest : Stasjon? = null
-        var closest: Float = 100000.00F
+        var closest = 100000.00F
 
-        // setter default-state til stasjon (i Oslo) med høyeste verdi
-        fun setDefaultState() {
-            var current_highest_station: Stasjon? = stations.random()
-            var current_highest_value = 0.0
-
-            for (stasjon in stations) {
-                if (stasjon.kommune.name == "Oslo") {
-                    val highest = stasjon.verdier.maxBy { it.value }
-                    if (highest != null)
-                        if (highest.value > current_highest_value) {
-                            current_highest_value = highest.value
-                            current_highest_station = stasjon
-                        }
-                }
-            };
-            nearest_station.postValue(current_highest_station)
-        }
 
         if (GpsStatus) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 for (stasjon in stations) {
                     if (location == null) {
-                        setDefaultState(); break
+                        setDefaultState(stations); break
                     }
                     else {
                         // oppretter Location-objekter
@@ -175,32 +143,8 @@ class ViewModel : ViewModel() {
                 }
             }
         }
-        else setDefaultState()
+        else setDefaultState(stations)
     }
-
-//    @SuppressLint("MissingPermission")
-//    fun findNearbyStations(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
-//        val nearby: MutableList<Stasjon> = mutableListOf()
-//
-//        if (GpsStatus) {
-//            fusedLocationClient.lastLocation.addOnSuccessListener {
-//
-//                for (stasjon in stations) {
-//                    val myCoordinates = LatLng(it.latitude, it.longitude)
-//                    val stationCoordiantes = LatLng(stasjon.latitude, stasjon.longitude)
-//
-//                    // henter stasjoner innen en 10km radius (ca, ish 11.1 km)
-//                    if (stationCoordiantes.latitude <= myCoordinates.latitude + 0.1 && stationCoordiantes.latitude >= myCoordinates.latitude - 0.1) {
-//                        if (stationCoordiantes.longitude <= myCoordinates.longitude + 0.1 && stationCoordiantes.longitude >= myCoordinates.longitude - 0.1) {
-//                            nearby.add(stasjon)
-//                        }
-//                    }
-//                }; nearby_stations.postValue(nearby)
-//            }
-//        } else {
-//        //TODO default state (?)
-//        }
-//    }
 
     //endregion
 }
