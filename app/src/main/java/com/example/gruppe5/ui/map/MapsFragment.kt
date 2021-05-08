@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
+import com.example.gruppe5.Stasjon
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -45,6 +46,7 @@ class MapsFragment : Fragment() {
 
     // status
     var GpsStatus = false
+    var svar : String? = null // svar fra search-fragment
 
     // search
     lateinit var adapter : ArrayAdapter<*>
@@ -57,10 +59,14 @@ class MapsFragment : Fragment() {
         mMap.setPadding(0, 0, 0, 120)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
+        // henter svar fra search-knappen
+        svar = MapsFragmentArgs.fromBundle(requireArguments()).map
+
         addMapFunctions()
-        addMarkers()
         addOnClickers()
         addSwitchFunction()
+        if (svar == null) addMarkers()
+        else createStationFromSearch(svar!!)
     }
 
     override fun onCreateView(
@@ -82,8 +88,6 @@ class MapsFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(ViewModel::class.java) // legger til viewmodel
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
-
-        getStationFromSearch()
     }
 
     fun assignId(root: View) {
@@ -119,8 +123,15 @@ class MapsFragment : Fragment() {
 
     }
 
-    // legger til hver stasjon paa kartet
-    fun addMarkers() {
+    private fun createAndAddMarker(station : Stasjon) {
+        val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
+        val marker: MarkerOptions = MarkerOptions().position(LatLng(station.latitude, station.longitude)).title("[${station.name}]")
+        checkValues(highest,marker)
+        mMap.addMarker(marker)
+    }
+
+    // sjekker hvilke forurensnings-type det er, deres nivaaer, og kaller hjelpemetode videre
+    fun checkValues(highest: Map.Entry<String, Double>?, marker: MarkerOptions) {
 
         // endrer farge/ikon paa kartet avhengig av markoerenes nivaa
         fun alterMarker(level: String, marker: MarkerOptions) {
@@ -132,9 +143,7 @@ class MapsFragment : Fragment() {
             }
         }
 
-        // sjekker hvilke forurensnings-type det er, deres nivaaer, og kaller hjelpemetode videre
-        fun checkValues(highest: Map.Entry<String, Double>?, marker: MarkerOptions) {
-            if (highest != null)
+        if (highest != null)
             when (highest.key) {
                 "no2" -> {
                     if (highest.value <= 100.0) alterMarker("green", marker)
@@ -161,19 +170,15 @@ class MapsFragment : Fragment() {
                     else if (highest.value >= 240.0) alterMarker("purple", marker)
                 }
             }
-        }
+    }
 
-        // observerer alle stasjonene og oppretter markører
+    // legger til hver stasjon paa kartet - observerer alle stasjoner > oppretter > legger till
+    fun addMarkers() {
         viewModel.stations.observe(viewLifecycleOwner, { stations ->
             for (station in stations) {
-                val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
-                val title = "[${station.name}]"
-                val marker: MarkerOptions = MarkerOptions().position(LatLng(station.latitude, station.longitude)).title(title)
-                checkValues(highest, marker)
-                mMap.addMarker(marker)
+                createAndAddMarker(station)
             }
         })
-
     }
 
     // legger til heatmap overlay for google map
@@ -301,17 +306,12 @@ class MapsFragment : Fragment() {
     }
 
     // henter stasjon fra search og navigerer til markøren
-    private fun getStationFromSearch() {
-        val svar: String? = MapsFragmentArgs.fromBundle(requireArguments()).map
-        var find : String?
-
-
+    private fun createStationFromSearch(svar : String) {
+        mMap.clear()
         viewModel.stations.observe(viewLifecycleOwner, { stations ->
-            find = svar
             for (station in stations) {
-                if (station.name == find.toString()) {
-                    //kode for å flytte markør her?
-                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(station.latitude, station.longitude), 15.0f))
+                if (station.name == svar.toString()) {
+                    createAndAddMarker(station)
                 }
             }
         })
