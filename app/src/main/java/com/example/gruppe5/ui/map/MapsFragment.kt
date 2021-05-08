@@ -252,7 +252,7 @@ class MapsFragment : Fragment() {
         // onclick til markers - zoomer inn
         mMap.setOnMarkerClickListener {
             val latlng = LatLng(it.position.latitude, it.position.longitude)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15F), 2000, null)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10F), 2000, null)
             it.showInfoWindow()
             return@setOnMarkerClickListener true
         }
@@ -310,8 +310,8 @@ class MapsFragment : Fragment() {
             find = svar
             for (station in stations) {
                 if (station.name == find.toString()) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(station.latitude, station.longitude), 15.0f))
-
+                    //kode for å flytte markør her?
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(station.latitude, station.longitude), 15.0f))
                 }
             }
         })
