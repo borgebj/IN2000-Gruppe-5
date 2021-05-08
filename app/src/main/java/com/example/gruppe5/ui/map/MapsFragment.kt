@@ -57,9 +57,6 @@ class MapsFragment : Fragment() {
         mMap.setPadding(0, 0, 0, 120)
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
 
-        assignId(root)
-        //search
-        setHasOptionsMenu(true)
         addMapFunctions()
         addMarkers()
         addOnClickers()
@@ -72,8 +69,11 @@ class MapsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val root: View = inflater.inflate(R.layout.fragment_maps, container, false)
-
         this.root = root
+
+        assignId(root)
+        setHasOptionsMenu(true)
+
         return root
     }
 
@@ -82,6 +82,8 @@ class MapsFragment : Fragment() {
         viewModel = ViewModelProvider(this).get(ViewModel::class.java) // legger til viewmodel
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
+
+        getStationFromSearch()
     }
 
     fun assignId(root: View) {
@@ -250,7 +252,7 @@ class MapsFragment : Fragment() {
         // onclick til markers - zoomer inn
         mMap.setOnMarkerClickListener {
             val latlng = LatLng(it.position.latitude, it.position.longitude)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10F), 2000, null)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 15F), 2000, null)
             it.showInfoWindow()
             return@setOnMarkerClickListener true
         }
@@ -283,7 +285,7 @@ class MapsFragment : Fragment() {
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
 
-    // search-fargment navigering via søkefelt øverst på kartet
+    // search-fragment navigering via søkefelt øverst på kartet
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.nav_search2 -> {
             val map = "map"
@@ -296,6 +298,23 @@ class MapsFragment : Fragment() {
             Log.d("test",  "to")
             super.onOptionsItemSelected(item)
         }
+    }
+
+    // henter stasjon fra search og navigerer til markøren
+    private fun getStationFromSearch() {
+        val svar: String? = MapsFragmentArgs.fromBundle(requireArguments()).map
+        var find : String?
+
+
+        viewModel.stations.observe(viewLifecycleOwner, { stations ->
+            find = svar
+            for (station in stations) {
+                if (station.name == find.toString()) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(station.latitude, station.longitude), 15.0f))
+
+                }
+            }
+        })
     }
 
     //TODO legg til reset knapp ved siden av search
