@@ -35,9 +35,9 @@ class AboutDataFragment : Fragment() {
 
     private fun setText() {
         val bulletedList = listOf(
-            "\nAll dataen i denne appen er hentet fra meteorologisk institutt sitt API.",
+            "\nAll dataen i denne appen er hentet fra meteorologisk institutt sitt API, og viser verdier i sanntid.",
             "\nDe ulike nivåene er basert på miljødirektoratet sine bestemmelser over hva som er lite, moderat" +
-                    ", eller høyt luftforurensingsnivå.",
+                    "høyt, eller svært høyt luftforurensingsnivå.",
             "\nMeteorologisk institutt har 76 ulike målestasjoner over hele landet. Disse oppdateres " +
                     "hver time."
         )
