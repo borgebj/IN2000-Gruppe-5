@@ -82,7 +82,7 @@
         android:scaleType="centerCrop"
         android:text="@string/stasjonsnavn"
         android:textColor="@color/black"
-        android:textSize="18sp"
+        android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/icon_location"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
@@ -118,18 +118,53 @@
 
     <!-- teksten i mellom "gapet" i donuten: 100% .. 0% -->
     <TextView
-        android:id="@+id/donutNmbrsLocation"
+        android:id="@+id/donutNmbrsLocationMax"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
-        android:gravity="center"
-        android:text="\n100%                  0%"
+        android:gravity="start"
+        android:paddingStart="140dp"
+        android:paddingEnd="0dp"
+        android:text="\n500+"
         android:textColor="@color/black"
-        android:textSize="15sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/donut_view_location"
         app:layout_constraintTop_toTopOf="@id/donut_view_location"
         tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/donutNmbrsLocationMin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        android:gravity="end"
+        android:paddingEnd="140dp"
+        android:paddingStart="0dp"
+        android:text="\n0"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
+        app:layout_constraintTop_toTopOf="@id/donut_view_location"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/aqiTypeLocation"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="[TYPE]"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="25sp"
+        app:layout_constraintBottom_toTopOf="@id/aqiLevel_location"
+        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="@+id/donut_view_location" />
+
 
     <!-- Tekst som viser luftkvalitetnivået. teksten endrer farge etter nivå. -->
     <TextView
@@ -144,7 +179,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/smiley_location"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
         app:layout_constraintStart_toStartOf="@id/guideline"
-        app:layout_constraintTop_toBottomOf="@id/donutNmbrsLocation" />
+        app:layout_constraintTop_toBottomOf="@id/donutNmbrsLocationMax" />
 
     <!-- Infoknapp for å informere brukeren om tallene appen viser + mer (som funfacts)-->
     <ImageButton
@@ -163,7 +198,6 @@
         android:id="@+id/smiley_location"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/ic_smiley_lvl1"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintBottom_toBottomOf="@id/HorGuideline2"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"

@@ -31,11 +31,13 @@ class HomeFragment : Fragment(){
     private lateinit var viewModel: ViewModel
     private lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
-    private lateinit var aqiLevel : TextView
-    private lateinit var aqiSentence : TextView
-    private lateinit var aqiSmiley : ImageView
-    private lateinit var recommendation : Button
-    private lateinit var locationIcon : ImageButton
+    lateinit var aqiLevel : TextView
+    lateinit var aqiSentence : TextView
+    lateinit var aqiType : TextView
+    lateinit var numberMax : TextView
+    lateinit var aqiSmiley : ImageView
+    lateinit var locationIcon : ImageButton
+    lateinit var recommendation : Button
 
     private lateinit var root : View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -75,13 +77,16 @@ class HomeFragment : Fragment(){
     }
 
     fun assignId(root: View) {
-        textView = root.findViewById(R.id.text_home)
         donutView = root.findViewById(R.id.donut_view)
+        textView = root.findViewById(R.id.text_home)
         aqiLevel = root.findViewById(R.id.aqiLvlHome)
         aqiSentence = root.findViewById(R.id.aqiSentence_home)
+        aqiType = root.findViewById(R.id.aqiTypeHome)
+        numberMax = root.findViewById(R.id.donutNmbrsHomeMax)
         aqiSmiley = root.findViewById(R.id.smiley_home)
-        recommendation = root.findViewById(R.id.recommendation)
         locationIcon = root.findViewById(R.id.iconLocation_home)
+        recommendation = root.findViewById(R.id.recommendation)
+
     }
 
     private fun checkGpsStatus() {
@@ -239,7 +244,8 @@ class HomeFragment : Fragment(){
         var donutColor = "#808080"
 
         // endrer diverse visuelt, blant annet textview for å fortelle om luften er bra eller ikke, endre farger og ikoner
-        fun changeVisuals(level : String)   {
+        fun changeVisuals(level : String, type : String)   {
+            aqiType.text = "[$type]"
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(parseColor("#3F9F41"))
@@ -279,36 +285,36 @@ class HomeFragment : Fragment(){
         if (highest != null)
         when (highest.key) {
             "no2" -> {
-                when {
-                    highest.value <= 100.0 -> changeVisuals("green")
-                    highest.value in 100.0..200.0 -> changeVisuals("orange")
-                    highest.value in 200.0..400.0 -> changeVisuals("red")
-                    highest.value >= 400.0 -> changeVisuals("purple")
-                }
+                donutView.cap = 400F
+                numberMax.text = "400"
+                if (highest.value <= 100.0) changeVisuals("green", "Nitrogenoksid")
+                else if (highest.value in 100.0..200.0) changeVisuals("orange", "Nitrogenoksid")
+                else if (highest.value in 200.0..400.0) changeVisuals("red", "Nitrogenoksid")
+                else if (highest.value >= 400.0) changeVisuals("purple", "Nitrogenoksid")
             }
             "pm10" -> {
-                when {
-                    highest.value <= 60.0 -> changeVisuals("green")
-                    highest.value in 60.0..120.0 -> changeVisuals("orange")
-                    highest.value in 120.0..400.0 -> changeVisuals("red")
-                    highest.value >= 400.0 -> changeVisuals("purple")
-                }
+                numberMax.text = "400"
+                donutView.cap = 400F
+                if (highest.value <= 60.0) changeVisuals("green", "Svevestøv (pm10)")
+                else if (highest.value in 60.0..120.0) changeVisuals("orange", "Svevestøv (pm10)")
+                else if (highest.value in 120.0..400.0) changeVisuals("red", "Svevestøv (pm10)")
+                else if (highest.value >= 400.0) changeVisuals("purple", "Svevestøv (pm10)")
             }
             "pm25" -> {
-                when {
-                    highest.value <= 30.0 -> changeVisuals("green")
-                    highest.value in 30.0..50.0 -> changeVisuals("orange")
-                    highest.value in 50.0..150.0 -> changeVisuals("red")
-                    highest.value >= 150.0 -> changeVisuals("purple")
-                }
+                numberMax.text = "150"
+                donutView.cap = 150F
+                if (highest.value <= 30.0) changeVisuals("green", "Svevestøv (pm2.5)")
+                else if (highest.value in 30.0..50.0) changeVisuals("orange", "Svevestøv (pm2.5)")
+                else if (highest.value in 50.0..150.0) changeVisuals("red", "Svevestøv (pm2.5)")
+                else if (highest.value >= 150.0) changeVisuals("purple", "Svevestøv (pm2.5)")
             }
             "o3" -> {
-                when {
-                    highest.value <= 100.0 -> changeVisuals("green")
-                    highest.value in 100.0..180.0 -> changeVisuals("orange")
-                    highest.value in 180.0..240.0 -> changeVisuals("red")
-                    highest.value >= 240.0 -> changeVisuals("purple")
-                }
+                numberMax.text = "240"
+                donutView.cap = 240F
+                if (highest.value <= 100.0) changeVisuals("green", "Ozon")
+                else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon")
+                else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon")
+                else if (highest.value >= 240.0) changeVisuals("purple", "Ozon")
             }
         }
         // endrer tekst midt i donut og lager donut
