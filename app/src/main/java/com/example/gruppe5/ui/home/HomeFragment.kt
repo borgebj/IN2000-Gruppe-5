@@ -29,27 +29,29 @@ class HomeFragment : Fragment(){
 
     // globale variabler
     private lateinit var viewModel: ViewModel
-    lateinit var donutView: DonutProgressView
+    private lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
     lateinit var aqiLevel : TextView
     lateinit var aqiSentence : TextView
+    lateinit var aqiType : TextView
+    lateinit var numberMax : TextView
     lateinit var aqiSmiley : ImageView
-    lateinit var recommendation : Button
     lateinit var locationIcon : ImageButton
+    lateinit var recommendation : Button
 
-    lateinit var root : View
+    private lateinit var root : View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    var locationManager: LocationManager? = null
-    var GpsStatus = false
-    var nearest_station: Stasjon? = null
-    var current_status: String = ""
+    private var locationManager: LocationManager? = null
+    private var gpsStatus = false
+    private var nearestStation: Stasjon? = null
+    private var currentStatus: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 
         assignId(root)
-        CheckGpsStatus()
+        checkGpsStatus()
         getPollutionLevel()
         setOnClickers(root)
 
@@ -60,9 +62,9 @@ class HomeFragment : Fragment(){
     fun getPollutionLevel(){
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
         viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
-            viewModel.findNearestStation(fusedLocationClient, stasjoner, GpsStatus)
+            viewModel.findNearestStation(fusedLocationClient, stasjoner, gpsStatus)
             viewModel.nearest_station.observe(viewLifecycleOwner, { nearest ->
-                nearest_station = nearest
+                nearestStation = nearest
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
                 Log.d("highest", highest.toString())
                 if (highest != null) {
@@ -75,18 +77,21 @@ class HomeFragment : Fragment(){
     }
 
     fun assignId(root: View) {
-        textView = root.findViewById(R.id.text_home)
         donutView = root.findViewById(R.id.donut_view)
+        textView = root.findViewById(R.id.text_home)
         aqiLevel = root.findViewById(R.id.aqiLvlHome)
         aqiSentence = root.findViewById(R.id.aqiSentence_home)
+        aqiType = root.findViewById(R.id.aqiTypeHome)
+        numberMax = root.findViewById(R.id.donutNmbrsHomeMax)
         aqiSmiley = root.findViewById(R.id.smiley_home)
-        recommendation = root.findViewById(R.id.recommendation)
         locationIcon = root.findViewById(R.id.iconLocation_home)
+        recommendation = root.findViewById(R.id.recommendation)
+
     }
 
-    private fun CheckGpsStatus() {
+    private fun checkGpsStatus() {
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        gpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
@@ -102,14 +107,14 @@ class HomeFragment : Fragment(){
             val dialog = AlertDialog.Builder(context)
             dialog.setTitle("Anbefaling til nåværende luftnivå")
                 .setIcon(R.drawable.ic_info)
-                .setMessage(current_status)
-                .setPositiveButton("Lukk") { dialoginterface, i -> }
+                .setMessage(currentStatus)
+                .setPositiveButton("Lukk") { _, _ -> }
                 .show()
         }
 
-        // navigerer til nearest_station sin location-fragment
+        // navigerer til nearestStation sin location-fragment
         locationIcon.setOnClickListener {
-            val action = HomeFragmentDirections.actionNavigationHomeToNavigationLocation(nearest_station)
+            val action = HomeFragmentDirections.actionNavigationHomeToNavigationLocation(nearestStation)
             root.findNavController().navigate(action)
         }
     }
@@ -117,11 +122,13 @@ class HomeFragment : Fragment(){
     //region [funfacts]
     private fun slideShow(command : String, dialog : AlertDialog.Builder){
         val animasjonsDialog : AlertDialog = dialog.create()
-        if (command == "open") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen //animasjon
-        else if (command == "close") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose //animasjon
-        else if (command == "next") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext //animasjon
-        else if (command == "nextNext") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext //animasjon
-        else if (command == "back") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThBack
+        when (command) {
+            "open" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen //animasjon
+            "close" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose //animasjon
+            "next" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext //animasjon
+            "nextNext" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext //animasjon
+            "back" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThBack
+        }
         return (animasjonsDialog.show())
     }
 
@@ -132,7 +139,7 @@ class HomeFragment : Fragment(){
         dialog.setTitle("Luftkvalitets-nivåer")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
-            .setPositiveButton("Lukk") { dialoginterface, i -> }
+            .setPositiveButton("Lukk") { _, _ -> }
             .setNeutralButton("les mer") { _, _ -> openValueList("next") }
         slideShow(command, dialog)
     }
@@ -142,7 +149,7 @@ class HomeFragment : Fragment(){
         // setter opp alert builder
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Velg en type")
-            .setNeutralButton("Tilbake") { dialog, which -> alertValuesView(getString(R.string.str_info_values), "back")}
+            .setNeutralButton("Tilbake") { _, _ -> alertValuesView(getString(R.string.str_info_values), "back")}
 
         val values = arrayOf("NO2", "PM10", "PM2,5", "O3")
         builder.setItems(values) { _, which ->
@@ -216,7 +223,7 @@ class HomeFragment : Fragment(){
         val newDialog = AlertDialog.Builder(context)
         newDialog.setTitle("Funfact om AQI")
         newDialog.setIcon(R.drawable.ic_funfact)
-        newDialog.setMessage(facts.get(factIndex))
+        newDialog.setMessage(facts[factIndex])
             .setPositiveButton("Lukk") {
                     _, _ ->}
             .setNeutralButton("Neste funfact") {
@@ -232,35 +239,36 @@ class HomeFragment : Fragment(){
     }
     //endregion
 
-    fun setAqiInformer(map: Map<String, Double>) {
+    private fun setAqiInformer(map: Map<String, Double>) {
         val highest : Map.Entry<String, Double>? = map.maxByOrNull { it.value }
         var donutColor = "#808080"
 
         // endrer diverse visuelt, blant annet textview for å fortelle om luften er bra eller ikke, endre farger og ikoner
-        fun changeVisuals(level : String)   {
+        fun changeVisuals(level : String, type : String)   {
+            aqiType.text = "[$type]"
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(parseColor("#3F9F41"))
                     aqiSentence.text = getString(R.string.luftnivaa_bra)
-                    current_status = "Det er lite luftforurensning\nIkke nødvendig med noen spesielle tiltak."
+                    currentStatus = "Det er lite luftforurensning\nIkke nødvendig med noen spesielle tiltak."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
                     donutColor = "#3F9F41"
                 } "orange" -> {
                     aqiLevel.setTextColor(parseColor("#FFCB00"))
                     aqiSentence.text = getString(R.string.luftnivaa_moderat)
-                    current_status = "Utendørs aktivitet anbefales for de fleste"
+                    currentStatus = "Utendørs aktivitet anbefales for de fleste"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
                     donutColor = "#FFCB00"
-            } "red" -> {
+                } "red" -> {
                     aqiLevel.setTextColor(parseColor("#C13500"))
                     aqiSentence.text = getString(R.string.luftnivaa_utsatte)
-                    current_status ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
+                    currentStatus ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
                     donutColor = "#C13500"
                 } "purple" -> {
                     aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
                     aqiSentence.text = getString(R.string.luftnivaa_usunt)
-                    current_status ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
+                    currentStatus ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
                     donutColor = "#4900AC"
                 }
@@ -269,36 +277,44 @@ class HomeFragment : Fragment(){
 
         // donutview-seksjonen for nivaaet
         fun createDonut() {
-            val donut_section = highest?.value?.let { DonutSection("pollution level", parseColor(donutColor), it.toFloat()) }
+            val donutSection = highest?.value?.let { DonutSection("pollution level", parseColor(donutColor), it.toFloat()) }
             donutView.cap = 500f
-            if (donut_section != null) donutView.submitData(listOf(donut_section))
+            if (donutSection != null) donutView.submitData(listOf(donutSection))
         }
 
         if (highest != null)
         when (highest.key) {
             "no2" -> {
-                if (highest.value <= 100.0) changeVisuals("green")
-                else if (highest.value in 100.0..200.0) changeVisuals("orange")
-                else if (highest.value in 200.0..400.0) changeVisuals("red")
-                else if (highest.value >= 400.0) changeVisuals("purple")
+                donutView.cap = 400F
+                numberMax.text = "400"
+                if (highest.value <= 100.0) changeVisuals("green", "Nitrogenoksid")
+                else if (highest.value in 100.0..200.0) changeVisuals("orange", "Nitrogenoksid")
+                else if (highest.value in 200.0..400.0) changeVisuals("red", "Nitrogenoksid")
+                else if (highest.value >= 400.0) changeVisuals("purple", "Nitrogenoksid")
             }
             "pm10" -> {
-                if (highest.value <= 60.0) changeVisuals("green")
-                else if (highest.value in 60.0..120.0) changeVisuals("orange")
-                else if (highest.value in 120.0..400.0) changeVisuals("red")
-                else if (highest.value >= 400.0) changeVisuals("purple")
+                numberMax.text = "400"
+                donutView.cap = 400F
+                if (highest.value <= 60.0) changeVisuals("green", "Svevestøv (pm10)")
+                else if (highest.value in 60.0..120.0) changeVisuals("orange", "Svevestøv (pm10)")
+                else if (highest.value in 120.0..400.0) changeVisuals("red", "Svevestøv (pm10)")
+                else if (highest.value >= 400.0) changeVisuals("purple", "Svevestøv (pm10)")
             }
             "pm25" -> {
-                if (highest.value <= 30.0) changeVisuals("green")
-                else if (highest.value in 30.0..50.0) changeVisuals("orange")
-                else if (highest.value in 50.0..150.0) changeVisuals("red")
-                else if (highest.value >= 150.0) changeVisuals("purple")
+                numberMax.text = "150"
+                donutView.cap = 150F
+                if (highest.value <= 30.0) changeVisuals("green", "Svevestøv (pm2.5)")
+                else if (highest.value in 30.0..50.0) changeVisuals("orange", "Svevestøv (pm2.5)")
+                else if (highest.value in 50.0..150.0) changeVisuals("red", "Svevestøv (pm2.5)")
+                else if (highest.value >= 150.0) changeVisuals("purple", "Svevestøv (pm2.5)")
             }
             "o3" -> {
-                if (highest.value <= 100.0) changeVisuals("green")
-                else if (highest.value in 100.0..180.0) changeVisuals("orange")
-                else if (highest.value in 180.0..240.0) changeVisuals("red")
-                else if (highest.value >= 240.0) changeVisuals("purple")
+                numberMax.text = "240"
+                donutView.cap = 240F
+                if (highest.value <= 100.0) changeVisuals("green", "Ozon")
+                else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon")
+                else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon")
+                else if (highest.value >= 240.0) changeVisuals("purple", "Ozon")
             }
         }
         // endrer tekst midt i donut og lager donut

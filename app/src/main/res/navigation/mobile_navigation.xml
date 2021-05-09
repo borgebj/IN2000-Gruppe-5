@@ -155,7 +155,7 @@
     <fragment
         android:id="@+id/navigation_search"
         android:name="com.example.gruppe5.ui.search.SearchFragment"
-        android:label="Search"
+        android:label="Søk"
         tools:layout="@layout/search_fragment" >
         <action
             android:id="@+id/action_navigation_search_to_navigation_favorites"

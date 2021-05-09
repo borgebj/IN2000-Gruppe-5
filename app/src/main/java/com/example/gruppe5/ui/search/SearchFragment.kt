@@ -2,8 +2,8 @@ package com.example.gruppe5.ui.search
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
@@ -17,7 +17,7 @@ class SearchFragment : Fragment() {
 
     lateinit var textView: TextView
     lateinit var adapter : ArrayAdapter<*>
-    lateinit var listView : ListView
+    private lateinit var listView : ListView //liste over stasjoner
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,14 +25,11 @@ class SearchFragment : Fragment() {
     ): View {
         val root : View = inflater.inflate(R.layout.search_fragment, container, false)
 
-        setHasOptionsMenu(true)
-
         assignId(root)
+        setHasOptionsMenu(true)
         setOnListView(root)
-
         return root
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -54,37 +51,14 @@ class SearchFragment : Fragment() {
         listView.adapter = adapter
     }
 
-    fun setOnListView(root: View){
-        listView.onItemClickListener = AdapterView.OnItemClickListener{ parent, view, position, id ->
-            Log.d("in ontemclicklistener", "KALT")
-
-            val station = parent?.getItemAtPosition(position).toString()
-            //toastMsg(station)
-            closeKeyboard(listView)
-
-
-            val arg: String? = SearchFragmentArgs.fromBundle(requireArguments()).map
-
-            if (arg != null) { // fra Map
-                val action =
-                    SearchFragmentDirections.actionNavigationSearchToNavigationMap(station)
-                    root.findNavController().navigate(action)
-            } else { // fra Favorite
-                val action =
-                    SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
-                    root.findNavController().navigate(action)
-            }
-
-        }
-        listView.emptyView = root.findViewById(R.id.empy_text_view)
-    }
-
+    // oppretter søke-meny
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
 
         inflater.inflate(R.menu.search_bar_menu, menu)
         val search = menu.findItem(R.id.nav_search)
         val searchView = search?.actionView as SearchView
-        searchView.queryHint= "Search a station"
+        searchView.queryHint= "Søk på en stasjon"
+        searchView.imeOptions = EditorInfo.IME_FLAG_NO_FULLSCREEN
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -100,7 +74,30 @@ class SearchFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    fun closeKeyboard(e: View){
+    // returnerer valgt stasjon(String) til Map/Favorite
+    private fun setOnListView(root: View){
+        listView.onItemClickListener = AdapterView.OnItemClickListener{ parent, _, position, _ ->
+
+            val station = parent?.getItemAtPosition(position).toString()
+            closeKeyboard(listView)
+
+            val arg: String? = SearchFragmentArgs.fromBundle(requireArguments()).map
+
+            if (arg != null) { //fra Map
+                val action =
+                    SearchFragmentDirections.actionNavigationSearchToNavigationMap(station)
+                    root.findNavController().navigate(action)
+            } else { //fra Favorite
+                val action =
+                    SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
+                    root.findNavController().navigate(action)
+            }
+
+        }
+        listView.emptyView = root.findViewById(R.id.empty_text_view)
+    }
+
+    private fun closeKeyboard(e: View){
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(e.windowToken, 0)
     }
