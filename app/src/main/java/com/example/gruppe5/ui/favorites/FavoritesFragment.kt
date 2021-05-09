@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
@@ -57,21 +56,16 @@ class FavoritesFragment : Fragment() {
         addAdapter()
         setResetBut(root)
         setSearchFrag(root)
-        //setInfoBut()
 
         viewModel.stations.observe(viewLifecycleOwner, {
-            //Log.d("I OBSERVE", "KALT")
-
             setFavStations(it)
-            getDataTilbake(it)
+            getDataBack(it)
         })
         checkDeleteElem()
     }
 
     @SuppressLint("CommitPrefEdits")
     fun assignId(root: View) {
-
-        Log.d("assignID", "KALT")
 
         addBut = root.findViewById(R.id.add_but)
         resetB = root.findViewById(R.id.reset_but)
@@ -81,7 +75,6 @@ class FavoritesFragment : Fragment() {
         pref = requireContext().getSharedPreferences("pre", MODE_PRIVATE)
         editor = pref.edit()
         antKeys = pref.all.size
-
     }
 
     private fun addAdapter() {
@@ -93,7 +86,6 @@ class FavoritesFragment : Fragment() {
     fun setResetBut(root: View){
 
         resetB.setOnClickListener{
-
             editor.clear().commit()
             favStations = mutableListOf()
             favAdapter.notifyDataSetChanged()
@@ -102,7 +94,6 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun refresh(root: View){
-
         root.findNavController().navigate(
             FavoritesFragmentDirections.actionNavigationFavoritesSelf()
         )
@@ -110,31 +101,27 @@ class FavoritesFragment : Fragment() {
 
     private fun setSearchFrag(root: View){
 
-        Log.d("setSearchFrag", "KALT")
-
         addBut.setOnClickListener {
             tilSearch(root)  // navigere til SearchFragment
-            if (antKeys == 5) Toast.makeText(context, "List is full! delete/reset favorite stations to add new favorite.", Toast.LENGTH_LONG).show()
+            val msg = "Tøm listen over favorittstasjoner eller slett noen stasjoner for å legge til en ny favoritt."
+            if (antKeys == 5) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
         }
     }
 
     private fun tilSearch(root: View){
-
         root.findNavController().navigate(FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
     }
 
+    // legger til stasjonene i preference til MutableList stasjoner
     private fun setFavStations(stasjoner: MutableList<Stasjon>){
 
         val keys: Map<String, *> = pref.getAll()
-        for ((key, value) in keys) {
-            Log.d("map values", key + ": " + value.toString())
+        for ((_, value) in keys) {
             addToFavStations(value as String, stasjoner)
         }
     }
 
     private fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>){
-
-        Log.d("addToFavStations", "KALT med $station")
 
         for (st in stasjoner){
             if (st.name.equals(station, ignoreCase = true)){ // finner match
@@ -142,7 +129,6 @@ class FavoritesFragment : Fragment() {
                 if (!inFavStations(station)){ // ikke satt til CardView ennaa
                     favStations.add(st)
                     favAdapter.notifyDataSetChanged()
-                    Log.d("ADDED TO FAV", st.name)
 
                     if (!inPref(station)) { // ikke satt til pref ennaa = ny favorittby
                         setElem(station, station)
@@ -157,9 +143,7 @@ class FavoritesFragment : Fragment() {
     private fun inPref(station: String) : Boolean {
 
         val keys: Map<String, *> = pref.getAll()
-        for ((key, value) in keys) {
-            Log.d("map values", key + ": " + value.toString())
-
+        for ((_, value) in keys) {
             if (station == value) return true
         }
         return false
@@ -173,18 +157,17 @@ class FavoritesFragment : Fragment() {
         return false
     }
 
-
+    // legger til en stasjon til preferences
     @SuppressLint("CommitPrefEdits")
     fun setElem(station: String, key: String){
         editor.putString(key, station)
         editor.commit()
     }
 
+    // henter data fra SearchFragment
+    private fun getDataBack(stasjoner: MutableList<Stasjon>){
 
-    private fun getDataTilbake(stasjoner: MutableList<Stasjon>){
-
-        val station: String? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation //args.favoriteStation
-        Log.d("getdatatilbake()", "$station")
+        val station: String? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation
         if (antKeys != 5) { // kan lagre MAKS FEM favorittstasjoner -- antall elementer som kan legges til kan endres
             if (station != null && !inFavStations(station)) addToFavStations(station, stasjoner)
         }
@@ -194,24 +177,20 @@ class FavoritesFragment : Fragment() {
 
         val args = arguments // station as Stasjon som skal slettes fra pref
         if (args != null) {
-            val slettes: Stasjon? = args.getParcelable("station") as Stasjon?
-
+            val delete: Stasjon? = args.getParcelable("station") as Stasjon?
             val keys: Map<String, *> = pref.getAll()
             for ((key, value) in keys) {
-                Log.d("map values", key + ": " + value.toString())
-                if (slettes?.name == value) {
+                if (delete?.name == value) {
                     editor.remove(key)
                     editor.commit()
                     antKeys--
-                    favStations.remove(slettes)
+                    favStations.remove(delete)
                     favAdapter.notifyDataSetChanged()
                     break
                 }
             }
         }
-        else Log.d("bundle for slettes", "NULL")
     }
-
 
     //infoknapp
     private fun alertView(message: String, command: String) {
@@ -230,21 +209,17 @@ class FavoritesFragment : Fragment() {
         return (animasjonsDialog.show())
     }
 
-    // info knapp
+    // infoknapp på toolbar
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.info_fav -> {
             alertView(getString(R.string.str_info_favorites), "open")
             true
         }
-        else -> {
-            super.onOptionsItemSelected(item)
-        }
-
+        else -> super.onOptionsItemSelected(item)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.infoknapp_on_favorites_menu, menu)
 
     }
-
 }
