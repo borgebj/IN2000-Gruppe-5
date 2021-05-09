@@ -8,7 +8,7 @@ class SearchViewModel : ViewModel() {
     // TODO: Implement the ViewModel
 
     private val _text = MutableLiveData<String>().apply {
-        value = "Search-fragment"
+        //value = "Search-fragment"
     }
     val text: LiveData<String> = _text
 }
