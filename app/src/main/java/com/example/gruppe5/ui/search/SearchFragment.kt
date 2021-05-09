@@ -3,6 +3,7 @@ package com.example.gruppe5.ui.search
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
@@ -24,13 +25,11 @@ class SearchFragment : Fragment() {
     ): View {
         val root : View = inflater.inflate(R.layout.search_fragment, container, false)
 
-        setHasOptionsMenu(true)
         assignId(root)
+        setHasOptionsMenu(true)
         setOnListView(root)
-
         return root
     }
-
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -50,6 +49,29 @@ class SearchFragment : Fragment() {
             )
         )
         listView.adapter = adapter
+    }
+
+    // oppretter søke-meny
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+
+        inflater.inflate(R.menu.search_bar_menu, menu)
+        val search = menu.findItem(R.id.nav_search)
+        val searchView = search?.actionView as SearchView
+        searchView.queryHint= "Søk på en stasjon"
+        searchView.imeOptions = EditorInfo.IME_FLAG_NO_FULLSCREEN
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                adapter.filter.filter(newText)
+                return true
+            }
+        })
+
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     // returnerer valgt stasjon(String) til Map/Favorite
@@ -72,29 +94,7 @@ class SearchFragment : Fragment() {
             }
 
         }
-        listView.emptyView = root.findViewById(R.id.empy_text_view)
-    }
-
-    // oppretter søke-meny
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-
-        inflater.inflate(R.menu.search_bar_menu, menu)
-        val search = menu.findItem(R.id.nav_search)
-        val searchView = search?.actionView as SearchView
-        searchView.queryHint= "Search a station"
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                adapter.filter.filter(newText)
-                return true
-            }
-        })
-
-        super.onCreateOptionsMenu(menu, inflater)
+        listView.emptyView = root.findViewById(R.id.empty_text_view)
     }
 
     private fun closeKeyboard(e: View){
