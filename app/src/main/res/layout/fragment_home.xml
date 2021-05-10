@@ -35,7 +35,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <TextView
+        android:id="@+id/text_info"
+        android:layout_width="257dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginBottom="17dp"
+        android:gravity="center"
+        android:text="@string/nærmeste"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/donut_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
         android:id="@+id/info_home"

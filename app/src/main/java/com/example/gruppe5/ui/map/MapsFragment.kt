@@ -4,10 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Point
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.SystemClock
 import android.util.Log
 import android.view.*
+import android.view.animation.BounceInterpolator
+import android.view.animation.Interpolator
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
@@ -18,10 +23,7 @@ import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.heatmaps.HeatmapTileProvider
 import com.google.maps.android.heatmaps.WeightedLatLng
@@ -51,6 +53,9 @@ class MapsFragment : Fragment() {
     // search
     lateinit var adapter : ArrayAdapter<*>
 
+    // lister
+    var markers : MutableList<Marker?> = mutableListOf()
+
 
     private val callback = OnMapReadyCallback { Map ->
         mMap = Map
@@ -65,8 +70,8 @@ class MapsFragment : Fragment() {
         addMapFunctions()
         addOnClickers()
         addSwitchFunction()
-        if (svar == null) addMarkers()
-        else createStationFromSearch(svar!!)
+        addMarkers()
+        createStationFromSearch()
     }
 
     override fun onCreateView(
@@ -82,6 +87,7 @@ class MapsFragment : Fragment() {
 
         return root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -123,11 +129,17 @@ class MapsFragment : Fragment() {
 
     }
 
-    private fun createAndAddMarker(station : Stasjon) {
+    private fun createAndAddMarker(station: Stasjon) {
         val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
-        val marker: MarkerOptions = MarkerOptions().position(LatLng(station.latitude, station.longitude)).title("[${station.name}]")
-        checkValues(highest,marker)
-        mMap.addMarker(marker)
+        val markerOptions: MarkerOptions = MarkerOptions().position(
+            LatLng(
+                station.latitude,
+                station.longitude
+            )
+        ).title("[${station.name}]")
+        checkValues(highest, markerOptions)
+        val marker = mMap.addMarker(markerOptions)
+        markers.add(marker)
     }
 
     // sjekker hvilke forurensnings-type det er, deres nivaaer, og kaller hjelpemetode videre
@@ -232,7 +244,11 @@ class MapsFragment : Fragment() {
             viewModel.stations.observe(viewLifecycleOwner) { list ->
 
                 for (stasjon in list) {
-                    val navn = marker_title?.substring(marker_title.indexOf("[") + 1, marker_title.indexOf("]"))
+                    val navn = marker_title?.substring(
+                        marker_title.indexOf("[") + 1, marker_title.indexOf(
+                            "]"
+                        )
+                    )
 
                     if (navn == stasjon.name) {
 
@@ -240,13 +256,17 @@ class MapsFragment : Fragment() {
                             .show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
-                        root.postDelayed({
-                            val action =
-                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(
-                                    stasjon
-                                )
-                            root.findNavController().navigate(action)
-                        }, 1500)
+                        try {
+                            root.postDelayed({
+                                val action =
+                                    MapsFragmentDirections.actionNavigationMapToNavigationLocation(
+                                        stasjon
+                                    )
+                                root.findNavController().navigate(action)
+                            }, 1500)
+                        } catch (e: Exception) { // denne kastes om man prøver å navigere til et annet fragment mens den venter
+                            e.printStackTrace()
+                        }
 
                         marker.showInfoWindow()
                     }
@@ -281,10 +301,19 @@ class MapsFragment : Fragment() {
     }
 
     // oppretter en Bitmap fra en vector fil, for å skape Bitmaps / Icons for kartet sine markører
-    private fun bitMapFromVector(vectorResID:Int):BitmapDescriptor {
-        val vectorDrawable= this.context?.let { ContextCompat.getDrawable(it,vectorResID) }
-        vectorDrawable!!.setBounds(0,0, vectorDrawable.intrinsicWidth,vectorDrawable.intrinsicHeight)
-        val bitmap=Bitmap.createBitmap(vectorDrawable.intrinsicWidth,vectorDrawable.intrinsicHeight,Bitmap.Config.ARGB_8888)
+    private fun bitMapFromVector(vectorResID: Int):BitmapDescriptor {
+        val vectorDrawable= this.context?.let { ContextCompat.getDrawable(it, vectorResID) }
+        vectorDrawable!!.setBounds(
+            0,
+            0,
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight
+        )
+        val bitmap=Bitmap.createBitmap(
+            vectorDrawable.intrinsicWidth,
+            vectorDrawable.intrinsicHeight,
+            Bitmap.Config.ARGB_8888
+        )
         val canvas=Canvas(bitmap)
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
@@ -300,24 +329,37 @@ class MapsFragment : Fragment() {
             true
         }
         else -> {
-            Log.d("test",  "to")
+            Log.d("test", "to")
             super.onOptionsItemSelected(item)
         }
     }
 
     // henter stasjon fra search og navigerer til markøren
-    private fun createStationFromSearch(svar : String) {
-        mMap.clear()
+    private fun createStationFromSearch() {
+
         viewModel.stations.observe(viewLifecycleOwner, { stations ->
             for (station in stations) {
-                if (station.name == svar.toString()) {
-                    createAndAddMarker(station)
+                for (marker in markers) {
+                    if (station.name == svar.toString() && marker?.position == LatLng(
+                            station.latitude,
+                            station.longitude
+                        )
+                    ) {
+                        mMap.animateCamera(
+                            CameraUpdateFactory.newLatLngZoom(
+                                LatLng(
+                                    station.latitude,
+                                    station.longitude
+                                ), 15F
+                            ), 2000, null
+                        )
+                        marker.alpha = 1F
+                        //createAndAddMarker(station)
+                    }
                 }
             }
         })
     }
-
-    //TODO legg til reset knapp ved siden av search
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_bar_on_map_menu, menu)
