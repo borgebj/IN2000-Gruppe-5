@@ -278,7 +278,6 @@ class HomeFragment : Fragment(){
         // donutview-seksjonen for nivaaet
         fun createDonut() {
             val donutSection = highest?.value?.let { DonutSection("pollution level", parseColor(donutColor), it.toFloat()) }
-            donutView.cap = 500f
             if (donutSection != null) donutView.submitData(listOf(donutSection))
         }
 

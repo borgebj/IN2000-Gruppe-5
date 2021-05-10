@@ -37,11 +37,7 @@ class FavoritesFragment : Fragment() {
     private var antKeys = 0 // antall lagrede favorittstasjoner - maks5
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
         this.root = root
         return root
@@ -50,10 +46,10 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
-
         assignId(root)
         setHasOptionsMenu(true)
         addAdapter()
+
         setResetBut(root)
         setSearchFrag(root)
 
