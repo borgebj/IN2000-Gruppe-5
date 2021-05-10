@@ -240,13 +240,17 @@ class MapsFragment : Fragment() {
                             .show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
-                        root.postDelayed({
-                            val action =
-                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(
-                                    stasjon
-                                )
-                            root.findNavController().navigate(action)
-                        }, 1500)
+                        try {
+                            root.postDelayed({
+                                val action =
+                                    MapsFragmentDirections.actionNavigationMapToNavigationLocation(
+                                        stasjon
+                                    )
+                                root.findNavController().navigate(action)
+                            }, 1500)
+                        } catch (e : Exception) { // denne kastes om man prøver å navigere til et annet fragment mens den venter
+                            e.printStackTrace()
+                        }
 
                         marker.showInfoWindow()
                     }
@@ -311,6 +315,7 @@ class MapsFragment : Fragment() {
         viewModel.stations.observe(viewLifecycleOwner, { stations ->
             for (station in stations) {
                 if (station.name == svar.toString()) {
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(station.latitude, station.longitude), 10F), 2000, null)
                     createAndAddMarker(station)
                 }
             }
