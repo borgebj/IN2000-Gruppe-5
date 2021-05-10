@@ -21,7 +21,6 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
         val textEn: TextView = view.findViewById(R.id.textEn)
         val textTo: TextView = view.findViewById(R.id.textTo)
         val star: ImageButton = view.findViewById(R.id.star_but)
-        val location : ImageButton = view.findViewById(R.id.to_location)
 
     }
 
@@ -39,12 +38,11 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
         viewHolder.textEn.text = liste[position].name
         viewHolder.textTo.text = "Kommune: ${liste[position].kommune.name}"
 
-        viewHolder.itemView.setOnClickListener{
+        viewHolder.itemView.setOnClickListener{ //
             val fragment = LocationFragment()
             val bundle = Bundle()
             bundle.putParcelable("location", liste[position] )
             fragment.arguments = bundle
-            Log.d("SNEDER FRA adap", liste[position].name )
 
             Navigation.findNavController(it).navigate(R.id.navigation_location, bundle)
         }
@@ -54,12 +52,9 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
             val fragment = FavoritesFragment()
             val bundle = Bundle()
             bundle.putParcelable("station", liste[position] )
-            Log.d("position", position.toString())
             fragment.arguments = bundle
-            Log.d("STAR trykket", liste[position].name )
 
             Navigation.findNavController(it).navigate(R.id.navigation_favorites, bundle)
-
         }
     }
 
