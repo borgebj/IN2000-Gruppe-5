@@ -60,8 +60,8 @@ class LocationFragment : Fragment() {
         //henter stasjon fra map fragmentet, og setter den til instansvariabelen.
         if (stasjon != null) {
             this.stasjon = stasjon
+            setAqiInformer(stasjon.verdier)
             stasjonNavn.text = stasjon.name
-            Log.d("mine verdier", stasjon.verdier.toString())
         }
         //henter stasjon fra favorite fragmentet, og setter den til instansvariabelen.
         else {
@@ -71,7 +71,6 @@ class LocationFragment : Fragment() {
                 this.stasjon = myStasjon!!
                 setAqiInformer(myStasjon.verdier)
                 stasjonNavn.text = myStasjon.name
-                Log.d("fra favorite", myStasjon.toString())
             }
             else Log.d("bundle == null", "HER")
         }

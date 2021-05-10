@@ -22,10 +22,10 @@
     <string name="innstillinger">INNSTILLINGER</string>
 
     <!-- Location -->
-    <string name="level1">Luftnivået er bra</string>
-    <string name="level2">Luftnivået er moderat</string>
-    <string name="level3">Luftnivået er usunt for utsatte grupper</string>
-    <string name="level4">Luftnivået er usunt</string>
+    <string name="level1">Luftkvaliteten er bra</string>
+    <string name="level2">Luftkvaliteten er moderat</string>
+    <string name="level3">Luftkvaliteten er usunt for utsatte grupper</string>
+    <string name="level4">Luftkvaliteten er usunt</string>
 
     <!-- Infoknapp -->
     <string name="str_info">Konsentrasjonen av helseskadelige luftforurensende partikler måles i mikrogam per kubikkmeter (mg3/m3), og har forskjellige grenser for hva som betraktes som helseskadelig. Nivåene regnes om, slik at det nivået som er høyest prosentmessig, og dermed mest helseskadelig, vises fram. </string>
