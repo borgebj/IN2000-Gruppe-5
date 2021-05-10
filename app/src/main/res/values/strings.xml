@@ -30,7 +30,7 @@
     <!-- Infoknapp -->
     <string name="str_info">Konsentrasjonen av helseskadelige luftforurensende partikler måles i mikrogam per kubikkmeter (mg3/m3), og har forskjellige grenser for hva som betraktes som helseskadelig. Nivåene regnes om, slik at det nivået som er høyest prosentmessig, og dermed mest helseskadelig, vises fram. </string>
     <string name="str_info_values">Luftforurensning påvirkes av flere verdier, slik som <b>O3, NO2, PM2.5, og PM10.</b> Verdiene måles i mikrogram per kubikkmeter (mg/m3), og har ulike grenser for hvor høy konsentrasjon av mg/m3 som er farlig. Verdiene illustreres ved søyler som viser hvor mange prosent av maks forurensningsnivå, verdien er. Grønn søyle viser at konsentrasjonen av luftforurensningen i timesmiddel utgjør en minimal helserisiko, gul viser moderat, rød viser alvorlig, og lilla viser svært alvorlig,</string>
-    <string name="str_info_favorites"> Legg til en favoritt ved å trykke på "+" oppe i høyre hjørnet, og fjern favoritten ved å trykke på den gule stjerna. For å fjerne alle favorittene, trykk på reset. </string>
+    <string name="str_info_favorites"> Legg til en favoritt ved å trykke på "+" oppe i høyre hjørnet, og fjern favoritten ved å trykke på den gule stjerna. For å fjerne alle favorittene, trykk på -. </string>
     <string name="location_icon">Location icon</string>
     <string name="stasjonsnavn">den valgte stasjonen</string>
     <string name="info_button">Info button</string>
