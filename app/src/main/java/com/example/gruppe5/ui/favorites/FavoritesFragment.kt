@@ -49,11 +49,7 @@ class FavoritesFragment : Fragment() {
         toastMsg("Loading ..")
     }*/
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
         this.root = root
         return root
@@ -65,20 +61,12 @@ class FavoritesFragment : Fragment() {
         assignId(root)
         addAdapter()
 
-        Log.d("antKeys i onViewCreate", antKeys.toString())
-        /*viewModel.fav_stations.observe(viewLifecycleOwner,{
-            fav_adapter = StasjonAdapter(it.toMutableList())
-            fav_recycler.adapter = fav_adapter
-        })*/
-
         setResetBut(root)
         setSearchFrag(root)
-        setInfoBut()
+        setInfoBut(root)
 
         //toastMsg("Loading ..")
         viewModel.stations.observe(viewLifecycleOwner, Observer {
-            Log.d("I OBSERVE", "KALT")
-
             setFavStations(it)
             getDataTilbake(it)
         })
@@ -86,9 +74,6 @@ class FavoritesFragment : Fragment() {
     }
 
     fun assignId(root: View) {
-
-        Log.d("assignID", "KALT")
-
         addBut = root.findViewById(R.id.add_but)
         resetB = root.findViewById(R.id.reset_but)
         fav_recycler = root.findViewById(R.id.favorites_recycler)
@@ -132,9 +117,6 @@ class FavoritesFragment : Fragment() {
     }
 
     fun setSearchFrag(root: View){
-
-        Log.d("setSearchFrag", "KALT")
-
         addBut.setOnClickListener {
             tilSearch(root)  // navigere til SearchFragment
             if (antKeys == 5) toastMsg("List is full! Reset favorite stations to add new favorite.")
@@ -147,18 +129,13 @@ class FavoritesFragment : Fragment() {
     }
 
     fun setFavStations(stasjoner: MutableList<Stasjon>){
-
         val keys: Map<String, *> = pref.getAll()
         for ((key, value) in keys) {
-            Log.d("map values", key + ": " + value.toString())
             addToFavStations(value as String, stasjoner)
         }
     }
 
     fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>){
-
-        Log.d("addToFavStations", "KALT med ${station}")
-
         for (st in stasjoner){
             if (st.name.equals(station, ignoreCase = true)){ // finner match
 
@@ -218,8 +195,6 @@ class FavoritesFragment : Fragment() {
     }
 
     fun checkDeleteElem(){
-        Log.d("checkDeleteElem()", "KALT")
-
         val args = arguments // station as Stasjon som skal slettes fra pref
         if (args != null) {
             val slettes: Stasjon? = args?.getParcelable("station") as Stasjon?
@@ -244,7 +219,7 @@ class FavoritesFragment : Fragment() {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
-    fun setInfoBut() {
+    fun setInfoBut(root: View) {
         val infoButton: ImageButton = root.findViewById(R.id.info_favorites)
         infoButton.setOnClickListener {
             alertView(getString(R.string.str_info_favorites), root, "open")
@@ -267,13 +242,5 @@ class FavoritesFragment : Fragment() {
         else if (command == "close") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose //animasjon
         return (animasjonsDialog.show())
     }
-
-    /*fun getElem(key: Int) : String {
-
-    val station : String? = pref.getString(key.toString(), null)
-    Log.d("getElem() station", station.toString())
-
-    return station.toString()
-}*/
 
 }

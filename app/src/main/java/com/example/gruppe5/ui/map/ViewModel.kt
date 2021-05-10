@@ -16,7 +16,9 @@ import kotlin.collections.HashMap
 // skal inneholde logikk
 
 class ViewModel : ViewModel() {
-    init { parseData() }
+    init {
+        parseData()
+    }
 
     val nearest_station: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
@@ -31,6 +33,13 @@ class ViewModel : ViewModel() {
         val full = "$base$del"
         return khttp.get(full).text //TODO utdatert - bytt
     }
+
+//    response = gson.fromJson(Fuel.get(path).awaitString(), Parties::class.java).parties?.toMutableList()!!
+
+//    val alpakka = "alpacaparties.json"
+//    val path = "$adr$alpakka"
+//    val gson = Gson()
+
 
     // henter data fra AirQuality (metrologisk institutt API)
     private fun parseData() {
