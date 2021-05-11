@@ -50,7 +50,7 @@
     <fragment
         android:id="@+id/navigation_location"
         android:name="com.example.gruppe5.ui.location.LocationFragment"
-        android:label="Location"
+        android:label="Lokasjon"
         tools:layout="@layout/fragment_location"
         app:enterAnim="@transition/slide_left"
         app:popEnterAnim="@transition/slide_left_i">

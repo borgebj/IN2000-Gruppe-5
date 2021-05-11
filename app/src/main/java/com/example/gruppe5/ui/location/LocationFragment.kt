@@ -285,7 +285,7 @@ class LocationFragment : Fragment() {
         dialog.setItems(values) { _, which ->
             when (which) {
                 0 -> {displayTypeFact("O3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke lungefunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.", root)} //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
-                1 -> {displayTypeFact("PM2,5 er betegnelse på partikler med diameter under 2,5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.", root)}
+                1 -> {displayTypeFact("PM2.5 er betegnelse på partikler med diameter under 2.5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.", root)}
                 2 -> {displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, særlig langs hovedveier, er dager som ofte har høy konsentrasjon. Oslo og Bergen har hatt de høyeste verdiene.", root )}           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
                 3 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.", root)}
             }
@@ -319,13 +319,13 @@ class LocationFragment : Fragment() {
     //viser fram fun facts etter man har trykket på infoknappen og "les funfacts"
     private fun displayFunfacts(root: View) {
         val facts = listOf(
-            "Barn er mest sårbare for luftforurensning - men vi er alle berørt",
-            "Fem dager inn i 2017 ble de årlige grensene for luftforurensning i London brutt",
-            "De globale kostnadene for luftforurensning er 225 milliarder dollar årlig, ifølge Verdensbanken",
-            "De minste partiklene er de farligste",
-            "I 2019 var det kun to brudd på grense- og målsettingsverdiene for lokal luftkvalitet i Norge, begge knyttet til utslipp fra industrivirksomhet",
+            "Barn er mest sårbare for luftforurensning - men vi er alle berørt.",
+            "Fem dager inn i 2017 ble de årlige grensene for luftforurensning i London brutt.",
+            "De globale kostnadene for luftforurensning er 225 milliarder dollar årlig, ifølge Verdensbanken.",
+            "De minste partiklene er de farligste.",
+            "I 2019 var det kun to brudd på grense- og målsettingsverdiene for lokal luftkvalitet i Norge, begge knyttet til utslipp fra industrivirksomhet.",
             "Fint svevestøv (PM2,5) kommer hovedsakelig fra langtransportert luftforurensning og fra lokal vedfyring.",
-            "Lokalt er utslipp fra vedfyring den viktigste kilden til fint svevestøv (PM2,5) mens utslipp fra eksos kan være viktig i områdene med de høyeste nivåene ",
+            "Lokalt er utslipp fra vedfyring den viktigste kilden til fint svevestøv (PM2,5) mens utslipp fra eksos kan være viktig i områdene med de høyeste nivåene.",
             "Norges befolkning tapte over 15 000 friske leveår i 2016 (tall fra FHI) på grunn av lokal luftforurensning.",
             "Over 1100 mennesker døde for tidlig i Norge som følge av lokal luftforurensning i 2016 (tall fra FHI).",
             "7. september er den internasjonale dagen for ren luft.",
