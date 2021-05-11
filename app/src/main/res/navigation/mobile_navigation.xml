@@ -101,19 +101,15 @@
         <action
             android:id="@+id/action_navigation_favorites_to_navigation_search2"
             app:destination="@id/navigation_search"
-            app:enterAnim="@transition/slide_left"
             app:popEnterAnim="@transition/slide_left_i" />
         <action
             android:id="@+id/action_navigation_favorites_self"
-            app:destination="@id/navigation_favorites"
-            app:enterAnim="@transition/slide_left"
-            app:popEnterAnim="@transition/slide_left_i"
-            />
+            app:destination="@id/navigation_favorites" />
         <action
             android:id="@+id/action_navigation_favorites_to_navigation_location"
             app:destination="@id/navigation_location"
-            app:enterAnim="@transition/slide_left"
-            app:popEnterAnim="@transition/slide_left_i"/>
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@transition/slide_left_i" />
     </fragment>
 
     <fragment
@@ -159,8 +155,7 @@
         tools:layout="@layout/search_fragment" >
         <action
             android:id="@+id/action_navigation_search_to_navigation_favorites"
-            app:destination="@id/navigation_favorites"
-            app:enterAnim="@transition/slide_right" />
+            app:destination="@id/navigation_favorites" />
         <action
             android:id="@+id/action_navigation_search_to_navigation_map"
             app:destination="@id/navigation_map" />

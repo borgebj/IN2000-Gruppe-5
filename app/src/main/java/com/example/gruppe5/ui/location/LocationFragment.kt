@@ -27,6 +27,7 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
+import java.lang.NullPointerException
 import com.example.gruppe5.ui.location.LocationFragmentArgs.Companion as LocationFragmentArgs1
 
 class LocationFragment : Fragment() {
@@ -67,10 +68,12 @@ class LocationFragment : Fragment() {
         else {
             val args = arguments
             if (args != null) {
-                val myStasjon: Stasjon? = args.getParcelable("location") as Stasjon?
-                this.stasjon = myStasjon!!
-                setAqiInformer(myStasjon.verdier)
-                stasjonNavn.text = myStasjon.name
+                try {
+                    val myStasjon: Stasjon? = args.getParcelable("location") as Stasjon?
+                    this.stasjon = myStasjon!!
+                    setAqiInformer(myStasjon.verdier)
+                    stasjonNavn.text = myStasjon.name
+                } catch (e: NullPointerException) {e.printStackTrace()}
             }
             else Log.d("bundle == null", "HER")
         }

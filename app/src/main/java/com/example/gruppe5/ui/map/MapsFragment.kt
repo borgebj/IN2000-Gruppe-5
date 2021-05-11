@@ -4,15 +4,11 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Point
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.SystemClock
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.*
-import android.view.animation.BounceInterpolator
-import android.view.animation.Interpolator
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
@@ -32,7 +28,7 @@ import java.util.*
 
 // SKAL INNEHOLDE UI/kode som endrer viewet
 
-class MapsFragment : Fragment() {
+class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // elementer
     lateinit var mMap: GoogleMap
@@ -49,6 +45,8 @@ class MapsFragment : Fragment() {
     // status
     var GpsStatus = false
     var svar : String? = null // svar fra search-fragment
+    private var tts: TextToSpeech? = null
+    var ttsStatus = true
 
     // search
     lateinit var adapter : ArrayAdapter<*>
@@ -59,6 +57,7 @@ class MapsFragment : Fragment() {
 
     private val callback = OnMapReadyCallback { Map ->
         mMap = Map
+        tts = TextToSpeech(this.context, this)
 
         // starter med aa flytte kamera til Norge
         mMap.setPadding(0, 0, 0, 120)
@@ -249,9 +248,14 @@ class MapsFragment : Fragment() {
                             "]"
                         )
                     )
-
                     if (navn == stasjon.name) {
-
+                        // tts-test
+                        if (ttsStatus) { tts!!.speak(
+                            "Opening page $navn",
+                            TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            "")
+                        }
                         Toast.makeText(this.context, "Opner side ...", Toast.LENGTH_SHORT)
                             .show() // informerer bruker
 
@@ -359,6 +363,16 @@ class MapsFragment : Fragment() {
                 }
             }
         })
+    }
+
+    // KUN FOR TEST ATM !
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            val result = tts!!.setLanguage(Locale.US) // henter språk
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                Log.e("TTS", "Language not supported")
+            }
+        } else { Log.e("TTS", "Initialization failed") }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
