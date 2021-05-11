@@ -7,13 +7,10 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 
 class SearchFragment : Fragment() {
-
-    private lateinit var viewModel: SearchViewModel
 
     lateinit var textView: TextView
     lateinit var adapter : ArrayAdapter<*>
@@ -29,15 +26,6 @@ class SearchFragment : Fragment() {
         setHasOptionsMenu(true)
         setOnListView(root)
         return root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
-        viewModel.text.observe(viewLifecycleOwner, {
-            textView.text = it
-        })
-
     }
 
     fun assignId(root: View) {

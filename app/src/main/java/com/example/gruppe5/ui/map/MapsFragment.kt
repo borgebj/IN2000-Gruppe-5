@@ -117,9 +117,9 @@ class MapsFragment : Fragment() {
     fun addMapFunctions() {
         CheckGpsStatus()
         if (GpsStatus) {
-            Toast.makeText(requireContext(), "GPS ENABLED", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Lokasjon på", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(requireContext(), "GPS NOT ENABLED", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Lokasjon av", Toast.LENGTH_SHORT).show()
         }
         mMap.isMyLocationEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
@@ -252,7 +252,7 @@ class MapsFragment : Fragment() {
 
                     if (navn == stasjon.name) {
 
-                        Toast.makeText(this.context, "Opening page ...", Toast.LENGTH_SHORT)
+                        Toast.makeText(this.context, "Opner side ...", Toast.LENGTH_SHORT)
                             .show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
