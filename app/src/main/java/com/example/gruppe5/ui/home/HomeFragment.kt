@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color.*
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +37,7 @@ class HomeFragment : Fragment(){
     lateinit var aqiSmiley : ImageView
     lateinit var locationIcon : ImageButton
     lateinit var recommendation : Button
+    lateinit var textInfo : TextView
 
     private lateinit var root : View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -63,13 +63,12 @@ class HomeFragment : Fragment(){
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
         viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
             viewModel.findNearestStation(fusedLocationClient, stasjoner, gpsStatus)
-            viewModel.nearest_station.observe(viewLifecycleOwner, { nearest ->
+            viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->
                 nearestStation = nearest
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
-                Log.d("highest", highest.toString())
                 if (highest != null) {
                     nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
-                }
+                } else { textInfo.text = "høyest verdi i Oslo" }
                 if (nearest.name.length > 8) textView.textSize = 32F
                 textView.text = nearest.name
             })
@@ -86,6 +85,7 @@ class HomeFragment : Fragment(){
         aqiSmiley = root.findViewById(R.id.smiley_home)
         locationIcon = root.findViewById(R.id.iconLocation_home)
         recommendation = root.findViewById(R.id.recommendation)
+        textInfo = root.findViewById(R.id.text_info)
 
     }
 
@@ -179,7 +179,7 @@ class HomeFragment : Fragment(){
     //viser dialog/pop up vindu. brukes for infoknapper
     private fun alertView(message: String, root : View, command : String) {
         val dialogB = AlertDialog.Builder(context)
-        dialogB.setTitle("Hva er AQI?")
+        dialogB.setTitle("Om luftkvalitet")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") {
@@ -221,18 +221,18 @@ class HomeFragment : Fragment(){
 
         var factIndex = (facts.indices).random()
         val newDialog = AlertDialog.Builder(context)
-        newDialog.setTitle("Funfact om AQI")
+        newDialog.setTitle("Funfact om luftkvalitet")
         newDialog.setIcon(R.drawable.ic_funfact)
         newDialog.setMessage(facts[factIndex])
             .setPositiveButton("Lukk") {
                     _, _ ->}
-            .setNeutralButton("Neste funfact") {
+            .setNegativeButton("Neste funfact") {
                     _, _ ->
                     factIndex = (facts.indices).random()
                     newDialog.setMessage(facts[factIndex])
                     slideShow("next", newDialog)
             }
-            .setNegativeButton("tilbake") {
+            .setNeutralButton("tilbake") {
                     _, _ ->
                     alertView(getString(R.string.str_info), root, "back")}
         slideShow("nextNext", newDialog)
@@ -286,10 +286,10 @@ class HomeFragment : Fragment(){
             "no2" -> {
                 donutView.cap = 400F
                 numberMax.text = "400"
-                if (highest.value <= 100.0) changeVisuals("green", "Nitrogenoksid")
-                else if (highest.value in 100.0..200.0) changeVisuals("orange", "Nitrogenoksid")
-                else if (highest.value in 200.0..400.0) changeVisuals("red", "Nitrogenoksid")
-                else if (highest.value >= 400.0) changeVisuals("purple", "Nitrogenoksid")
+                if (highest.value <= 100.0) changeVisuals("green", "Nitrogendioksid (no2)")
+                else if (highest.value in 100.0..200.0) changeVisuals("orange", "Nitrogendioksid (no2)")
+                else if (highest.value in 200.0..400.0) changeVisuals("red", "Nitrogendioksid (no2)")
+                else if (highest.value >= 400.0) changeVisuals("purple", "Nitrogendioksid (no2)")
             }
             "pm10" -> {
                 numberMax.text = "400"
@@ -310,14 +310,17 @@ class HomeFragment : Fragment(){
             "o3" -> {
                 numberMax.text = "240"
                 donutView.cap = 240F
-                if (highest.value <= 100.0) changeVisuals("green", "Ozon")
-                else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon")
-                else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon")
-                else if (highest.value >= 240.0) changeVisuals("purple", "Ozon")
+                if (highest.value <= 100.0) changeVisuals("green", "Ozon (o3)")
+                else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon (o3)")
+                else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon (o3)")
+                else if (highest.value >= 240.0) changeVisuals("purple", "Ozon (o3)")
             }
         }
+        donutView.setOnClickListener {
+
+        }
         // endrer tekst midt i donut og lager donut
-        aqiLevel.text = ("${highest?.value?.toInt().toString()} ug/m3")
+        aqiLevel.text = ("${highest?.value?.toInt().toString()} µg/m3")
         createDonut()
     }
 }

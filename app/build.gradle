@@ -49,6 +49,9 @@ dependencies {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-reflect'
     }
 
+    //core
+    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+
     // for google-maps
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
     implementation "com.google.android.gms:play-services-location:18.0.0"
