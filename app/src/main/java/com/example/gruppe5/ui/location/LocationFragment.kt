@@ -149,7 +149,7 @@ class LocationFragment : Fragment() {
     }
 
     //metoden returnerer et dangerLevel fra 1-4(4=farligst), ved å regne ut. setter samtidig hver enkelte globale prosentvariabel.
-    private fun calculateDangerLevel(liveValue: Double?, polType: String) : Int{
+    fun calculateDangerLevel(liveValue: Double?, polType: String) : Int{
         //initaliserer verdier som brukes til å kalkulere prosent, og hvor farlig prosenten er for den gitte typen.
         var topValue = 0                         //verdien viser max eksponering av ug/m3 i timesmiddel før det blir svært alvorlig. Kan hete maxvalue, men blir misvisende siden verdien kan overstige nivået
         val percentage : Float                   //prosenten for anbefalt eksponering
@@ -188,7 +188,7 @@ class LocationFragment : Fragment() {
     }
 
     //metoden tar inn dangerLevelet fra 1-4, og returnerer fargen, som settes i setValues.
-    private fun setColor(dangerLevel : Int): Int{
+    fun setColor(dangerLevel : Int): Int{
         var color = R.color.black
         when (dangerLevel) {
             1 -> { color = R.color.green }
