@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                         permission: PermissionRequest?,
                         token: PermissionToken?
                     ) {
-                        token?.continuePermissionRequest()
+                        //token?.continuePermissionRequest()
                     }
                 }).check()
     }

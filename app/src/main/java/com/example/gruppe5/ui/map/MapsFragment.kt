@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -115,10 +116,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     // legger til funksjoner fra google-maps
-    @SuppressLint("MissingPermission")
-    fun addMapFunctions() {
-        checkLocationStatus()
-        if (locationStatus) {
+    private fun addMapFunctions() {
+        if (ActivityCompat.checkSelfPermission(root.context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.isMyLocationEnabled = true
             mMap.uiSettings.isMyLocationButtonEnabled = true
         } else {
