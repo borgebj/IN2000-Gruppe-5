@@ -28,32 +28,37 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         assignId()
-        checkMyPermission()
 
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        // setter opp navbar
         val appBarConfiguration = AppBarConfiguration(setOf(
             R.id.navigation_home, R.id.navigation_map, R.id.navigation_favorites, R.id.navigation_settings))
         setupActionBarWithNavController(navController, appBarConfiguration)
-        // setter opp navbar
         navView.setupWithNavController(navController)
 
+        checkMyPermission()
+    }
+
+    fun assignId() {
+        navView = findViewById(R.id.nav_view)
+        navController = findNavController(R.id.nav_host_fragment)
     }
 
     override fun onSupportNavigateUp(): Boolean {
         val navController = findNavController(R.id.nav_host_fragment)
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+
     private fun checkMyPermission() {
         Dexter.withContext(this)
             .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             .withListener(
                 object : PermissionListener {
                     override fun onPermissionGranted(response: PermissionGrantedResponse){
-                        Toast.makeText(applicationContext, "ACCESS GRANTED", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(applicationContext, "Lokasjon tillatt", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                        Toast.makeText(applicationContext, "Lokasjon ikke tillatt", Toast.LENGTH_SHORT).show()
 //                    val intent = Intent()
 //                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
 //                    val uri = Uri.fromParts("package", getPackageName(),"");
@@ -73,10 +78,4 @@ class MainActivity : AppCompatActivity() {
                 }).check()
 
     }
-
-    fun assignId() {
-        navView = findViewById(R.id.nav_view)
-        navController = findNavController(R.id.nav_host_fragment)
-    }
-
 }

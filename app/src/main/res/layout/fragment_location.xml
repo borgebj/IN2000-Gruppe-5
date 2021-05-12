@@ -149,24 +149,24 @@
         app:layout_constraintTop_toTopOf="@id/donut_view_location"
         tools:ignore="HardcodedText" />
 
+
+    <!-- Tekst som viser luftkvalitetnivået. teksten endrer farge etter nivå. -->
     <TextView
         android:id="@+id/aqiTypeLocation"
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="8dp"
         android:foregroundGravity="center"
         android:gravity="center"
         android:text="[TYPE]"
-        android:textStyle="bold"
         android:textColor="@color/black"
-        android:textSize="25sp"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/aqiLevel_location"
         app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="@+id/donut_view_location" />
 
-
-    <!-- Tekst som viser luftkvalitetnivået. teksten endrer farge etter nivå. -->
     <TextView
         android:id="@+id/aqiLevel_location"
         android:layout_width="match_parent"
