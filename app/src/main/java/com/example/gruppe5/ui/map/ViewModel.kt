@@ -2,16 +2,23 @@ package com.example.gruppe5.ui.map
 
 import android.annotation.SuppressLint
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gruppe5.Stasjon
+import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import kotlinx.coroutines.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import org.json.JSONObject
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
+
 
 // skal inneholde logikk
 
@@ -20,25 +27,28 @@ class ViewModel : ViewModel() {
         parseData()
     }
 
-    val nearest_station: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
+    val nearestStation: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
     val stations: MutableLiveData<MutableList<Stasjon>> by lazy { MutableLiveData<MutableList<Stasjon>>() }
 
     @SuppressLint("SimpleDateFormat")
-    val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split("T") // dagens dato og tid splittet i to
+    val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split(
+        "T"
+    ) // dagens dato og tid splittet i to
 
 
     // henter JSON/XML via KHTTP -> til String
-    fun getData(base: String, del: String): String {
+    private suspend fun getData(base: String, del: String): String? {
         val full = "$base$del"
-        return khttp.get(full).text //TODO utdatert - bytt
+        val client = OkHttpClient()
+        val request: Request = Request.Builder()
+            .url(full)
+            .header("User-Agent", "https://github.uio.no/borgebj/IN2000-Gruppe-5 borge@bjornstadjordet.com")
+            .build()
+        return client.newCall(request).execute().body?.string()
+        //return khttp.get(full).text
     }
 
-//    response = gson.fromJson(Fuel.get(path).awaitString(), Parties::class.java).parties?.toMutableList()!!
-
-//    val alpakka = "alpacaparties.json"
-//    val path = "$adr$alpakka"
-//    val gson = Gson()
 
 
     // henter data fra AirQuality (metrologisk institutt API)
@@ -46,37 +56,61 @@ class ViewModel : ViewModel() {
         val baseURLMetro = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
 
         // [indre metode] henter alle stasjoner
-        fun getStations() : MutableList<Stasjon> = Gson().fromJson(getData(baseURLMetro,"/stations"), Array<Stasjon>::class.java).toMutableList()
+        suspend fun getStations() : MutableList<Stasjon> = Gson().fromJson(
+            getData(
+                baseURLMetro,
+                "/stations"
+            ), Array<Stasjon>::class.java
+        ).toMutableList()
 
         // henter og tildeler verdier til alle stasjoner
-        fun getValues(stations : MutableList<Stasjon>) {
+        suspend fun getValues(stations: MutableList<Stasjon>) {
             for (station in stations) {
-                val valueJson = getData(baseURLMetro,"/?station=${station.eoi}")
-                val objekt = JSONObject(valueJson)
+                val valueJson = getData(baseURLMetro, "/?station=${station.eoi}")
+                if (valueJson is String) {
+                    val objekt = JSONObject(valueJson)
 
-                // main-data
-                val data = objekt.getJSONObject("data")
+                    // main-data
+                    val data = objekt.getJSONObject("data")
 
-                // gaar gjennom listen med tidspunkter
-                val timeList = data.getJSONArray("time")
-                for (i in 0 until timeList.length()) {
-                    val timeObject = timeList.getJSONObject(i)
+                    // gaar gjennom listen med tidspunkter
+                    val timeList = data.getJSONArray("time")
+                    for (i in 0 until timeList.length()) {
+                        val timeObject = timeList.getJSONObject(i)
 
-                    val times = timeObject.get("from").toString().split("T")
-                    val variables = timeObject.getJSONObject("variables")
+                        val times = timeObject.get("from").toString().split("T")
+                        val variables = timeObject.getJSONObject("variables")
 
-                    // for aa sikre at tidspunktet sammenlignet er innenfor denne og neste time
-                    val slit = today[1].split(":")
-                    val timeIsValid : Boolean = times[1] >= slit[0] && times[1] <= (slit[0].toInt()+1).toString()
+                        // for aa sikre at tidspunktet sammenlignet er innenfor denne og neste time
+                        val slit = today[1].split(":")
+                        val timeIsValid: Boolean =
+                            times[1] >= slit[0] && times[1] <= (slit[0].toInt() + 1).toString()
 
-                    // sammenligner dato og tidspunkt for aa hente verdier for NAA
-                    if (times[0] == today[0] && timeIsValid) {
-                        val map = HashMap<String, Double>()
-                        map["no2"] = String.format("%.2f", variables.getJSONObject("no2_concentration").get("value")).toDouble()
-                        map["pm10"] = String.format("%.2f", variables.getJSONObject("pm10_concentration").get("value")).toDouble()
-                        map["pm25"] = String.format("%.2f", variables.getJSONObject("pm25_concentration").get("value")).toDouble()
-                        map["o3"] = String.format("%.2f", variables.getJSONObject("o3_concentration").get("value")).toDouble()
-                        station.verdier = map
+                        // sammenligner dato og tidspunkt for aa hente verdier for NAA
+                        if (times[0] == today[0] && timeIsValid) {
+                            val map = HashMap<String, Double>()
+                            map["no2"] = String.format(
+                                "%.2f", variables.getJSONObject("no2_concentration").get(
+                                    "value"
+                                )
+                            ).toDouble()
+                            map["pm10"] = String.format(
+                                "%.2f", variables.getJSONObject("pm10_concentration").get(
+                                    "value"
+                                )
+                            ).toDouble()
+                            map["pm25"] = String.format(
+                                "%.2f", variables.getJSONObject("pm25_concentration").get(
+                                    "value"
+                                )
+                            ).toDouble()
+                            map["o3"] = String.format(
+                                "%.2f", variables.getJSONObject("o3_concentration").get(
+                                    "value"
+                                )
+                            ).toDouble()
+                            station.verdier = map
+                        }
                     }
                 }
             }
@@ -87,7 +121,6 @@ class ViewModel : ViewModel() {
             val stasjoner = getStations()
             getValues(stasjoner)
             stations.postValue(stasjoner)
-
         }
     }
 
@@ -106,12 +139,16 @@ class ViewModel : ViewModel() {
                     }
             }
         }
-        nearest_station.postValue(currentHighestStation)
+        nearestStation.postValue(currentHighestStation)
     }
 
     //region [nearby stations]
     @SuppressLint("MissingPermission")
-    fun findNearestStation(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
+    fun findNearestStation(
+        fusedLocationClient: FusedLocationProviderClient,
+        stations: MutableList<Stasjon>,
+        GpsStatus: Boolean
+    ) {
         var nearest : Stasjon? = null
         var closest = 100000.00F
 
@@ -138,7 +175,7 @@ class ViewModel : ViewModel() {
                             closest = distance
                             nearest = stasjon
                         }
-                    }; nearest_station.postValue(nearest)
+                    }; nearestStation.postValue(nearest)
                 }
             }
         }

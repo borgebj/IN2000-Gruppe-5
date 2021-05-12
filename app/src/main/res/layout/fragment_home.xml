@@ -2,12 +2,13 @@
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".ui.home.HomeFragment" >
@@ -35,6 +36,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/text_info"
         android:layout_width="257dp"
@@ -111,36 +113,6 @@
         app:layout_constraintTop_toTopOf="@+id/donut_view"
         app:layout_constraintVertical_bias="0.232" />
 
-    <!--
-    <TextView
-        android:layout_width="385dp"
-        android:layout_height="39dp"
-        android:foregroundGravity="center"
-        android:text="400                                                                      100"
-        android:textColor="@color/gray"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/donut_view"
-        app:layout_constraintEnd_toEndOf="@+id/donut_view"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="@+id/donut_view"
-        app:layout_constraintTop_toTopOf="@+id/donut_view"
-        app:layout_constraintVertical_bias="0.642" />
-
-    <TextView
-        android:layout_width="305dp"
-        android:layout_height="39dp"
-        android:foregroundGravity="center"
-        android:text="     300                                            200"
-        android:textColor="@color/gray"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/donut_view"
-        app:layout_constraintEnd_toEndOf="@+id/donut_view"
-        app:layout_constraintHorizontal_bias="0.494"
-        app:layout_constraintStart_toStartOf="@+id/donut_view"
-        app:layout_constraintTop_toTopOf="@+id/donut_view"
-        app:layout_constraintVertical_bias="1.272" />
-        -->
-
     <TextView
         android:id="@+id/aqiSentence_home"
         android:layout_width="match_parent"
@@ -200,12 +172,11 @@
         android:id="@+id/aqiTypeHome"
         android:layout_width="180dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:foregroundGravity="center"
         android:gravity="center"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:textSize="25sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/aqiLvlHome"
         app:layout_constraintEnd_toEndOf="@+id/donut_view"
         app:layout_constraintHorizontal_bias="0.495"

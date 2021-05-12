@@ -40,7 +40,7 @@ class AboutAppFragment : Fragment() {
             "\nGod luftkvalitet er viktig for å bevare god helse, og denne appen skal bidra med å skape forståelse for luftkvalitetens effekt på egen helse, og ",
             "gjøre det mulig å enkelt avgjøre om det er sunt og trygt å bevege seg utendørs i området man befinner seg i, eller skal oppsøke.",
             "\nI Norge er luftkvaliteten generelt tilfredsstillende, men utsatte grupper anbefales å ta hensyn i perioder med dårlig luftkvalitet.",
-            "\nDenne appen til alle. Både de med luftveisproblemer, de som syns luftkvalitet er interessant, og de som bare har lyst til å unngå byens mest forurensede områder."
+            "\nDenne appen er for alle. Både de med luftveisproblemer, de som syns luftkvalitet er interessant, og de som bare har lyst til å unngå byens mest forurensede områder."
         )
             .toBulletedList()
         textView.text = bulletedList

@@ -17,7 +17,19 @@
         android:layout_width="300dp"
         android:layout_height="20dp"
         android:gravity="center"
-        android:background="#07000000"
+        android:background="@color/white"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:alpha="0.5"
+        android:singleLine="true"
+        android:textSize="14sp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
+
+    <TextView
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:gravity="center"
         android:layout_marginBottom="10dp"
         android:textColor="@color/black"
         android:singleLine="true"

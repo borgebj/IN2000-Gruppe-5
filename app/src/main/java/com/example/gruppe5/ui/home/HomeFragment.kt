@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color.*
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,6 +37,7 @@ class HomeFragment : Fragment(){
     lateinit var aqiSmiley : ImageView
     lateinit var locationIcon : ImageButton
     lateinit var recommendation : Button
+    lateinit var textInfo : TextView
 
     private lateinit var root : View
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -63,13 +63,12 @@ class HomeFragment : Fragment(){
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
         viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
             viewModel.findNearestStation(fusedLocationClient, stasjoner, gpsStatus)
-            viewModel.nearest_station.observe(viewLifecycleOwner, { nearest ->
+            viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->
                 nearestStation = nearest
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
-                Log.d("highest", highest.toString())
                 if (highest != null) {
                     nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
-                }
+                } else { textInfo.text = "høyest verdi i Oslo" }
                 if (nearest.name.length > 8) textView.textSize = 32F
                 textView.text = nearest.name
             })
@@ -86,6 +85,7 @@ class HomeFragment : Fragment(){
         aqiSmiley = root.findViewById(R.id.smiley_home)
         locationIcon = root.findViewById(R.id.iconLocation_home)
         recommendation = root.findViewById(R.id.recommendation)
+        textInfo = root.findViewById(R.id.text_info)
 
     }
 
@@ -156,8 +156,8 @@ class HomeFragment : Fragment(){
             when (which) {
                 0 -> {displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, er dager som oftest blir vi utsatt for de høyeste konsentrasjonene om vinteren på kalde dager med lite vind, og spesielt på trafikkerte veier og i tunneler. Oslo og Bergen har hatt de høyeste verdiene." )}           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
                 1 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000 000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.")}
-                2 -> {displayTypeFact("pm2,5 er betegnelse på partikler med diameter under 2,5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.")}
-                3 -> {displayTypeFact("o3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke luftveisfunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.")} //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
+                2 -> {displayTypeFact("PM2.5 er betegnelse på partikler med diameter under 2.5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.")}
+                3 -> {displayTypeFact("O3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke luftveisfunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.")} //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
             }
         }
         slideShow(command, builder)
@@ -179,7 +179,7 @@ class HomeFragment : Fragment(){
     //viser dialog/pop up vindu. brukes for infoknapper
     private fun alertView(message: String, root : View, command : String) {
         val dialogB = AlertDialog.Builder(context)
-        dialogB.setTitle("Hva er AQI?")
+        dialogB.setTitle("Om luftkvalitet")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") {
@@ -197,13 +197,13 @@ class HomeFragment : Fragment(){
     //viser fram fun facts etter man har trykket på infoknappen og "les funfacts"
     private fun displayFunfacts(root: View) {
         val facts = listOf(
-            "Barn er mest sårbare for luftforurensning - men vi er alle berørt",
-            "Fem dager inn i 2017 ble de årlige grensene for luftforurensning i London brutt",
-            "De globale kostnadene for luftforurensning er 225 milliarder dollar årlig, ifølge Verdensbanken",
-            "De minste partiklene er de farligste",
-            "I 2019 var det kun to brudd på grense- og målsettingsverdiene for lokal luftkvalitet i Norge, begge knyttet til utslipp fra industrivirksomhet",
+            "Barn er mest sårbare for luftforurensning - men vi er alle berørt.",
+            "Fem dager inn i 2017 ble de årlige grensene for luftforurensning i London brutt.",
+            "De globale kostnadene for luftforurensning er 225 milliarder dollar årlig, ifølge Verdensbanken.",
+            "De minste partiklene er de farligste.",
+            "I 2019 var det kun to brudd på grense- og målsettingsverdiene for lokal luftkvalitet i Norge, begge knyttet til utslipp fra industrivirksomhet.",
             "Fint svevestøv (PM2,5) kommer hovedsakelig fra langtransportert luftforurensning og fra lokal vedfyring.",
-            "Lokalt er utslipp fra vedfyring den viktigste kilden til fint svevestøv (PM2,5, mens utslipp fra eksos kan være viktig i områdene med de høyeste nivåene ",
+            "Lokalt er utslipp fra vedfyring den viktigste kilden til fint svevestøv (PM2,5, mens utslipp fra eksos kan være viktig i områdene med de høyeste nivåene.",
             "Norges befolkning tapte over 15 000 friske leveår i 2016 (tall fra FHI) på grunn av lokal luftforurensning.",
             "Over 1100 mennesker døde for tidlig i Norge som følge av lokal luftforurensning i 2016 (tall fra FHI).",
             "7. september er den internasjonale dagen for ren luft.",
@@ -221,18 +221,18 @@ class HomeFragment : Fragment(){
 
         var factIndex = (facts.indices).random()
         val newDialog = AlertDialog.Builder(context)
-        newDialog.setTitle("Funfact om AQI")
+        newDialog.setTitle("Funfact om luftkvalitet")
         newDialog.setIcon(R.drawable.ic_funfact)
         newDialog.setMessage(facts[factIndex])
             .setPositiveButton("Lukk") {
                     _, _ ->}
-            .setNeutralButton("Neste funfact") {
+            .setNegativeButton("Neste funfact") {
                     _, _ ->
                     factIndex = (facts.indices).random()
                     newDialog.setMessage(facts[factIndex])
                     slideShow("next", newDialog)
             }
-            .setNegativeButton("tilbake") {
+            .setNeutralButton("tilbake") {
                     _, _ ->
                     alertView(getString(R.string.str_info), root, "back")}
         slideShow("nextNext", newDialog)
@@ -256,19 +256,19 @@ class HomeFragment : Fragment(){
                 } "orange" -> {
                     aqiLevel.setTextColor(parseColor("#FFCB00"))
                     aqiSentence.text = getString(R.string.luftnivaa_moderat)
-                    currentStatus = "Utendørs aktivitet anbefales for de fleste"
+                    currentStatus = "Utendørs aktivitet anbefales for de fleste."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
                     donutColor = "#FFCB00"
                 } "red" -> {
                     aqiLevel.setTextColor(parseColor("#C13500"))
                     aqiSentence.text = getString(R.string.luftnivaa_utsatte)
-                    currentStatus ="Luftkvaliteten er innenfor en grei mengde\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet"
+                    currentStatus ="Luftkvaliteten er innenfor en grei mengde.\nBarn, gravide, syke og eldre bør vurdere begrenset utendørs fysisk aktivitet."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
                     donutColor = "#C13500"
                 } "purple" -> {
                     aqiLevel.setTextColor(parseColor("#4900AC")) //endres til oransje
                     aqiSentence.text = getString(R.string.luftnivaa_usunt)
-                    currentStatus ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige"
+                    currentStatus ="Vurder å ikke oppholde deg utendørs i lengre perioder. Barn, gravide, syke og eldre må være spesielt forsiktige."
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
                     donutColor = "#4900AC"
                 }
@@ -286,10 +286,10 @@ class HomeFragment : Fragment(){
             "no2" -> {
                 donutView.cap = 400F
                 numberMax.text = "400"
-                if (highest.value <= 100.0) changeVisuals("green", "Nitrogenoksid")
-                else if (highest.value in 100.0..200.0) changeVisuals("orange", "Nitrogenoksid")
-                else if (highest.value in 200.0..400.0) changeVisuals("red", "Nitrogenoksid")
-                else if (highest.value >= 400.0) changeVisuals("purple", "Nitrogenoksid")
+                if (highest.value <= 100.0) changeVisuals("green", "Nitrogendioksid (no2)")
+                else if (highest.value in 100.0..200.0) changeVisuals("orange", "Nitrogendioksid (no2)")
+                else if (highest.value in 200.0..400.0) changeVisuals("red", "Nitrogendioksid (no2)")
+                else if (highest.value >= 400.0) changeVisuals("purple", "Nitrogendioksid (no2)")
             }
             "pm10" -> {
                 numberMax.text = "400"
@@ -310,14 +310,17 @@ class HomeFragment : Fragment(){
             "o3" -> {
                 numberMax.text = "240"
                 donutView.cap = 240F
-                if (highest.value <= 100.0) changeVisuals("green", "Ozon")
-                else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon")
-                else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon")
-                else if (highest.value >= 240.0) changeVisuals("purple", "Ozon")
+                if (highest.value <= 100.0) changeVisuals("green", "Ozon (o3)")
+                else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon (o3)")
+                else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon (o3)")
+                else if (highest.value >= 240.0) changeVisuals("purple", "Ozon (o3)")
             }
         }
+        donutView.setOnClickListener {
+
+        }
         // endrer tekst midt i donut og lager donut
-        aqiLevel.text = ("${highest?.value?.toInt().toString()} ug/m3")
+        aqiLevel.text = ("${highest?.value?.toInt().toString()} µg/m3")
         createDonut()
     }
 }

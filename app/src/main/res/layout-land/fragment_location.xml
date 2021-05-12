@@ -25,6 +25,20 @@
         app:layout_constraintGuide_percent="0.10" />
 
     <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
+
+    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline3.5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -141,19 +155,49 @@
 
     <!-- teksten i mellom "gapet" i donuten: 100% .. 0% -->
     <TextView
-        android:id="@+id/donutNmbrsLocation"
+        android:id="@+id/donutNmbrsLocationMax"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:foregroundGravity="center"
-        android:gravity="center"
-        android:text="100%      0%"
+        android:gravity="start"
+        android:paddingEnd="0dp"
+        android:text="500+"
         android:textColor="@color/black"
-        android:textSize="15sp"
-        app:layout_constraintBottom_toTopOf="@+id/aqiLevel_location"
-        app:layout_constraintEnd_toStartOf="@+id/guideline3.5"
-        app:layout_constraintStart_toStartOf="@+id/donut_view_location"
-        app:layout_constraintTop_toTopOf="@+id/donut_view_location"
-        tools:ignore="HardcodedText" />
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/donut_view_location"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2.5"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="@id/donut_view_location" />
+
+    <TextView
+        android:id="@+id/aqiTypeLocation"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:foregroundGravity="center"
+        android:gravity="center"
+        android:text="[TYPE]"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/aqiLevel_location"
+        app:layout_constraintEnd_toEndOf="@+id/donut_view_location"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toStartOf="@+id/donut_view_location" />
+
+    <TextView
+        android:id="@+id/donutNmbrsLocationMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        android:gravity="end"
+        android:text="0"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline3"
+        app:layout_constraintStart_toStartOf="@+id/guideline2.5"
+        app:layout_constraintTop_toTopOf="@id/donut_view_location"/>
+
     <!-- Tekst som viser luftkvalitetnivået. teksten endrer farge etter nivå. -->
     <TextView
         android:id="@+id/aqiLevel_location"
