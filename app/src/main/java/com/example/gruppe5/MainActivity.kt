@@ -59,21 +59,13 @@ class MainActivity : AppCompatActivity() {
 
                     override fun onPermissionDenied(response: PermissionDeniedResponse) {
                         Toast.makeText(applicationContext, "Lokasjon ikke tillatt", Toast.LENGTH_SHORT).show()
-//                    val intent = Intent()
-//                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//                    val uri = Uri.fromParts("package", getPackageName(),"");
-//                    intent.setData(uri);
-//                    startActivity(intent);
-
-                        //checkMyPermission() // TODO
-
                     }
 
                     override fun onPermissionRationaleShouldBeShown(
                         permission: PermissionRequest?,
                         token: PermissionToken?
                     ) {
-//                        token?.continuePermissionRequest()
+                        token?.continuePermissionRequest()
                     }
                 }).check()
 
