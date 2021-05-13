@@ -46,10 +46,10 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(ViewModel::class.java)
-
         assignId(root)
         setHasOptionsMenu(true)
         addAdapter()
+
         setResetBut(root)
         setSearchFrag(root)
 
@@ -62,6 +62,7 @@ class FavoritesFragment : Fragment() {
 
     @SuppressLint("CommitPrefEdits")
     fun assignId(root: View) {
+
         addBut = root.findViewById(R.id.add_but)
         resetB = root.findViewById(R.id.reset_but)
         favRecycler = root.findViewById(R.id.favorites_recycler)
@@ -95,6 +96,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun setSearchFrag(root: View){
+
         addBut.setOnClickListener {
             tilSearch(root)  // navigere til SearchFragment
             val msg = "Tøm listen over favorittstasjoner eller slett noen stasjoner for å legge til en ny favoritt."
@@ -216,5 +218,4 @@ class FavoritesFragment : Fragment() {
         inflater.inflate(R.menu.infoknapp_on_favorites_menu, menu)
 
     }
-
 }

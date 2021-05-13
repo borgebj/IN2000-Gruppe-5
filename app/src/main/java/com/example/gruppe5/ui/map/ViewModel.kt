@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.gruppe5.Stasjon
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.coroutines.awaitString
 import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.*
 import com.google.gson.Gson
@@ -40,20 +42,22 @@ class ViewModel : ViewModel() {
     // henter JSON/XML via KHTTP -> til String
     private suspend fun getData(base: String, del: String): String? {
         val full = "$base$del"
-        val client = OkHttpClient()
+        /*val client = OkHttpClient()
         val request: Request = Request.Builder()
             .url(full)
             .header("User-Agent", "https://github.uio.no/borgebj/IN2000-Gruppe-5 borge@bjornstadjordet.com")
             .build()
         return client.newCall(request).execute().body?.string()
-        //return khttp.get(full).text
+        //return khttp.get(full).text*/
+        return Fuel.get(full).awaitString()
     }
 
 
 
     // henter data fra AirQuality (metrologisk institutt API)
     private fun parseData() {
-        val baseURLMetro = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
+        //val baseURLMetro = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
+        val baseURLMetro = "https://in2000-apiproxy.ifi.uio.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
 
         // [indre metode] henter alle stasjoner
         suspend fun getStations() : MutableList<Stasjon> = Gson().fromJson(
