@@ -20,8 +20,8 @@ import com.karumi.dexter.listener.single.PermissionListener
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var navView: BottomNavigationView
-    lateinit var navController : NavController
+    private lateinit var navView: BottomNavigationView
+    private lateinit var navController : NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         assignId()
 
-        // setter opp navbar
+        // setter opp navigasjonsbar
         val appBarConfiguration = AppBarConfiguration(setOf(
             R.id.navigation_home, R.id.navigation_map, R.id.navigation_favorites, R.id.navigation_settings))
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
+    // Spør bruker om tillatelse til å bruke lokasjon
     private fun checkMyPermission() {
         Dexter.withContext(this)
             .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
@@ -59,23 +60,14 @@ class MainActivity : AppCompatActivity() {
 
                     override fun onPermissionDenied(response: PermissionDeniedResponse) {
                         Toast.makeText(applicationContext, "Lokasjon ikke tillatt", Toast.LENGTH_SHORT).show()
-//                    val intent = Intent()
-//                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-//                    val uri = Uri.fromParts("package", getPackageName(),"");
-//                    intent.setData(uri);
-//                    startActivity(intent);
-
-                        //checkMyPermission() // TODO
-
                     }
 
                     override fun onPermissionRationaleShouldBeShown(
                         permission: PermissionRequest?,
                         token: PermissionToken?
                     ) {
-//                        token?.continuePermissionRequest()
+                        //token?.continuePermissionRequest()
                     }
                 }).check()
-
     }
 }
