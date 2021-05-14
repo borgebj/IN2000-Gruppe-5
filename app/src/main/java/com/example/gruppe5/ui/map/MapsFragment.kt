@@ -44,6 +44,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     // maps stuff
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var locationManager: LocationManager? = null
+    var gpsStatus = false
 
     // status
     var locationStatus = false
@@ -107,6 +108,12 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         )
     }
 
+    private fun checkGpsStatus() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        gpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
+    }
+
 
     private fun checkLocationStatus() {
         locationStatus = (ContextCompat.checkSelfPermission(root.context,
@@ -116,13 +123,20 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     // legger til funksjoner fra google-maps
+    @SuppressLint("MissingPermission")
     private fun addMapFunctions() {
-        if (ActivityCompat.checkSelfPermission(root.context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        //if (ActivityCompat.checkSelfPermission(root.context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        //checkLocationStatus()
+        checkGpsStatus()
+        if (gpsStatus ){
             mMap.isMyLocationEnabled = true
             mMap.uiSettings.isMyLocationButtonEnabled = true
+            Log.d("IF", "TRUE")
         } else {
             mMap.isMyLocationEnabled = false
             mMap.uiSettings.isMyLocationButtonEnabled = false
+            Log.d("ELSE", "FALSE")
+
         }
 
         mMap.uiSettings.isZoomControlsEnabled = true
