@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,15 +32,14 @@ class LocationFragment : Fragment() {
     private lateinit var aqiLevel: TextView                         //aqi = air quality index, sier noe om luftkvaliteten
     private lateinit var aqiSentence: TextView
     private lateinit var verdiNivaer: TextView                      //overskrift for horisontalt søylediagram
-    lateinit var aqiType: TextView                                  // textview som sier hvilken type som er høyest
-    lateinit var numberMax: TextView
+    private lateinit var aqiType: TextView                                  // textview som sier hvilken type som er høyest
+    private lateinit var numberMax: TextView
     private lateinit var aqiSmiley: ImageView
     private lateinit var donutView: DonutProgressView
     private lateinit var stasjon: Stasjon                            //Fragmentets stasjon
     private lateinit var barDataSet: BarDataSet
     private lateinit var HorBarChart: HorizontalBarChart
-    private var pm10Percentage: Float =
-        0.0f                //viser helserisikoen til forurensningstypene i %
+    private var pm10Percentage: Float = 0.0f //viser helserisikoen til forurensningstypene i %
     private var pm25Percentage: Float = 0.0f
     private var no2Percentage: Float = 0.0f
     private var o3percentage: Float = 0.0f
@@ -76,9 +74,12 @@ class LocationFragment : Fragment() {
                 } catch (e: NullPointerException) {
                     e.printStackTrace()
                 }
-            } else Log.d("bundle = null", "HER")
+            }
         }
         setChart() // oppretter søylediagrammet
+        setValues() //metoden setter opp søylenes nivå, og farger.
+        setGraphData() //egen metode. setter plasseringen, og annen formattering
+
         return root
     }
 
@@ -94,10 +95,122 @@ class LocationFragment : Fragment() {
         HorBarChart = root.findViewById(R.id.hor_bar_chart)
     }
 
+    //setter onclicklisteners for infoknappene. åpner hver sine dialoger, og sender med tekst fra Strings, kommando for animasjon og root
+    private fun setOnClickers(root: View) {
+        val infoButton2: ImageButton = root.findViewById(R.id.info2_location)
+        infoButton2.setOnClickListener {
+            alertValuesView(getString(R.string.str_info_values), "open", root)
+        }
+    }
+
+    //setter views etter nivåene fra aqiet
+    @SuppressLint("SetTextI18n")
+    private fun setAqiInformer(map: Map<String, Double>) {
+        val highest: Map.Entry<String, Double>? =
+                map.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
+        var donutColor = "#808080"
+
+        @SuppressLint("SetTextI18n") //ignorerer advarsel på strings
+        fun changeVisuals(level: String, type: String) {  //metoden kalles i createDonut(). endrer views som signaliserer luftkvalitetsnivået etter det faktiske nivået.
+            aqiType.text = type
+            when (level) {
+                "green" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#3F9F41"))
+                    aqiSentence.text = getString(R.string.luftnivaa_bra)
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
+                    donutColor = "#3F9F41"
+                }
+                "orange" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#FFCB00"))
+                    aqiSentence.text = getString(R.string.luftnivaa_moderat)
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+                    donutColor = "#FFCB00"
+                }
+                "red" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#C13500"))
+                    aqiSentence.text = getString(R.string.luftnivaa_utsatte)
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
+                    donutColor = "#C13500"
+                }
+                "purple" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#4900AC")) //endres til oransje
+                    aqiSentence.text = getString(R.string.luftnivaa_usunt)
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
+                    donutColor = "#4900AC"
+                }
+            }
+        }
+
+        // donutview-seksjonen for nivaaet
+        fun createDonut() {
+            val donutSection = highest?.value?.let {
+                DonutSection(
+                        "pollution level",
+                        Color.parseColor(donutColor),
+                        it.toFloat()
+                )
+            }
+            if (donutSection != null) donutView.submitData(listOf(donutSection))
+        }
+
+        //sjekker verdinivåene, og setter views deretter
+        if (highest != null)
+            when (highest.key) {
+                "no2" -> {
+                    numberMax.text = "\n400"
+                    donutView.cap = 400F
+                    when {
+                        highest.value <= 100.0 -> changeVisuals("green", "Nitrogenoksid")
+                        highest.value in 100.0..200.0 -> changeVisuals("orange", "Nitrogenoksid")
+                        highest.value in 200.0..400.0 -> changeVisuals("red", "Nitrogenoksid")
+                        highest.value >= 400.0 -> changeVisuals("purple", "Nitrogenoksid")
+                    }
+                }
+                "pm10" -> {
+                    numberMax.text = "\n400"
+                    donutView.cap = 400F
+                    when {
+                        highest.value <= 60.0 -> changeVisuals("green", "Svevestøv (pm10)")
+                        highest.value in 60.0..120.0 -> changeVisuals(
+                                "orange",
+                                "Svevestøv (pm10)"
+                        )
+                        highest.value in 120.0..400.0 -> changeVisuals("red", "Svevestøv (pm10)")
+                        highest.value >= 400.0 -> changeVisuals("purple", "Svevestøv (pm10)")
+                    }
+                }
+                "pm25" -> {
+                    numberMax.text = "\n150"
+                    donutView.cap = 150F
+                    when {
+                        highest.value <= 30.0 -> changeVisuals("green", "Svevestøv (pm2.5)")
+                        highest.value in 30.0..50.0 -> changeVisuals(
+                                "orange",
+                                "Svevestøv (pm2.5)"
+                        )
+                        highest.value in 50.0..150.0 -> changeVisuals("red", "Svevestøv (pm2.5)")
+                        highest.value >= 150.0 -> changeVisuals("purple", "Svevestøv (pm2.5)")
+                    }
+                }
+                "o3" -> {
+                    numberMax.text = "\n240"
+                    donutView.cap = 240F
+                    when {
+                        highest.value <= 100.0 -> changeVisuals("green", "Ozon")
+                        highest.value in 100.0..180.0 -> changeVisuals("orange", "Ozon")
+                        highest.value in 180.0..240.0 -> changeVisuals("red", "Ozon")
+                        highest.value >= 240.0 -> changeVisuals("purple", "Ozon")
+                    }
+                }
+            }
+        // endrer tekst midt i donuten og lager donuten
+        aqiLevel.text = (highest?.value?.toInt().toString() + " μg/m3")
+        createDonut()
+    }
+
     //setter oppa aksene og andre nødvendige detaljer for det horisontale bar chartet
     private fun setChart() {
-        val description =
-            Description()                 //lager description som skal gjøre diagrammet enklere å lese.
+        val description = Description()                 //lager description som skal gjøre diagrammet enklere å lese.
         description.text = "Verdiene vises i %"
         description.textSize = 15f
         HorBarChart.description = description
@@ -109,8 +222,7 @@ class LocationFragment : Fragment() {
         val xAxis = HorBarChart.xAxis
         xAxis.setDrawGridLines(false)                   //fjerner rutenettet bak
         xAxis.position = XAxis.XAxisPosition.BOTTOM   //setter labelsene på venstre side av søylene
-        xAxis.labelCount =
-            4                            //setter antallet til 4, siden vi har 4 verdier
+        xAxis.labelCount = 4                            //setter antallet til 4, siden vi har 4 verdier
         xAxis.isEnabled = true
         xAxis.textSize = 15f
 
@@ -131,96 +243,8 @@ class LocationFragment : Fragment() {
 
         val yRight = HorBarChart.axisRight
         yRight.isEnabled = false                        //hindrer at tekst kommer på nederste aksen
-        setGraphData()                                  //egen metode. setter plasseringen, og annen formattering
+        //setGraphData()                                  //egen metode. setter plasseringen, og annen formattering
         HorBarChart.animateY(2000)         //animasjon for når søylene "bygges"
-    }
-
-    //setter deler av designet og selve dataen.
-    private fun setGraphData() {
-        setValues()
-        HorBarChart.setDrawBarShadow(true)              //setter skygge som viser hvor langt søylen kan gå.//egen metode,
-        barDataSet.setDrawValues(true)                  //setter søyleverdien i tekst
-        barDataSet.valueTextSize =
-            13f                  //endrer tekststørrelsen til teksten oppå søylene
-        barDataSet.barBorderColor = R.color.black       //setter rammefarge på søylene
-        barDataSet.barShadowColor = Color.argb(40, 150, 150, 150)   //gråfarge
-        val data =
-            BarData(barDataSet)                  //oppretter BarData objekt med bardatasettet som parameter.
-        data.barWidth =
-            0.5f                            //setter bredden på søylene  OBS: for å øke mellomrommet mellom søylene, sett verdien til barwidth til <1f
-        HorBarChart.data =
-            data                         //avslutningsvis: sett dataen og refresh grafen
-        HorBarChart.invalidate()
-    }
-
-    //metoden returnerer et dangerLevel fra 1-4(4=farligst), ved å regne ut. setter samtidig hver enkelte globale prosentvariabel.
-    fun calculateDangerLevel(liveValue: Double?, polType: String): Int {
-        //initaliserer verdier som brukes til å kalkulere prosent, og hvor farlig prosenten er for den gitte typen.
-        var topValue =
-            0                         //verdien viser max eksponering av ug/m3 i timesmiddel før det blir svært alvorlig. Kan hete maxvalue, men blir misvisende siden verdien kan overstige nivået
-        val percentage: Float                   //prosenten for anbefalt eksponering
-        var dangerLimit1 =
-            0                     //hvor mange prosent som må til for å være "lite farlig", "moderat", "alvorlig" og "svært alvorlig".
-        var dangerLimit2 = 0
-        val dangerLimit3 =
-            100                  //farenivå "alvorlig" vil alltid være 100%. Farenivået over vil alltid være over 100%. Det er altså kun prosentene for lite farlig og moderat som er relevant her, siden det er de som vil variere.
-        var dangerLevel =
-            0                      //settes til et tall fra 1 - 4, som forteller hvor farlig nivået er (4 er farligst). Returneres
-
-        //setter verdiene som er initalisert, til sin type. Hver type har forskjellige prosentmessige grenseverdier.
-        //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
-        when (polType) {
-            "pm10" -> {
-                topValue = 400; dangerLimit1 = 15; dangerLimit2 = 30; }
-            "pm25" -> {
-                topValue = 150; dangerLimit1 = 20; dangerLimit2 = 33
-            }
-            "no2" -> {
-                topValue = 400; dangerLimit1 = 25; dangerLimit2 = 50
-            }
-            "o3" -> {
-                topValue = 240; dangerLimit1 = 41; dangerLimit2 = 75
-            }
-            //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
-        }
-
-        //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
-        if (liveValue != null) {
-            percentage = (liveValue.toFloat() / topValue.toFloat()) * 100f
-            when (polType) {
-                "pm10" -> pm10Percentage = percentage
-                "pm25" -> pm25Percentage = percentage
-                "no2" -> no2Percentage = percentage
-                "o3" -> o3percentage = percentage
-            }
-
-            //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
-            if (percentage < dangerLimit1) dangerLevel = 1
-            else if (percentage > dangerLimit1 && percentage < dangerLimit2) dangerLevel = 2
-            else if (percentage > dangerLimit2 && percentage < dangerLimit3) dangerLevel = 3
-            else if (percentage > dangerLimit3) dangerLevel = 4
-        }
-        return dangerLevel
-    }
-
-    //metoden tar inn dangerLevelet fra 1-4, og returnerer fargen, som settes i setValues.
-    fun setColor(dangerLevel: Int): Int {
-        var color = R.color.black
-        when (dangerLevel) {
-            1 -> {
-                color = R.color.green
-            }
-            2 -> {
-                color = R.color.yellow
-            }
-            3 -> {
-                color = R.color.red
-            }
-            4 -> {
-                color = R.color.purple_700
-            }
-        }
-        return color
     }
 
     //metoden setter opp søylenes nivå, og farger.
@@ -243,23 +267,74 @@ class LocationFragment : Fragment() {
 
         //setter fargene med variablene som lages med metodekall
         barDataSet.setColors(
-            ContextCompat.getColor(HorBarChart.context, setColor(pm10lvl)),    //pm10lvl
-            ContextCompat.getColor(HorBarChart.context, setColor(pm25lvl)),    //pm25lvl
-            ContextCompat.getColor(HorBarChart.context, setColor(no2lvl)),     //no2lvl
-            ContextCompat.getColor(HorBarChart.context, setColor(o3lvl))      //o3lvl
+                ContextCompat.getColor(HorBarChart.context, setColor(pm10lvl)),    //pm10lvl
+                ContextCompat.getColor(HorBarChart.context, setColor(pm25lvl)),    //pm25lvl
+                ContextCompat.getColor(HorBarChart.context, setColor(no2lvl)),     //no2lvl
+                ContextCompat.getColor(HorBarChart.context, setColor(o3lvl))      //o3lvl
         )
     }
 
-    //setter onclicklisteners for infoknappene. åpner hver sine dialoger, og sender med tekst fra Strings, kommando for animasjon og root
-    private fun setOnClickers(root: View) {
-        val infoButton1: ImageButton = root.findViewById(R.id.info1_location)
-        infoButton1.setOnClickListener {
-            alertView(getString(R.string.str_info), root, "open")
+    //metoden tar inn dangerLevelet fra 1-4, og returnerer fargen, som settes i setValues.
+    fun setColor(dangerLevel: Int): Int {
+        var color = R.color.black
+        when (dangerLevel) {
+            1 -> color = R.color.green
+            2 -> color = R.color.yellow
+            3 -> color = R.color.red
+            4 -> color = R.color.purple_700
         }
-        val infoButton2: ImageButton = root.findViewById(R.id.info2_location)
-        infoButton2.setOnClickListener {
-            alertValuesView(getString(R.string.str_info_values), "open", root)
+        return color
+    }
+
+    //metoden returnerer et dangerLevel fra 1-4(4=farligst), ved å regne ut. setter samtidig hver enkelte globale prosentvariabel.
+    fun calculateDangerLevel(liveValue: Double?, polType: String): Int {
+        //initaliserer verdier som brukes til å kalkulere prosent, og hvor farlig prosenten er for den gitte typen.
+        var topValue = 0 //verdien viser max eksponering av ug/m3 i timesmiddel før det blir svært alvorlig. Kan hete maxvalue, men blir misvisende siden verdien kan overstige nivået
+        val percentage: Float                   //prosenten for anbefalt eksponering
+        var dangerLimit1 = 0 //hvor mange prosent som må til for å være "lite farlig", "moderat", "alvorlig" og "svært alvorlig".
+        var dangerLimit2 = 0
+        val dangerLimit3 = 100 //farenivå "alvorlig" vil alltid være 100%. Farenivået over vil alltid være over 100%. Det er altså kun prosentene for lite farlig og moderat som er relevant her, siden det er de som vil variere.
+        var dangerLevel = 0 //settes til et tall fra 1 - 4, som forteller hvor farlig nivået er (4 er farligst). Returneres
+
+        //setter verdiene som er initalisert, til sin type. Hver type har forskjellige prosentmessige grenseverdier.
+        //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
+        when (polType) {
+            "pm10" -> { topValue = 400; dangerLimit1 = 15; dangerLimit2 = 30; }
+            "pm25" -> { topValue = 150; dangerLimit1 = 20; dangerLimit2 = 33 }
+            "no2" -> { topValue = 400; dangerLimit1 = 25; dangerLimit2 = 50 }
+            "o3" -> { topValue = 240; dangerLimit1 = 41; dangerLimit2 = 75 }
+            //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
         }
+
+        //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
+        if (liveValue != null) {
+            percentage = (liveValue.toFloat() / topValue.toFloat()) * 100f
+            when (polType) {
+                "pm10" -> pm10Percentage = percentage
+                "pm25" -> pm25Percentage = percentage
+                "no2" -> no2Percentage = percentage
+                "o3" -> o3percentage = percentage
+            }
+            //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
+            if (percentage < dangerLimit1) dangerLevel = 1
+            else if (percentage > dangerLimit1 && percentage < dangerLimit2) dangerLevel = 2
+            else if (percentage > dangerLimit2 && percentage < dangerLimit3) dangerLevel = 3
+            else if (percentage > dangerLimit3) dangerLevel = 4
+        }
+        return dangerLevel
+    }
+
+    //setter deler av designet og selve dataen.
+    private fun setGraphData() {
+        HorBarChart.setDrawBarShadow(true)              //setter skygge som viser hvor langt søylen kan gå.//egen metode,
+        barDataSet.setDrawValues(true)                  //setter søyleverdien i tekst
+        barDataSet.valueTextSize = 13f //endrer tekststørrelsen til teksten oppå søylene
+        barDataSet.barBorderColor = R.color.black       //setter rammefarge på søylene
+        barDataSet.barShadowColor = Color.argb(40, 150, 150, 150)   //gråfarge
+        val data = BarData(barDataSet)                  //oppretter BarData objekt med bardatasettet som parameter.
+        data.barWidth = 0.5f                            //setter bredden på søylene  OBS: for å øke mellomrommet mellom søylene, sett verdien til barwidth til <1f
+        HorBarChart.data = data                         //avslutningsvis: sett dataen og refresh grafen
+        HorBarChart.invalidate()
     }
 
     //brukes for animerte overganger i dialog/pop up boksene.
@@ -269,8 +344,7 @@ class LocationFragment : Fragment() {
             "open" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen
             "close" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose
             "next" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext
-            "nextNext" -> animasjonsDialog.window?.attributes?.windowAnimations =
-                R.style.DialogThNext
+            "nextNext" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext
             "back" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThBack
         }
         return (animasjonsDialog.show())
@@ -285,32 +359,11 @@ class LocationFragment : Fragment() {
             .setMessage(message)
             .setPositiveButton("Lukk") { _, _ -> }                                              //lukker vinduet. _ brukes for å hoppe over variabler som ikke brukes.
             .setNeutralButton("les mer") { _, _ ->
-                openValueList(
-                    "next",
-                    root
-                )
+                openValueList("next", root)
             }     //kaller metoden nedenfor.
             .setNegativeButton("Se risikogrenser") { _, _ -> displayTable(root) }
         slideShow(command, dialog)
     }
-
-    private fun displayTable(root: View) {
-        val image = ImageView(context)
-        image.setImageResource(R.drawable.health_risk_table)
-        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
-            .setView(image)
-            .setNeutralButton("Tilbake") { _, _ ->
-                alertValuesView(
-                    getString(R.string.str_info_values),
-                    "back",
-                    root
-                )
-            }
-            .setPositiveButton("Lukk") { _, _ -> }
-        //builder.create()
-        slideShow("next", builder)
-    }
-
 
     //kalles i metoden ovenfor. Åpner liste med ulike verdier, som man kan velge i for deretter å få en forklaring. åpnes når det trykkes "les mer".
     private fun openValueList(command: String, root: View) {
@@ -356,6 +409,23 @@ class LocationFragment : Fragment() {
         slideShow(command, dialog)
     }
 
+    // viser tabellen over risikoverdien
+    private fun displayTable(root: View) {
+        val image = ImageView(context)
+        image.setImageResource(R.drawable.health_risk_table)
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+                .setView(image)
+                .setNeutralButton("Tilbake") { _, _ ->
+                    alertValuesView(
+                            getString(R.string.str_info_values),
+                            "back",
+                            root
+                    )
+                }
+                .setPositiveButton("Lukk") { _, _ -> }
+        slideShow("next", builder)
+    }
+
     //for hver av typene i lista.
     private fun displayTypeFact(message: String, root: View) {
         val dialog = AlertDialog.Builder(context)
@@ -377,8 +447,7 @@ class LocationFragment : Fragment() {
             .setMessage(message)
             .setPositiveButton("Lukk") { _, _ -> }
             .setNeutralButton("les mer") { _, _ ->
-                root.findNavController()
-                    .navigate(R.id.action_navigation_dialog_to_AboutAirQualityFragment)
+                root.findNavController().navigate(R.id.action_navigation_dialog_to_AboutAirQualityFragment)
             } //åpner infosiden under settings.
             .setNegativeButton("se funfact") { _, _ -> displayFunfacts(root) }  //kaller metode for å se funfacts. åpner en egen dialog der man kan bla gjennom funfacts
         slideShow(command, dialogB)
@@ -432,102 +501,4 @@ class LocationFragment : Fragment() {
         slideShow("nextNext", newDialog)
     }
 
-    //setter views etter nivåene fra aqiet
-    private fun setAqiInformer(map: Map<String, Double>) {
-        val highest: Map.Entry<String, Double>? =
-            map.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
-        var donutColor = "#808080"
-
-        @SuppressLint("SetTextI18n") //ignorerer advarsel på strings
-        fun changeVisuals(
-            level: String,
-            type: String
-        ) {  //metoden kalles i createDonut(). endrer views som signaliserer luftkvalitetsnivået etter det faktiske nivået.
-            aqiType.text = type
-            when (level) {
-                "green" -> {
-                    aqiLevel.setTextColor(Color.parseColor("#3F9F41"))
-                    aqiSentence.text = getString(R.string.luftnivaa_bra)
-                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
-                    donutColor = "#3F9F41"
-                }
-                "orange" -> {
-                    aqiLevel.setTextColor(Color.parseColor("#FFCB00"))
-                    aqiSentence.text = getString(R.string.luftnivaa_moderat)
-                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-                    donutColor = "#FFCB00"
-                }
-                "red" -> {
-                    aqiLevel.setTextColor(Color.parseColor("#C13500"))
-                    aqiSentence.text = getString(R.string.luftnivaa_utsatte)
-                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
-                    donutColor = "#C13500"
-                }
-                "purple" -> {
-                    aqiLevel.setTextColor(Color.parseColor("#4900AC")) //endres til oransje
-                    aqiSentence.text = getString(R.string.luftnivaa_usunt)
-                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
-                    donutColor = "#4900AC"
-                }
-            }
-        }
-
-        // donutview-seksjonen for nivaaet
-        fun createDonut() {
-            val donutSection = highest?.value?.let {
-                DonutSection(
-                    "pollution level",
-                    Color.parseColor(donutColor),
-                    it.toFloat()
-                )
-            }
-            if (donutSection != null) donutView.submitData(listOf(donutSection))
-        }
-
-        //sjekker verdinivåene, og setter views deretter
-        if (highest != null)
-            when (highest.key) {
-                "no2" -> {
-                    numberMax.text = "\n400"
-                    donutView.cap = 400F
-                    if (highest.value <= 100.0) changeVisuals("green", "Nitrogenoksid")
-                    else if (highest.value in 100.0..200.0) changeVisuals("orange", "Nitrogenoksid")
-                    else if (highest.value in 200.0..400.0) changeVisuals("red", "Nitrogenoksid")
-                    else if (highest.value >= 400.0) changeVisuals("purple", "Nitrogenoksid")
-                }
-                "pm10" -> {
-                    numberMax.text = "\n400"
-                    donutView.cap = 400F
-                    if (highest.value <= 60.0) changeVisuals("green", "Svevestøv (pm10)")
-                    else if (highest.value in 60.0..120.0) changeVisuals(
-                        "orange",
-                        "Svevestøv (pm10)"
-                    )
-                    else if (highest.value in 120.0..400.0) changeVisuals("red", "Svevestøv (pm10)")
-                    else if (highest.value >= 400.0) changeVisuals("purple", "Svevestøv (pm10)")
-                }
-                "pm25" -> {
-                    numberMax.text = "\n150"
-                    donutView.cap = 150F
-                    if (highest.value <= 30.0) changeVisuals("green", "Svevestøv (pm2.5)")
-                    else if (highest.value in 30.0..50.0) changeVisuals(
-                        "orange",
-                        "Svevestøv (pm2.5)"
-                    )
-                    else if (highest.value in 50.0..150.0) changeVisuals("red", "Svevestøv (pm2.5)")
-                    else if (highest.value >= 150.0) changeVisuals("purple", "Svevestøv (pm2.5)")
-                }
-                "o3" -> {
-                    numberMax.text = "\n240"
-                    donutView.cap = 240F
-                    if (highest.value <= 100.0) changeVisuals("green", "Ozon")
-                    else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon")
-                    else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon")
-                    else if (highest.value >= 240.0) changeVisuals("purple", "Ozon")
-                }
-            }
-        // endrer tekst midt i donuten og lager donuten
-        aqiLevel.text = (highest?.value?.toInt().toString() + " μg/m3")
-        createDonut()
-    }
 }

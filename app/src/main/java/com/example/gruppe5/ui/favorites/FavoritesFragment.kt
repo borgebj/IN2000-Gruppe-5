@@ -10,7 +10,6 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,9 +33,9 @@ class FavoritesFragment : Fragment() {
     private lateinit var root: View
 
     private var favStations: MutableList<Stasjon> = mutableListOf()
-    private lateinit var pref: SharedPreferences// = requireContext().getSharedPreferences("my_pref", MODE_PRIVATE)
-    private lateinit var editor: SharedPreferences.Editor// = pref.edit()
-    private var antKeys = 0 // antall lagrede favorittstasjoner - maks5
+    private lateinit var pref: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+    private var antKeys = 0 // antall lagrede favorittstasjoner - maks fem
 
 
     override fun onCreateView(
@@ -85,7 +84,6 @@ class FavoritesFragment : Fragment() {
 
     @SuppressLint("ApplySharedPref")
     fun setResetBut(root: View) {
-
         resetB.setOnClickListener {
             editor.clear().commit()
             favStations = mutableListOf()
@@ -110,12 +108,13 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    // naviger til SearchFragment
     private fun tilSearch(root: View) {
         root.findNavController()
             .navigate(FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
     }
 
-    // legger til stasjonene i preference til MutableList stasjoner
+    // legger til stasjonene i preference til MutableList favStations
     private fun setFavStations(stasjoner: MutableList<Stasjon>) {
 
         val keys: Map<String, *> = pref.getAll()
@@ -123,7 +122,7 @@ class FavoritesFragment : Fragment() {
             addToFavStations(value as String, stasjoner)
         }
     }
-
+    // legg til station til MutableList, stasjoner
     private fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>) {
 
         for (st in stasjoner) {
@@ -142,7 +141,7 @@ class FavoritesFragment : Fragment() {
             }
         }
     }
-
+    // return true hvis station er i pref
     private fun inPref(station: String): Boolean {
 
         val keys: Map<String, *> = pref.getAll()
@@ -152,6 +151,7 @@ class FavoritesFragment : Fragment() {
         return false
     }
 
+    // return true hvis station er i favStation
     private fun inFavStations(station: String): Boolean {
 
         for (st in favStations) {
@@ -176,6 +176,7 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    // sjekk om noen stasjon skal slettes
     private fun checkDeleteElem() {
 
         val args = arguments // station as Stasjon som skal slettes fra pref
@@ -225,6 +226,5 @@ class FavoritesFragment : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.infoknapp_on_favorites_menu, menu)
-
     }
 }
