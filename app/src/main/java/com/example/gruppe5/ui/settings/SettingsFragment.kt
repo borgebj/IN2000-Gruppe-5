@@ -1,9 +1,6 @@
 package com.example.gruppe5.ui.settings
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -23,7 +20,6 @@ class SettingsFragment : Fragment() {
     private lateinit var luftkvalitetKnapp: Button
     private lateinit var appKnapp: Button
     private lateinit var dataKnapp: Button
-    private var teksten: String = ""
 
 
     override fun onCreateView(
@@ -34,7 +30,6 @@ class SettingsFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_settings, container, false)
 
         assignId(root)
-        setCondition()
         setLocation()
         setAboutAirquality(root)
         setAboutApp(root)
@@ -59,82 +54,8 @@ class SettingsFragment : Fragment() {
     private fun setLocation() {
         lokasjonKnapp.setOnClickListener{
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-            setCondition()
         }
     }
-
-
-    @SuppressLint("SetTextI18n")
-    private fun setCondition() {
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        teksten = if (location) {
-            "På"
-        } else {
-            "Av"
-        }
-    }
-
-    override fun onResume() {  // After a pause OR at startup
-        super.onResume()
-        lokasjonKnapp.text = teksten
-        //Refresh your stuff here
-    }
-
-    /*
-fun refresh() {
-    val intent = Intent(this.context, SettingsFragment::class.java)
-    startActivity(intent)
-}
-
-*/
-
-    /*
-    fun settLokasjon(){
-        if (sjekk){
-            lokasjonKnapp.text = "På"
-        } else{
-            lokasjonKnapp.text = "Av"
-        }
-    }
-
-     */
-
-    /*
-    private fun refresh(root: View) {
-        root.refreshDrawableState()
-
-    }
-
-     */
-
-
-        /* FORSØK PÅ Å FJERNE POSISJONSKNAPPEN PÅ KARTET:
-
-        val mMap : GoogleMap = root.findViewById(R.id.map)
-        val locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        val location = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        if (location) {
-            lokasjonKnapp.setText("På")
-            mMap.uiSettings.isMyLocationButtonEnabled = true
-            if (ActivityCompat.checkSelfPermission(
-                    root.context,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    root.context,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                return
-            }
-            mMap.isMyLocationEnabled = true
-        } else {
-            lokasjonKnapp.setText("Av")
-            mMap.uiSettings.isMyLocationButtonEnabled = false
-            mMap.isMyLocationEnabled = false
-        }
-        */
-
 
     private fun setAboutAirquality(root: View) {
         luftkvalitetKnapp.setOnClickListener {

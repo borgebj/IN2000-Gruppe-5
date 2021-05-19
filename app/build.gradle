@@ -73,6 +73,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // fuel
+    implementation 'com.github.kittinunf.fuel:fuel:2.2.0'
+    implementation 'com.github.kittinunf.fuel:fuel-coroutines:2.2.0'
+
     // for donut-chart
     implementation("app.futured.donut:library:2.1.0")
     compileOnly 'com.google.android.wearable:wearable:2.6.0'

@@ -1,7 +1,9 @@
 package com.example.gruppe5.ui.map
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.LocationManager
@@ -11,6 +13,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -42,9 +45,10 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     // maps stuff
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     var locationManager: LocationManager? = null
+    var gpsStatus = false
 
     // status
-    var GpsStatus = false
+    var locationStatus = false
     var svar : String? = null // svar fra search-fragment
     private var tts: TextToSpeech? = null
     var ttsStatus = true
@@ -102,11 +106,18 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         )
     }
 
-
-    fun CheckGpsStatus() {
+    private fun checkGpsStatus() {
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        GpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        gpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
+    }
+
+
+    private fun checkLocationStatus() {
+        locationStatus = (ContextCompat.checkSelfPermission(root.context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+                == PackageManager.PERMISSION_GRANTED)
     }
 
     // legger til funksjoner fra google-maps
@@ -117,13 +128,14 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             Toast.makeText(requireContext(), "Lokasjon på", Toast.LENGTH_SHORT).show()
             mMap.isMyLocationEnabled = true
         } else {
-            Toast.makeText(requireContext(), "Lokasjon av", Toast.LENGTH_SHORT).show()
+            mMap.isMyLocationEnabled = false
+            mMap.uiSettings.isMyLocationButtonEnabled = false
+            Log.d("ELSE", "FALSE")
+
         }
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
-        mMap.uiSettings.isMyLocationButtonEnabled = true
         mMap.uiSettings.isZoomGesturesEnabled = true
-
     }
 
     private fun createAndAddMarker(station: Stasjon) {

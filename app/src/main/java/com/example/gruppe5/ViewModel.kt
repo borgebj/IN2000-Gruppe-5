@@ -6,6 +6,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.coroutines.awaitString
+import com.example.gruppe5.Stasjon
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.coroutines.awaitString
+import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import kotlinx.coroutines.*

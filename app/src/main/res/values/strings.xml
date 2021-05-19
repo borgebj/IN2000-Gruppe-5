@@ -43,7 +43,7 @@
     <string name="luftnivaa_utsatte">Luftnivået er usunt for utsatte grupper</string>
     <string name="luftnivaa_usunt">Luftnivået er usunt</string>
     <string name="lokasjon">Lokasjon</string>
-    <string name="av">Av</string>
+    <string name="gps">GPS</string>
     <string name="informasjon">INFORMASJON</string>
     <string name="om_luftkvalitet">Om luftkvalitet</string>
     <string name="om_appen">Om appen</string>
