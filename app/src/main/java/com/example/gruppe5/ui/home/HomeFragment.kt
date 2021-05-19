@@ -316,9 +316,6 @@ class HomeFragment : Fragment(){
                 else if (highest.value >= 240.0) changeVisuals("purple", "Ozon (o3)")
             }
         }
-        donutView.setOnClickListener {
-
-        }
         // endrer tekst midt i donut og lager donut
         aqiLevel.text = ("${highest?.value?.toInt().toString()} µg/m3")
         createDonut()

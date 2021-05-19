@@ -135,11 +135,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             )
         ).title(station.name)
         checkValues(highest, markerOptions)
-        val marker = mMap.addMarker(markerOptions)
+        mMap.addMarker(markerOptions)
     }
 
     // sjekker hvilke forurensnings-type det er, deres nivaaer, og kaller hjelpemetode videre
-    fun checkValues(highest: Map.Entry<String, Double>?, marker: MarkerOptions) {
+    private fun checkValues(highest: Map.Entry<String, Double>?, marker: MarkerOptions) {
 
         // endrer farge/ikon paa kartet avhengig av markoerenes nivaa
         fun alterMarker(level: String, marker: MarkerOptions) {
@@ -199,17 +199,16 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // legger til heatmap overlay for google map
     private fun addHeatmap() {
-        viewModel.stations.observe(viewLifecycleOwner, { list ->
+        viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
             val weightedData: MutableList<WeightedLatLng> = mutableListOf()
 
             // lager LatLng og WeightedLatLng av hver stasjon for heatmap
-            for (station in list) {
+            for (station in stasjoner) {
                 val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
                 val verdi = station.verdier[highest?.key]
                 if (verdi != null) weightedData.add(
                     WeightedLatLng(
-                        LatLng(
-                            station.latitude,
+                        LatLng(station.latitude,
                             station.longitude
                         ), verdi
                     )
@@ -257,7 +256,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                             null,
                             "")
                         }
-                        Toast.makeText(this.context, "Opner side ...", Toast.LENGTH_SHORT).show() // informerer bruker
+                        Toast.makeText(this.context, "Åpner side ...", Toast.LENGTH_SHORT).show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
                         try {
