@@ -13,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
@@ -27,7 +28,7 @@ import com.google.android.gms.location.LocationServices
 class HomeFragment : Fragment() {
 
     // globale variabler
-    private lateinit var viewModel: ViewModel
+    private val viewModel: ViewModel by activityViewModels() // <- bruker EN felles viewmodel
     private lateinit var donutView: DonutProgressView
     lateinit var textView: TextView
     lateinit var aqiLevel: TextView
@@ -54,6 +55,7 @@ class HomeFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 
+
         assignId(root)
         checkGpsStatus()
         getPollutionLevel()
@@ -64,7 +66,6 @@ class HomeFragment : Fragment() {
 
     @JvmName("getPollutionLevel1")
     fun getPollutionLevel() {
-        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
         viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
             viewModel.findNearestStation(fusedLocationClient, stasjoner, gpsStatus)
             viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->

@@ -9,6 +9,7 @@ import android.view.*
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +24,7 @@ import com.example.gruppe5.ViewModel
 class FavoritesFragment : Fragment() {
 
     // globale variabler
-    private lateinit var viewModel: ViewModel
+    private val viewModel: ViewModel by activityViewModels() // <- bruker EN felles viewmodel
 
     private lateinit var addBut: ImageButton
     private lateinit var resetB: ImageButton
@@ -50,7 +51,6 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ViewModel::class.java)
         assignId(root)
         setHasOptionsMenu(true)
         addAdapter()
