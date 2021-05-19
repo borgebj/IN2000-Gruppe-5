@@ -15,7 +15,7 @@ import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
@@ -33,13 +33,13 @@ import java.util.*
 
 class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
+    // viewmodel
+    val viewModel: ViewModel by activityViewModels() // <- bruker EN felles viewmodel
+
     // elementer
     lateinit var mMap: GoogleMap
     lateinit var root: View
     lateinit var switch: SwitchCompat
-
-    // viewmodel
-    lateinit var viewModel: ViewModel
 
     // maps stuff
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -96,7 +96,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ViewModel::class.java) // legger til viewmodel
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(callback)
     }
