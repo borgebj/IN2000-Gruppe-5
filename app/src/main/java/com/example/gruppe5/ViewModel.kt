@@ -40,8 +40,6 @@ class ViewModel : ViewModel() {
         return Fuel.get(full).awaitString()
     }
 
-
-
     // henter data fra AirQuality (metrologisk institutt API)
     private fun parseData() {
         val baseURLMetro = "https://in2000-apiproxy.ifi.uio.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
@@ -114,7 +112,7 @@ class ViewModel : ViewModel() {
     }
 
     // setter default-state til stasjon (i Oslo) med høyeste verdi
-    fun setDefaultState(stations: MutableList<Stasjon>) {
+    private fun setDefaultState(stations: MutableList<Stasjon>) {
         var currentHighestStation: Stasjon? = stations.random()
         var currentHighestValue = 0.0
 
