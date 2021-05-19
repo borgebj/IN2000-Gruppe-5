@@ -6,6 +6,8 @@ import android.content.Context
 import android.graphics.Color.parseColor
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,11 +49,7 @@ class HomeFragment : Fragment() {
     private var nearestStation: Stasjon? = null
     private var currentStatus: String = ""
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 

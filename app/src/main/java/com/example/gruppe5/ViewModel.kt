@@ -2,6 +2,8 @@ package com.example.gruppe5
 
 import android.annotation.SuppressLint
 import android.location.Location
+import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.kittinunf.fuel.Fuel
@@ -30,7 +32,7 @@ class ViewModel : ViewModel() {
 
     @SuppressLint("SimpleDateFormat")
     val today = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(Calendar.getInstance().time).split(
-        "T"
+            "T"
     ) // dagens dato og tid splittet i to
 
 
@@ -46,10 +48,10 @@ class ViewModel : ViewModel() {
 
         // [indre metode] henter alle stasjoner
         suspend fun getStations() : MutableList<Stasjon> = Gson().fromJson(
-            getData(
-                baseURLMetro,
-                "/stations"
-            ), Array<Stasjon>::class.java
+                getData(
+                        baseURLMetro,
+                        "/stations"
+                ), Array<Stasjon>::class.java
         ).toMutableList()
 
         // henter og tildeler verdier til alle stasjoner
@@ -78,24 +80,24 @@ class ViewModel : ViewModel() {
                     if (times[0] == today[0] && timeIsValid) {
                         val map = HashMap<String, Double>()
                         map["no2"] = String.format(
-                            "%.2f", variables.getJSONObject("no2_concentration").get(
+                                "%.2f", variables.getJSONObject("no2_concentration").get(
                                 "value"
-                            )
+                        )
                         ).toDouble()
                         map["pm10"] = String.format(
-                            "%.2f", variables.getJSONObject("pm10_concentration").get(
+                                "%.2f", variables.getJSONObject("pm10_concentration").get(
                                 "value"
-                            )
+                        )
                         ).toDouble()
                         map["pm25"] = String.format(
-                            "%.2f", variables.getJSONObject("pm25_concentration").get(
+                                "%.2f", variables.getJSONObject("pm25_concentration").get(
                                 "value"
-                            )
+                        )
                         ).toDouble()
                         map["o3"] = String.format(
-                            "%.2f", variables.getJSONObject("o3_concentration").get(
+                                "%.2f", variables.getJSONObject("o3_concentration").get(
                                 "value"
-                            )
+                        )
                         ).toDouble()
                         station.verdier = map
                     }
@@ -131,14 +133,14 @@ class ViewModel : ViewModel() {
 
     //region [nearby stations]
     @SuppressLint("MissingPermission")
-    fun findNearestStation(
-        fusedLocationClient: FusedLocationProviderClient,
-        stations: MutableList<Stasjon>,
-        GpsStatus: Boolean
-    ) {
+    fun findNearestStation(fusedLocationClient: FusedLocationProviderClient, stations: MutableList<Stasjon>, GpsStatus: Boolean) {
         var nearest : Stasjon? = null
         var closest = 100000.00F
 
+        // selve requesten - - -  IDK hvordan det fungerer men boom > Børge
+        val mLocationRequest = LocationRequest.create().setInterval(60000).setFastestInterval(5000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        val locationCallback = object : LocationCallback() {}
+        fusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.getMainLooper())
 
         if (GpsStatus) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
