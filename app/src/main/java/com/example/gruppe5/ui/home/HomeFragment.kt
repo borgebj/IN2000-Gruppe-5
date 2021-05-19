@@ -5,6 +5,8 @@ import android.content.Context
 import android.graphics.Color.parseColor
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +16,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
@@ -47,21 +48,28 @@ class HomeFragment : Fragment() {
     private var nearestStation: Stasjon? = null
     private var currentStatus: String = ""
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 
-
         assignId(root)
         checkGpsStatus()
-        getPollutionLevel()
+        refreshPage()
         setOnClickers(root)
 
         return root
+    }
+
+    //
+    fun refreshPage() {
+        getPollutionLevel()
+    }
+
+    private fun refresh() {
+        val handler = Handler()
+        val runnable = Runnable {
+
+        }
     }
 
     @JvmName("getPollutionLevel1")
@@ -74,9 +82,9 @@ class HomeFragment : Fragment() {
                 if (highest != null) {
                     nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
                 } else if (viewModel.usingDefault) {
-                    textInfo.text = "høyest verdi i Oslo"
+                    textInfo.text = getString(R.string.hoyestOslo)
                 } // sjekker om bruker defaultState
-                if (nearest.name.length > 8) textView.textSize = 28F // sjekker lengden på navnet
+                if (nearest.name.length > 10) textView.textSize = 28F // sjekker lengden på navnet
                 textView.text = nearest.name
             })
         })
