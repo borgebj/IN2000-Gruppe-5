@@ -1,5 +1,6 @@
 package com.example.gruppe5.ui.home
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color.parseColor
@@ -14,7 +15,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
@@ -55,31 +55,12 @@ class HomeFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 
-
         assignId(root)
         checkGpsStatus()
-        getPollutionLevel()
+        getHomepageStation()
         setOnClickers(root)
 
         return root
-    }
-
-    @JvmName("getPollutionLevel1")
-    fun getPollutionLevel() {
-        viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
-            viewModel.findNearestStation(fusedLocationClient, stasjoner, gpsStatus)
-            viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->
-                nearestStation = nearest
-                val highest: Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
-                if (highest != null) {
-                    nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
-                } else if (viewModel.usingDefault) {
-                    textInfo.text = "høyest verdi i Oslo"
-                } // sjekker om bruker defaultState
-                if (nearest.name.length > 8) textView.textSize = 28F // sjekker lengden på navnet
-                textView.text = nearest.name
-            })
-        })
     }
 
     fun assignId(root: View) {
@@ -98,12 +79,30 @@ class HomeFragment : Fragment() {
 
     private fun checkGpsStatus() {
         locationManager =
-            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         gpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
-    // setter onClickers for kart og API_test
+    @SuppressLint("SetTextI18n")
+    private fun getHomepageStation() {
+        viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
+            viewModel.findNearestStation(fusedLocationClient, stasjoner, gpsStatus)
+            viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->
+                nearestStation = nearest
+                val highest: Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
+
+                if (highest != null) nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
+                // sjekker om bruker defaultState
+                if (viewModel.usingDefault) textInfo.text = "Høyest verdi i Oslo"
+                else textInfo.text = "Nærmeste stasjon"
+
+                if (nearest.name.length > 8) textView.textSize = 28F // sjekker lengden på navnet
+                textView.text = nearest.name
+            })
+        })
+    }
+
     private fun setOnClickers(root: View) {
         //infoknapp
         val infoButton: ImageButton = root.findViewById(R.id.info_home)
@@ -174,7 +173,7 @@ class HomeFragment : Fragment() {
             when (which) {
                 0 -> {
                     displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, er dager som oftest blir vi utsatt for de høyeste konsentrasjonene om vinteren på kalde dager med lite vind, og spesielt på trafikkerte veier og i tunneler. Oslo og Bergen har hatt de høyeste verdiene.")
-                }           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
+                }
                 1 -> {
                     displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000 000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.")
                 }
@@ -183,7 +182,7 @@ class HomeFragment : Fragment() {
                 }
                 3 -> {
                     displayTypeFact("O3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke luftveisfunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.")
-                } //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
+                }
             }
         }
         slideShow(command, builder)
@@ -266,6 +265,7 @@ class HomeFragment : Fragment() {
     }
     //endregion
 
+    @SuppressLint("SetTextI18n")
     private fun setAqiInformer(map: Map<String, Double>) {
         val highest: Map.Entry<String, Double>? = map.maxByOrNull { it.value }
         var donutColor = "#808080"

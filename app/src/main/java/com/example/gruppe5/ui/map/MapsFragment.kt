@@ -1,9 +1,7 @@
 package com.example.gruppe5.ui.map
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.LocationManager
@@ -34,26 +32,24 @@ import java.util.*
 class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // viewmodel
-    val viewModel: ViewModel by activityViewModels() // <- bruker EN felles viewmodel
+    private val viewModel: ViewModel by activityViewModels() // <- bruker EN felles viewmodel
 
     // elementer
-    lateinit var mMap: GoogleMap
-    lateinit var root: View
-    lateinit var switch: SwitchCompat
+    private lateinit var mMap: GoogleMap
+    private lateinit var root: View
+    private lateinit var switch: SwitchCompat
 
     // maps stuff
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    var locationManager: LocationManager? = null
-    var gpsStatus = false
+    private var locationManager: LocationManager? = null
+    private var gpsStatus = false
 
-    // status
-    var locationStatus = false
-    var svar: String? = null // svar fra search-fragment
+    private var svar: String? = null // svar fra search-fragment
     private var tts: TextToSpeech? = null
-    var ttsStatus = true
+    private var ttsStatus = true
 
     // search
-    lateinit var adapter: ArrayAdapter<*>
+    private lateinit var adapter: ArrayAdapter<*>
 
 
     private val callback = OnMapReadyCallback { Map ->
@@ -116,12 +112,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
-
-    private fun checkLocationStatus() {
-        locationStatus = (ContextCompat.checkSelfPermission(root.context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-    }
-
-
     // legger til funksjoner fra google-maps
     @SuppressLint("MissingPermission")
     fun addMapFunctions() {
@@ -139,13 +129,132 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         mMap.uiSettings.isZoomGesturesEnabled = true
     }
 
+    // setter onClicker for infoWindow til hver markoer
+    @SuppressLint("PotentialBehaviorOverride")
+    fun addOnClickers() {
+
+        // onclick til infovindu, aapner location-fragment
+        mMap.setOnInfoWindowClickListener { marker ->
+            val marker_title: String? = marker.title
+            viewModel.stations.observe(viewLifecycleOwner) { list ->
+
+                for (stasjon in list) {
+                    val navn = marker_title
+                    if (navn == stasjon.name) {
+                        // tts-test
+                        if (ttsStatus) {
+                            tts!!.speak(
+                                    "Opening page $navn",
+                                    TextToSpeech.QUEUE_FLUSH,
+                                    null,
+                                    ""
+                            )
+                        }
+                        Toast.makeText(this.context, "Åpner side ...", Toast.LENGTH_SHORT)
+                                .show() // informerer bruker
+
+                        // venter i (ca) 2 sec for endret (postDelayed for aa vente)
+                        try {
+                            root.postDelayed({
+                                val action =
+                                        MapsFragmentDirections.actionNavigationMapToNavigationLocation(
+                                                stasjon
+                                        )
+                                root.findNavController().navigate(action)
+                            }, 1500)
+                        } catch (e: Exception) { // denne kastes om man prøver å navigere til et annet fragment mens den venter
+                            e.printStackTrace()
+                        }
+
+                        marker.showInfoWindow()
+                    }
+                }
+            }
+        }
+
+        // onclick til markers - zoomer inn
+        mMap.setOnMarkerClickListener {
+            val latlng = LatLng(it.position.latitude, it.position.longitude)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10F), 2000, null)
+            it.showInfoWindow()
+            return@setOnMarkerClickListener true
+        }
+    }
+
+    // legger til funksjon for heatmap switch on/off
+    private fun addSwitchFunction() {
+        switch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                mMap.clear()
+                root.postDelayed({
+                    addHeatmap()
+                }, 250)
+            } else {
+                mMap.clear()
+                root.postDelayed({
+                    addMarkers()
+                }, 250)
+            }
+        }
+    }
+
+    // legger til heatmap overlay for google map
+    private fun addHeatmap() {
+        viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
+            val weightedData: MutableList<WeightedLatLng> = mutableListOf()
+
+            // lager LatLng og WeightedLatLng av hver stasjon for heatmap
+            for (station in stasjoner) {
+                val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
+                val verdi = station.verdier[highest?.key]
+                if (verdi != null) weightedData.add(
+                        WeightedLatLng(
+                                LatLng(
+                                        station.latitude,
+                                        station.longitude
+                                ), verdi
+                        )
+                )
+            }
+
+            // lager selve heatmap og starter
+            val mProvider = HeatmapTileProvider.Builder()
+                    .radius(50)
+                    .weightedData(weightedData)
+                    .build()
+
+            // selve overlayen
+            mMap.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
+
+            // endrer heatmap naar kartet endres - bevegelser / zoom
+            mMap.setOnCameraIdleListener {
+                val newZoom = mMap.cameraPosition.zoom.toInt()
+                mProvider.setRadius((10 + newZoom * 2) * 4)
+
+                if (newZoom in 10..20) mProvider.setMaxIntensity(500.0)
+                if (newZoom in 9..9) mProvider.setMaxIntensity(1000.0)
+                if (newZoom in 5..8) mProvider.setMaxIntensity(2000.0)
+                if (newZoom in 0..4) mProvider.setMaxIntensity(4000.0)
+            }
+        })
+    }
+
+    // legger til hver stasjon paa kartet - observerer alle stasjoner > oppretter > legger till
+    private fun addMarkers() {
+        viewModel.stations.observe(viewLifecycleOwner, { stations ->
+            for (station in stations) {
+                createAndAddMarker(station)
+            }
+        })
+    }
+
     private fun createAndAddMarker(station: Stasjon) {
         val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
         val markerOptions: MarkerOptions = MarkerOptions().position(
-            LatLng(
-                station.latitude,
-                station.longitude
-            )
+                LatLng(
+                        station.latitude,
+                        station.longitude
+                )
         ).title(station.name)
         checkValues(highest, markerOptions)
         mMap.addMarker(markerOptions)
@@ -199,125 +308,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                     }
                 }
             }
-    }
-
-    // legger til hver stasjon paa kartet - observerer alle stasjoner > oppretter > legger till
-    fun addMarkers() {
-        viewModel.stations.observe(viewLifecycleOwner, { stations ->
-            for (station in stations) {
-                createAndAddMarker(station)
-            }
-        })
-    }
-
-    // legger til heatmap overlay for google map
-    private fun addHeatmap() {
-        viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
-            val weightedData: MutableList<WeightedLatLng> = mutableListOf()
-
-            // lager LatLng og WeightedLatLng av hver stasjon for heatmap
-            for (station in stasjoner) {
-                val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
-                val verdi = station.verdier[highest?.key]
-                if (verdi != null) weightedData.add(
-                    WeightedLatLng(
-                        LatLng(
-                            station.latitude,
-                            station.longitude
-                        ), verdi
-                    )
-                )
-            }
-
-            // lager selve heatmap og starter
-            val mProvider = HeatmapTileProvider.Builder()
-                .radius(50)
-                .weightedData(weightedData)
-                .build()
-
-            // selve overlayen
-            mMap.addTileOverlay(TileOverlayOptions().tileProvider(mProvider))
-
-            // endrer heatmap naar kartet endres - bevegelser / zoom
-            mMap.setOnCameraIdleListener {
-                val newZoom = mMap.cameraPosition.zoom.toInt()
-                mProvider.setRadius((10 + newZoom * 2) * 4)
-
-                if (newZoom in 10..20) mProvider.setMaxIntensity(500.0)
-                if (newZoom in 9..9) mProvider.setMaxIntensity(1000.0)
-                if (newZoom in 5..8) mProvider.setMaxIntensity(2000.0)
-                if (newZoom in 0..4) mProvider.setMaxIntensity(4000.0)
-            }
-        })
-    }
-
-    // setter onClicker for infoWindow til hver markoer
-    @SuppressLint("PotentialBehaviorOverride")
-    fun addOnClickers() {
-
-        // onclick til infovindu, aapner location-fragment
-        mMap.setOnInfoWindowClickListener { marker ->
-            val marker_title: String? = marker.title
-            viewModel.stations.observe(viewLifecycleOwner) { list ->
-
-                for (stasjon in list) {
-                    val navn = marker_title
-                    if (navn == stasjon.name) {
-                        // tts-test
-                        if (ttsStatus) {
-                            tts!!.speak(
-                                "Opening page $navn",
-                                TextToSpeech.QUEUE_FLUSH,
-                                null,
-                                ""
-                            )
-                        }
-                        Toast.makeText(this.context, "Åpner side ...", Toast.LENGTH_SHORT)
-                            .show() // informerer bruker
-
-                        // venter i (ca) 2 sec for endret (postDelayed for aa vente)
-                        try {
-                            root.postDelayed({
-                                val action =
-                                    MapsFragmentDirections.actionNavigationMapToNavigationLocation(
-                                        stasjon
-                                    )
-                                root.findNavController().navigate(action)
-                            }, 1500)
-                        } catch (e: Exception) { // denne kastes om man prøver å navigere til et annet fragment mens den venter
-                            e.printStackTrace()
-                        }
-
-                        marker.showInfoWindow()
-                    }
-                }
-            }
-        }
-
-        // onclick til markers - zoomer inn
-        mMap.setOnMarkerClickListener {
-            val latlng = LatLng(it.position.latitude, it.position.longitude)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 10F), 2000, null)
-            it.showInfoWindow()
-            return@setOnMarkerClickListener true
-        }
-    }
-
-    // legger til funksjon for heatmap switch on/off
-    fun addSwitchFunction() {
-        switch.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                mMap.clear()
-                root.postDelayed({
-                    addHeatmap()
-                }, 250)
-            } else {
-                mMap.clear()
-                root.postDelayed({
-                    addMarkers()
-                }, 250)
-            }
-        }
     }
 
     // oppretter en Bitmap fra en vector fil, for å skape Bitmaps / Icons for kartet sine markører
