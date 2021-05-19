@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color.parseColor
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -55,6 +56,7 @@ class HomeFragment : Fragment() {
         val root: View = inflater.inflate(R.layout.fragment_home, container, false)
         this.root = root
 
+
         assignId(root)
         checkGpsStatus()
         getHomepageStation()
@@ -91,9 +93,8 @@ class HomeFragment : Fragment() {
             viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->
                 nearestStation = nearest
                 val highest: Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
-
                 if (highest != null) nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
-                // sjekker om bruker defaultState
+
                 if (viewModel.usingDefault) textInfo.text = "Høyest verdi i Oslo"
                 else textInfo.text = "Nærmeste stasjon"
 
