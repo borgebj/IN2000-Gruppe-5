@@ -1,10 +1,11 @@
-package com.example.gruppe5.ui.map
+package com.example.gruppe5
 
 import android.annotation.SuppressLint
 import android.location.Location
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.github.kittinunf.fuel.Fuel
+import com.github.kittinunf.fuel.coroutines.awaitString
 import com.example.gruppe5.Stasjon
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.coroutines.awaitString
@@ -12,11 +13,7 @@ import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
 import org.json.JSONObject
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
@@ -28,6 +25,8 @@ class ViewModel : ViewModel() {
     init {
         parseData()
     }
+
+    var usingDefault: Boolean = false
 
     val nearestStation: MutableLiveData<Stasjon> by lazy { MutableLiveData<Stasjon>() }
 
@@ -42,13 +41,6 @@ class ViewModel : ViewModel() {
     // henter JSON/XML via KHTTP -> til String
     private suspend fun getData(base: String, del: String): String? {
         val full = "$base$del"
-        /*val client = OkHttpClient()
-        val request: Request = Request.Builder()
-            .url(full)
-            .header("User-Agent", "https://github.uio.no/borgebj/IN2000-Gruppe-5 borge@bjornstadjordet.com")
-            .build()
-        return client.newCall(request).execute().body?.string()
-        //return khttp.get(full).text*/
         return Fuel.get(full).awaitString()
     }
 
@@ -56,7 +48,6 @@ class ViewModel : ViewModel() {
 
     // henter data fra AirQuality (metrologisk institutt API)
     private fun parseData() {
-        //val baseURLMetro = "https://api.met.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
         val baseURLMetro = "https://in2000-apiproxy.ifi.uio.no/weatherapi/airqualityforecast/0.1" // AirQuality PI url
 
         // [indre metode] henter alle stasjoner
@@ -161,6 +152,7 @@ class ViewModel : ViewModel() {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 for (stasjon in stations) {
                     if (location == null) {
+                        usingDefault = false
                         setDefaultState(stations); break
                     }
                     else {
@@ -183,7 +175,9 @@ class ViewModel : ViewModel() {
                 }
             }
         }
-        else setDefaultState(stations)
+        else {
+            usingDefault = true
+            setDefaultState(stations) }
     }
 
     //endregion

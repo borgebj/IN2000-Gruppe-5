@@ -19,7 +19,7 @@ import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
-import com.example.gruppe5.ui.map.ViewModel
+import com.example.gruppe5.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
@@ -68,8 +68,8 @@ class HomeFragment : Fragment(){
                 val highest : Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
                 if (highest != null) {
                     nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
-                } else { textInfo.text = "høyest verdi i Oslo" }
-                if (nearest.name.length > 8) textView.textSize = 32F
+                } else if (viewModel.usingDefault){ textInfo.text = "høyest verdi i Oslo" } // sjekker om bruker defaultState
+                if (nearest.name.length > 8) textView.textSize = 28F // sjekker lengden på navnet
                 textView.text = nearest.name
             })
         })
@@ -245,7 +245,7 @@ class HomeFragment : Fragment(){
 
         // endrer diverse visuelt, blant annet textview for å fortelle om luften er bra eller ikke, endre farger og ikoner
         fun changeVisuals(level : String, type : String)   {
-            aqiType.text = "[$type]"
+            aqiType.text = type
             when(level) {
                 "green" -> {
                     aqiLevel.setTextColor(parseColor("#3F9F41"))
@@ -315,9 +315,6 @@ class HomeFragment : Fragment(){
                 else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon (o3)")
                 else if (highest.value >= 240.0) changeVisuals("purple", "Ozon (o3)")
             }
-        }
-        donutView.setOnClickListener {
-
         }
         // endrer tekst midt i donut og lager donut
         aqiLevel.text = ("${highest?.value?.toInt().toString()} µg/m3")

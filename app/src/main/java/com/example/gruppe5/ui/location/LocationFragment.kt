@@ -27,40 +27,40 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.ValueFormatter
-import java.lang.NullPointerException
-import com.example.gruppe5.ui.location.LocationFragmentArgs.Companion as LocationFragmentArgs1
 
 class LocationFragment : Fragment() {
 
-    private lateinit var viewModel : LocationViewModel
-    private lateinit var stasjonNavn : TextView
-    private lateinit var aqiLevel : TextView                         //aqi = air quality index, sier noe om luftkvaliteten
-    private lateinit var aqiSentence : TextView
-    private lateinit var verdiNivaer : TextView                      //overskrift for horisontalt søylediagram
-    lateinit var aqiType : TextView                                  // textview som sier hvilken type som er høyest
-    lateinit var numberMax : TextView
-    private lateinit var aqiSmiley : ImageView
-    private lateinit var donutView : DonutProgressView
+    private lateinit var stasjonNavn: TextView
+    private lateinit var aqiLevel: TextView                         //aqi = air quality index, sier noe om luftkvaliteten
+    private lateinit var aqiSentence: TextView
+    private lateinit var verdiNivaer: TextView                      //overskrift for horisontalt søylediagram
+    lateinit var aqiType: TextView                                  // textview som sier hvilken type som er høyest
+    lateinit var numberMax: TextView
+    private lateinit var aqiSmiley: ImageView
+    private lateinit var donutView: DonutProgressView
     private lateinit var stasjon: Stasjon                            //Fragmentets stasjon
-    private lateinit var barDataSet : BarDataSet
-    private lateinit var HorBarChart : HorizontalBarChart
-    private var pm10Percentage : Float = 0.0f                //viser helserisikoen til forurensningstypene i %
-    private var pm25Percentage : Float = 0.0f
-    private var no2Percentage : Float = 0.0f
-    private var o3percentage : Float = 0.0f
+    private lateinit var barDataSet: BarDataSet
+    private lateinit var HorBarChart: HorizontalBarChart
+    private var pm10Percentage: Float =
+        0.0f                //viser helserisikoen til forurensningstypene i %
+    private var pm25Percentage: Float = 0.0f
+    private var no2Percentage: Float = 0.0f
+    private var o3percentage: Float = 0.0f
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?): View {
+        savedInstanceState: Bundle?
+    ): View {
         val root: View = inflater.inflate(R.layout.fragment_location, container, false)
-        val stasjon: Stasjon? = LocationFragmentArgs1.fromBundle(requireArguments()).station
+        val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
         assignId(root)
         setOnClickers(root)
 
         //henter stasjon fra map fragmentet, og setter den til instansvariabelen.
         if (stasjon != null) {
             this.stasjon = stasjon
+            if (stasjon.name.length > 8) stasjonNavn.textSize = 28F
             setAqiInformer(stasjon.verdier)
             stasjonNavn.text = stasjon.name
         }
@@ -71,11 +71,13 @@ class LocationFragment : Fragment() {
                 try {
                     val myStasjon: Stasjon? = args.getParcelable("location") as Stasjon?
                     this.stasjon = myStasjon!!
+                    if (this.stasjon.name.length > 8) stasjonNavn.textSize = 28F
                     setAqiInformer(myStasjon.verdier)
                     stasjonNavn.text = myStasjon.name
-                } catch (e: NullPointerException) {e.printStackTrace()}
-            }
-            else Log.d("bundle == null", "HER")
+                } catch (e: NullPointerException) {
+                    e.printStackTrace()
+                }
+            } else Log.d("bundle == null", "HER")
         }
         setChart() // oppretter søylediagrammet
         return root
@@ -83,7 +85,6 @@ class LocationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(LocationViewModel::class.java)
     }
 
     fun assignId(root: View) {
@@ -100,7 +101,8 @@ class LocationFragment : Fragment() {
 
     //setter oppa aksene og andre nødvendige detaljer for det horisontale bar chartet
     private fun setChart() {
-        val description = Description()                 //lager description som skal gjøre diagrammet enklere å lese.
+        val description =
+            Description()                 //lager description som skal gjøre diagrammet enklere å lese.
         description.text = "Verdiene vises i %"
         description.textSize = 15f
         HorBarChart.description = description
@@ -112,10 +114,11 @@ class LocationFragment : Fragment() {
         val xAxis = HorBarChart.xAxis
         xAxis.setDrawGridLines(false)                   //fjerner rutenettet bak
         xAxis.position = XAxis.XAxisPosition.BOTTOM   //setter labelsene på venstre side av søylene
-        xAxis.labelCount = 4                            //setter antallet til 4, siden vi har 4 verdier
+        xAxis.labelCount =
+            4                            //setter antallet til 4, siden vi har 4 verdier
         xAxis.isEnabled = true
         xAxis.textSize = 15f
-        
+
         //setter minimum og maximum lengde for verdiene parene representerer. Siden verdier skal vises i prosent, går det til 100
         val yLeft = HorBarChart.axisLeft
         yLeft.axisMaximum = 100f
@@ -142,32 +145,47 @@ class LocationFragment : Fragment() {
         setValues()
         HorBarChart.setDrawBarShadow(true)              //setter skygge som viser hvor langt søylen kan gå.//egen metode,
         barDataSet.setDrawValues(true)                  //setter søyleverdien i tekst
-        barDataSet.valueTextSize = 13f                  //endrer tekststørrelsen til teksten oppå søylene
+        barDataSet.valueTextSize =
+            13f                  //endrer tekststørrelsen til teksten oppå søylene
         barDataSet.barBorderColor = R.color.black       //setter rammefarge på søylene
         barDataSet.barShadowColor = Color.argb(40, 150, 150, 150)   //gråfarge
-        val data = BarData(barDataSet)                  //oppretter BarData objekt med bardatasettet som parameter.
-        data.barWidth = 0.5f                            //setter bredden på søylene  OBS: for å øke mellomrommet mellom søylene, sett verdien til barwidth til <1f
-        HorBarChart.data = data                         //avslutningsvis: sett dataen og refresh grafen
+        val data =
+            BarData(barDataSet)                  //oppretter BarData objekt med bardatasettet som parameter.
+        data.barWidth =
+            0.5f                            //setter bredden på søylene  OBS: for å øke mellomrommet mellom søylene, sett verdien til barwidth til <1f
+        HorBarChart.data =
+            data                         //avslutningsvis: sett dataen og refresh grafen
         HorBarChart.invalidate()
     }
 
     //metoden returnerer et dangerLevel fra 1-4(4=farligst), ved å regne ut. setter samtidig hver enkelte globale prosentvariabel.
-    fun calculateDangerLevel(liveValue: Double?, polType: String) : Int{
+    fun calculateDangerLevel(liveValue: Double?, polType: String): Int {
         //initaliserer verdier som brukes til å kalkulere prosent, og hvor farlig prosenten er for den gitte typen.
-        var topValue = 0                         //verdien viser max eksponering av ug/m3 i timesmiddel før det blir svært alvorlig. Kan hete maxvalue, men blir misvisende siden verdien kan overstige nivået
-        val percentage : Float                   //prosenten for anbefalt eksponering
-        var dangerLimit1 = 0                     //hvor mange prosent som må til for å være "lite farlig", "moderat", "alvorlig" og "svært alvorlig".
+        var topValue =
+            0                         //verdien viser max eksponering av ug/m3 i timesmiddel før det blir svært alvorlig. Kan hete maxvalue, men blir misvisende siden verdien kan overstige nivået
+        val percentage: Float                   //prosenten for anbefalt eksponering
+        var dangerLimit1 =
+            0                     //hvor mange prosent som må til for å være "lite farlig", "moderat", "alvorlig" og "svært alvorlig".
         var dangerLimit2 = 0
-        val dangerLimit3  = 100                  //farenivå "alvorlig" vil alltid være 100%. Farenivået over vil alltid være over 100%. Det er altså kun prosentene for lite farlig og moderat som er relevant her, siden det er de som vil variere.
-        var dangerLevel = 0                      //settes til et tall fra 1 - 4, som forteller hvor farlig nivået er (4 er farligst). Returneres
+        val dangerLimit3 =
+            100                  //farenivå "alvorlig" vil alltid være 100%. Farenivået over vil alltid være over 100%. Det er altså kun prosentene for lite farlig og moderat som er relevant her, siden det er de som vil variere.
+        var dangerLevel =
+            0                      //settes til et tall fra 1 - 4, som forteller hvor farlig nivået er (4 er farligst). Returneres
 
         //setter verdiene som er initalisert, til sin type. Hver type har forskjellige prosentmessige grenseverdier.
         //setter dangerLevelet, ved å bruke variablene som er deklarert til å regne ut
         when (polType) {
-            "pm10" -> { topValue = 400; dangerLimit1 = 15; dangerLimit2 = 30; }
-            "pm25" -> { topValue = 150; dangerLimit1 = 20; dangerLimit2 = 33 }
-            "no2" -> { topValue = 400; dangerLimit1 = 25; dangerLimit2 = 50 }
-            "o3" -> { topValue = 240; dangerLimit1 = 41; dangerLimit2 = 75 }
+            "pm10" -> {
+                topValue = 400; dangerLimit1 = 15; dangerLimit2 = 30; }
+            "pm25" -> {
+                topValue = 150; dangerLimit1 = 20; dangerLimit2 = 33
+            }
+            "no2" -> {
+                topValue = 400; dangerLimit1 = 25; dangerLimit2 = 50
+            }
+            "o3" -> {
+                topValue = 240; dangerLimit1 = 41; dangerLimit2 = 75
+            }
             //prosenten regnes ut med verdiene som settes ovenfor, og settes for hver av typene.
         }
 
@@ -191,19 +209,27 @@ class LocationFragment : Fragment() {
     }
 
     //metoden tar inn dangerLevelet fra 1-4, og returnerer fargen, som settes i setValues.
-    fun setColor(dangerLevel : Int): Int{
+    fun setColor(dangerLevel: Int): Int {
         var color = R.color.black
         when (dangerLevel) {
-            1 -> { color = R.color.green }
-            2 -> { color = R.color.yellow }
-            3 -> { color = R.color.red}
-            4 -> { color = R.color.purple_700}
+            1 -> {
+                color = R.color.green
+            }
+            2 -> {
+                color = R.color.yellow
+            }
+            3 -> {
+                color = R.color.red
+            }
+            4 -> {
+                color = R.color.purple_700
+            }
         }
         return color
     }
 
     //metoden setter opp søylenes nivå, og farger.
-    private fun setValues(){
+    private fun setValues() {
         //egen metode kalles, slik at prosenten og dangertlevelet for hver type settes. Dangerlevelet lagres i variabelen, som sendes med som parameter når fargene settes i bunnen av denne metoden.
         val pm10lvl = calculateDangerLevel(stasjon.verdier["pm10"], "pm10")
         val pm25lvl = calculateDangerLevel(stasjon.verdier["pm25"], "pm25")
@@ -230,91 +256,135 @@ class LocationFragment : Fragment() {
     }
 
     //setter onclicklisteners for infoknappene. åpner hver sine dialoger, og sender med tekst fra Strings, kommando for animasjon og root
-    private fun setOnClickers(root: View){
-        val infoButton1 : ImageButton = root.findViewById(R.id.info1_location)
+    private fun setOnClickers(root: View) {
+        val infoButton1: ImageButton = root.findViewById(R.id.info1_location)
         infoButton1.setOnClickListener {
             alertView(getString(R.string.str_info), root, "open")
         }
-        val infoButton2 : ImageButton = root.findViewById(R.id.info2_location)
-        infoButton2.setOnClickListener{
+        val infoButton2: ImageButton = root.findViewById(R.id.info2_location)
+        infoButton2.setOnClickListener {
             alertValuesView(getString(R.string.str_info_values), "open", root)
         }
     }
 
     //brukes for animerte overganger i dialog/pop up boksene.
-    private fun slideShow(command : String, dialog : AlertDialog.Builder){
-        val animasjonsDialog : AlertDialog = dialog.create()
+    private fun slideShow(command: String, dialog: AlertDialog.Builder) {
+        val animasjonsDialog: AlertDialog = dialog.create()
         when (command) {
             "open" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen
             "close" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose
             "next" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext
-            "nextNext" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThNext
+            "nextNext" -> animasjonsDialog.window?.attributes?.windowAnimations =
+                R.style.DialogThNext
             "back" -> animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThBack
         }
         return (animasjonsDialog.show())
     }
 
     //dialog/pop-up vinduet til nederste infoknapp om de ulike nivåene.
-    private fun alertValuesView(message: String, command : String, root : View) {
-        val dialog = AlertDialog.Builder(context)                                                       //setter opp alert builder
+    private fun alertValuesView(message: String, command: String, root: View) {
+        val dialog =
+            AlertDialog.Builder(context)                                                       //setter opp alert builder
         dialog.setTitle("Hvordan måles luftkvalitet?")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { _, _ -> }                                              //lukker vinduet. _ brukes for å hoppe over variabler som ikke brukes.
-            .setNeutralButton("les mer") { _, _ -> openValueList("next", root) }     //kaller metoden nedenfor.
-            .setNegativeButton("Se risikogrenser") {_, _ -> displayTable(root) }
+            .setNeutralButton("les mer") { _, _ ->
+                openValueList(
+                    "next",
+                    root
+                )
+            }     //kaller metoden nedenfor.
+            .setNegativeButton("Se risikogrenser") { _, _ -> displayTable(root) }
         slideShow(command, dialog)
     }
 
-    private fun displayTable(root : View){
+    private fun displayTable(root: View) {
         val image = ImageView(context)
         image.setImageResource(R.drawable.health_risk_table)
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)
             .setView(image)
-            .setNeutralButton("Tilbake") { _, _ -> alertValuesView(getString(R.string.str_info_values),"back", root)}
-            .setPositiveButton("Lukk") {_, _ -> }
+            .setNeutralButton("Tilbake") { _, _ ->
+                alertValuesView(
+                    getString(R.string.str_info_values),
+                    "back",
+                    root
+                )
+            }
+            .setPositiveButton("Lukk") { _, _ -> }
         //builder.create()
         slideShow("next", builder)
     }
 
 
     //kalles i metoden ovenfor. Åpner liste med ulike verdier, som man kan velge i for deretter å få en forklaring. åpnes når det trykkes "les mer".
-    private fun openValueList(command : String, root : View){
+    private fun openValueList(command: String, root: View) {
         val dialog = AlertDialog.Builder(context)
         dialog.setTitle("Velg en type")
-            .setNeutralButton("Tilbake") { _, _ -> alertValuesView(getString(R.string.str_info_values), "back", root)}  //tilbake-knapp
+            .setNeutralButton("Tilbake") { _, _ ->
+                alertValuesView(
+                    getString(R.string.str_info_values),
+                    "back",
+                    root
+                )
+            }  //tilbake-knapp
         //verdiene settes inn i lista i dialogen. ved trykk på de ulike, kalles egen metode: "DisplayTypeFact". Denne åpner et nytt dialogvindu, med fakta for den valgte typen.
         val values = stasjon.verdier.keys.toTypedArray()
         dialog.setItems(values) { _, which ->
             when (which) {
-                0 -> {displayTypeFact("O3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke lungefunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.", root)} //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
-                1 -> {displayTypeFact("PM2.5 er betegnelse på partikler med diameter under 2.5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.", root)}
-                2 -> {displayTypeFact("NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, særlig langs hovedveier, er dager som ofte har høy konsentrasjon. Oslo og Bergen har hatt de høyeste verdiene.", root )}           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
-                3 -> {displayTypeFact("PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.", root)}
+                0 -> {
+                    displayTypeFact(
+                        "O3 (Ozon) er en reaktiv gass som finnes både nær bakken og høyere opp i atmosfæren. Høye konsentrasjoner av bakkenært ozon i Norge skyldes hovedsakelig langtransportert ozon fra Europa. Ozon frigjøres ikke fra en primær kilde, men dannes via en rekke komplekse reaksjoner i luften. Konsentrasjonen av ozon er noe høyere utenfor byene enn i byene. Ozonkonsentrasjonen i Norge har episodevis nådd nivåer opp mot 160 μg/m3. Studier har vist at astmatiske barn kan få luftveissymptomer ved akutt eksponering for ozon fra 100 til 120 μg/m3. Ozon kan gi betennelse og føre til skader i luftveiene, samt svekke lungefunksjon og øke luftveisplager. Befolkningsstudier har vist sammenhenger mellom ozoneksponering og økt dødelighet av luftveis-, hjerte- og karsykdom, samt økt sykelighet for mennesker med luftveissykdommer.",
+                        root
+                    )
+                } //https://www.fhi.no/nettpub/luftkvalitet/temakapitler/ozon/
+                1 -> {
+                    displayTypeFact(
+                        "PM2.5 er betegnelse på partikler med diameter under 2.5 mikrometer, og omtales som fint svevestøv. Partiklene stammer hovedsakelig fra industriutslipp og biltrafikk. Siden de er så små og lette, har fine partikler en tendens til å holde seg lenger i luften enn tyngre partikler. Dette øker sjansene for at mennesker og dyr inhalerer partiklene. Barn, eldre, og de som lider av lunge- og / eller hjertesykdom er spesielt sårbare, og bør ta spesielle forholdsregler når PM2.5 verdien krysser usunne nivåer.",
+                        root
+                    )
+                }
+                2 -> {
+                    displayTypeFact(
+                        "NO2 kan være helseskadelig for alle mennesker, men barn, eldre og folk med luftveis- og hjertekar problemer er spesielt sårbare. \nNitrogendioksid (NO2) er en helseskadelig gass, og hovedkilden er trafikkerte veier. Helseeffekter er svekket lungeinfeksjon, og forsterkelse av astma. Langvarig eksponering kan bidra til utvikling av luftveissykdommer som astma.\nKalde vinterdager med lite vind, særlig langs hovedveier, er dager som ofte har høy konsentrasjon. Oslo og Bergen har hatt de høyeste verdiene.",
+                        root
+                    )
+                }           //https://www.fhi.no/nyheter/2020/nitrogendioksid-forverrer-helsa-ved-lave-nivaer/
+                3 -> {
+                    displayTypeFact(
+                        "PM10 er betegnelse på partikler med diameter under 10 mikrometer (1/1000000 meter), og omtales i dagligtalen som svevestøv. Partiklene kan stamme fra blant annet industriutslipp og biltrafikk. Verdier over 35 mikrogram regnes som uakseptabelt ifølge vedtatte norske luftkvalitetskriterier. Ifølge Verdens helseorganisasjon (WHO) vil en tredagers periode med 50 mikrogram PM10 per kubikkmeter resultere i 1000 nye astmaanfall og fire dødsfall i en by med 1 million innbyggere. I England er det beregnet at PM10-partikler forårsaker 2000 til 10 000 dødsfall per år. Omlag 86 % av PM10 kommer fra vei- og gatetrafikk. I USA skyldes 64 000 dødsfall årlig virkninger på hjerte/lunge av svevestøv. Partiklene inneholder substanser som man vet er kreftfremkallende i andre sammenhenger.",
+                        root
+                    )
+                }
             }
         }
         slideShow(command, dialog)
     }
 
     //for hver av typene i lista.
-    private fun displayTypeFact(message: String, root : View){
+    private fun displayTypeFact(message: String, root: View) {
         val dialog = AlertDialog.Builder(context)
-        dialog.setTitle(((message.split(" ".toRegex(), 2).toTypedArray())[0]))  //setter første ord som tittel. alle stringsene om typene, har typen som første ord.
+        dialog.setTitle(
+            ((message.split(" ".toRegex(), 2).toTypedArray())[0])
+        )  //setter første ord som tittel. alle stringsene om typene, har typen som første ord.
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
             .setPositiveButton("Lukk") { _, _ -> }
-            .setNeutralButton("Tilbake") { _, _ -> openValueList("back", root)}
+            .setNeutralButton("Tilbake") { _, _ -> openValueList("back", root) }
         slideShow("next", dialog)
     }
 
     //viser dialog/pop up vindu. brukes for infoknappen øverst.
-    private fun alertView(message: String, root : View, command : String) {
+    private fun alertView(message: String, root: View, command: String) {
         val dialogB = AlertDialog.Builder(context) //setter opp Builder objekt.
         dialogB.setTitle("Om luftkvalitet")
             .setIcon(R.drawable.ic_info)
             .setMessage(message)
-            .setPositiveButton("Lukk") { _,_ -> }
-            .setNeutralButton("les mer") { _, _ -> root.findNavController().navigate(R.id.action_navigation_dialog_to_AboutAirQualityFragment)} //åpner infosiden under settings.
+            .setPositiveButton("Lukk") { _, _ -> }
+            .setNeutralButton("les mer") { _, _ ->
+                root.findNavController()
+                    .navigate(R.id.action_navigation_dialog_to_AboutAirQualityFragment)
+            } //åpner infosiden under settings.
             .setNegativeButton("se funfact") { _, _ -> displayFunfacts(root) }  //kaller metode for å se funfacts. åpner en egen dialog der man kan bla gjennom funfacts
         slideShow(command, dialogB)
     }
@@ -342,58 +412,80 @@ class LocationFragment : Fragment() {
             "Å oppfylle målene i Paris-avtalen for å bekjempe klimaendringene kan, internasjonalt innen 2050, redde omtrent en million liv i året gjennom reduksjoner i luftforurensning alene (WHO).",
             "Luften kan være forurenset, selv om den ser ren og klar ut. Svevestøv kan gjøre luften tåkete på avstand.",
             "Noen typer luftbåren forurensning kan trenge seg inn i kroppen gjennom huden.",
-            "Planter kan filtrere og rense forurenset luft")
+            "Planter kan filtrere og rense forurenset luft"
+        )
 
-        var factIndex = (facts.indices).random()       //gjør at man får tilfeldig rekkefølge på faktaen hver gang.
+        var factIndex =
+            (facts.indices).random()       //gjør at man får tilfeldig rekkefølge på faktaen hver gang.
         val newDialog = AlertDialog.Builder(context)
         newDialog.setTitle("Funfact om AQI")
         newDialog.setIcon(R.drawable.ic_funfact)
         newDialog.setMessage(facts[factIndex])
-            .setPositiveButton("Lukk") { _, _ ->}
+            .setPositiveButton("Lukk") { _, _ -> }
             .setNeutralButton("Neste funfact") { _, _ ->
                 factIndex = (facts.indices).random()
                 newDialog.setMessage(facts[factIndex])
-                slideShow("next", newDialog) }
-            .setNegativeButton("tilbake") { _, _ -> alertView(getString(R.string.str_info), root, "back")}
+                slideShow("next", newDialog)
+            }
+            .setNegativeButton("tilbake") { _, _ ->
+                alertView(
+                    getString(R.string.str_info),
+                    root,
+                    "back"
+                )
+            }
         slideShow("nextNext", newDialog)
     }
 
     //setter views etter nivåene fra aqiet
     private fun setAqiInformer(map: Map<String, Double>) {
-        val highest : Map.Entry<String, Double>? = map.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
+        val highest: Map.Entry<String, Double>? =
+            map.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
         var donutColor = "#808080"
 
         @SuppressLint("SetTextI18n") //ignorerer advarsel på strings
-        fun changeVisuals(level : String, type : String)   {  //metoden kalles i createDonut(). endrer views som signaliserer luftkvalitetsnivået etter det faktiske nivået.
-            aqiType.text = "[$type]"
-            when(level) {
+        fun changeVisuals(
+            level: String,
+            type: String
+        ) {  //metoden kalles i createDonut(). endrer views som signaliserer luftkvalitetsnivået etter det faktiske nivået.
+            aqiType.text = type
+            when (level) {
                 "green" -> {
                     aqiLevel.setTextColor(Color.parseColor("#3F9F41"))
                     aqiSentence.text = getString(R.string.luftnivaa_bra)
                     aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl1)
                     donutColor = "#3F9F41"
-                } "orange" -> {
-                aqiLevel.setTextColor(Color.parseColor("#FFCB00"))
-                aqiSentence.text = getString(R.string.luftnivaa_moderat)
-                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
-                donutColor = "#FFCB00"
-            } "red" -> {
-                aqiLevel.setTextColor(Color.parseColor("#C13500"))
-                aqiSentence.text = getString(R.string.luftnivaa_utsatte)
-                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
-                donutColor = "#C13500"
-            } "purple" -> {
-                aqiLevel.setTextColor(Color.parseColor("#4900AC")) //endres til oransje
-                aqiSentence.text = getString(R.string.luftnivaa_usunt)
-                aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
-                donutColor = "#4900AC"
-            }
+                }
+                "orange" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#FFCB00"))
+                    aqiSentence.text = getString(R.string.luftnivaa_moderat)
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl2)
+                    donutColor = "#FFCB00"
+                }
+                "red" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#C13500"))
+                    aqiSentence.text = getString(R.string.luftnivaa_utsatte)
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl3)
+                    donutColor = "#C13500"
+                }
+                "purple" -> {
+                    aqiLevel.setTextColor(Color.parseColor("#4900AC")) //endres til oransje
+                    aqiSentence.text = getString(R.string.luftnivaa_usunt)
+                    aqiSmiley.setBackgroundResource(R.drawable.ic_smiley_lvl4)
+                    donutColor = "#4900AC"
+                }
             }
         }
 
         // donutview-seksjonen for nivaaet
         fun createDonut() {
-            val donutSection = highest?.value?.let { DonutSection("pollution level", Color.parseColor(donutColor), it.toFloat()) }
+            val donutSection = highest?.value?.let {
+                DonutSection(
+                    "pollution level",
+                    Color.parseColor(donutColor),
+                    it.toFloat()
+                )
+            }
             if (donutSection != null) donutView.submitData(listOf(donutSection))
         }
 
@@ -412,7 +504,10 @@ class LocationFragment : Fragment() {
                     numberMax.text = "\n400"
                     donutView.cap = 400F
                     if (highest.value <= 60.0) changeVisuals("green", "Svevestøv (pm10)")
-                    else if (highest.value in 60.0..120.0) changeVisuals("orange", "Svevestøv (pm10)")
+                    else if (highest.value in 60.0..120.0) changeVisuals(
+                        "orange",
+                        "Svevestøv (pm10)"
+                    )
                     else if (highest.value in 120.0..400.0) changeVisuals("red", "Svevestøv (pm10)")
                     else if (highest.value >= 400.0) changeVisuals("purple", "Svevestøv (pm10)")
                 }
@@ -420,7 +515,10 @@ class LocationFragment : Fragment() {
                     numberMax.text = "\n150"
                     donutView.cap = 150F
                     if (highest.value <= 30.0) changeVisuals("green", "Svevestøv (pm2.5)")
-                    else if (highest.value in 30.0..50.0) changeVisuals("orange", "Svevestøv (pm2.5)")
+                    else if (highest.value in 30.0..50.0) changeVisuals(
+                        "orange",
+                        "Svevestøv (pm2.5)"
+                    )
                     else if (highest.value in 50.0..150.0) changeVisuals("red", "Svevestøv (pm2.5)")
                     else if (highest.value >= 150.0) changeVisuals("purple", "Svevestøv (pm2.5)")
                 }

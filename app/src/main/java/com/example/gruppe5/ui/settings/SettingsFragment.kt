@@ -38,6 +38,10 @@ class SettingsFragment : Fragment() {
         return root
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+    }
+
     fun assignId(root: View) {
         lokasjonKnapp = root.findViewById(R.id.location_button)
         informasjon = root.findViewById(R.id.informasjon)

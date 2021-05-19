@@ -65,6 +65,7 @@
         android:id="@+id/icon_location"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:alpha="0"
         android:background="@drawable/ic_location_marker"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline2"
@@ -80,8 +81,7 @@
         android:foregroundGravity="center"
         android:gravity="center"
         android:scaleType="centerCrop"
-        android:text="@string/stasjonsnavn"
-        android:textColor="@color/black"
+        android:textColor="@color/gray"
         android:textSize="35sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/icon_location"
@@ -125,13 +125,11 @@
         android:gravity="start"
         android:paddingStart="140dp"
         android:paddingEnd="0dp"
-        android:text="\n500+"
         android:textColor="@color/black"
         android:textSize="18sp"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
         app:layout_constraintStart_toStartOf="@+id/donut_view_location"
-        app:layout_constraintTop_toTopOf="@id/donut_view_location"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toTopOf="@id/donut_view_location" />
 
     <TextView
         android:id="@+id/donutNmbrsLocationMin"
@@ -158,7 +156,6 @@
         android:layout_marginBottom="8dp"
         android:foregroundGravity="center"
         android:gravity="center"
-        android:text="[TYPE]"
         android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
@@ -186,6 +183,7 @@
         android:id="@+id/info1_location"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:alpha="0"
         android:background="@drawable/ic_info"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guideline4"
