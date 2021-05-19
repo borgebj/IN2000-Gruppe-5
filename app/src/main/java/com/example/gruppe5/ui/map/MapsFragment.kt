@@ -117,7 +117,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     fun addMapFunctions() {
         checkGpsStatus()
         if (gpsStatus) {
-            Toast.makeText(requireContext(), "Lokasjon på", Toast.LENGTH_SHORT).show()
             mMap.isMyLocationEnabled = true
         } else {
             mMap.isMyLocationEnabled = false

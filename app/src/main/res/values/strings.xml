@@ -57,7 +57,8 @@
     <string name="soek">Søk</string>
     <string name="reset">Reset</string>
     <string name="legg_til">Legg til</string>
-    <string name="slett_alle">Slett alle</string>>
+    <string name="slett_alle">Slett alle</string>
+    <string name="hoyestOslo">høyest verdi i Oslo</string>>
 
     <string-array name="aqiFunfactList">
         <item>funfact 1</item>
