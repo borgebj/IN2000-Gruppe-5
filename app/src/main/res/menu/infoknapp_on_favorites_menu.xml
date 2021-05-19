@@ -8,6 +8,6 @@
         android:id="@+id/info_fav"
         android:icon="@drawable/ic_info_white"
         android:title="Info"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
 </menu>

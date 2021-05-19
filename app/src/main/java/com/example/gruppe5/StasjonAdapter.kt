@@ -2,7 +2,6 @@ package com.example.gruppe5
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +14,7 @@ import com.example.gruppe5.ui.location.LocationFragment
 
 
 class StasjonAdapter(private val liste: MutableList<Stasjon>) :
-        RecyclerView.Adapter<StasjonAdapter.ViewHolder>(){
+    RecyclerView.Adapter<StasjonAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textEn: TextView = view.findViewById(R.id.textEn)
@@ -28,7 +27,7 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.element, viewGroup, false)
+            .inflate(R.layout.element, viewGroup, false)
         return ViewHolder(view)
     }
 
@@ -38,10 +37,10 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
         viewHolder.textEn.text = liste[position].name
         viewHolder.textTo.text = "Kommune: ${liste[position].kommune.name}"
 
-        viewHolder.itemView.setOnClickListener{ //
+        viewHolder.itemView.setOnClickListener { //
             val fragment = LocationFragment()
             val bundle = Bundle()
-            bundle.putParcelable("location", liste[position] )
+            bundle.putParcelable("location", liste[position])
             fragment.arguments = bundle
 
             Navigation.findNavController(it).navigate(R.id.navigation_location, bundle)
@@ -51,7 +50,7 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
 
             val fragment = FavoritesFragment()
             val bundle = Bundle()
-            bundle.putParcelable("station", liste[position] )
+            bundle.putParcelable("station", liste[position])
             fragment.arguments = bundle
 
             Navigation.findNavController(it).navigate(R.id.navigation_favorites, bundle)

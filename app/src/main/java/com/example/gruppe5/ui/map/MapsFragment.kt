@@ -13,7 +13,6 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -36,11 +35,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // elementer
     lateinit var mMap: GoogleMap
-    lateinit var root : View
-    lateinit var switch : SwitchCompat
+    lateinit var root: View
+    lateinit var switch: SwitchCompat
 
     // viewmodel
-    lateinit var viewModel : ViewModel
+    lateinit var viewModel: ViewModel
 
     // maps stuff
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -49,12 +48,12 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // status
     var locationStatus = false
-    var svar : String? = null // svar fra search-fragment
+    var svar: String? = null // svar fra search-fragment
     private var tts: TextToSpeech? = null
     var ttsStatus = true
 
     // search
-    lateinit var adapter : ArrayAdapter<*>
+    lateinit var adapter: ArrayAdapter<*>
 
 
     private val callback = OnMapReadyCallback { Map ->
@@ -63,7 +62,12 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
         // starter med aa flytte kamera til Norge
         mMap.setPadding(0, 0, 0, 120)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(60.472024, 8.468946), 5.0f)) // flytter til Norge
+        mMap.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(60.472024, 8.468946),
+                5.0f
+            )
+        ) // flytter til Norge
 
         // henter svar fra search-knappen
         svar = MapsFragmentArgs.fromBundle(requireArguments()).map
@@ -107,30 +111,28 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     private fun checkGpsStatus() {
-        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager =
+            requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
         gpsStatus = locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(root.context)
     }
 
 
     private fun checkLocationStatus() {
-        locationStatus = (ContextCompat.checkSelfPermission(root.context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-                == PackageManager.PERMISSION_GRANTED)
+        locationStatus = (ContextCompat.checkSelfPermission(root.context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
+
 
     // legger til funksjoner fra google-maps
     @SuppressLint("MissingPermission")
     fun addMapFunctions() {
-        CheckGpsStatus()
-        if (GpsStatus) {
+        checkGpsStatus()
+        if (gpsStatus) {
             Toast.makeText(requireContext(), "Lokasjon på", Toast.LENGTH_SHORT).show()
             mMap.isMyLocationEnabled = true
         } else {
             mMap.isMyLocationEnabled = false
             mMap.uiSettings.isMyLocationButtonEnabled = false
-            Log.d("ELSE", "FALSE")
 
         }
         mMap.uiSettings.isZoomControlsEnabled = true
@@ -155,7 +157,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
         // endrer farge/ikon paa kartet avhengig av markoerenes nivaa
         fun alterMarker(level: String, marker: MarkerOptions) {
-            when(level) {
+            when (level) {
                 "green" -> marker.icon(bitMapFromVector(R.drawable.ic_level_one))
                 "orange" -> marker.icon(bitMapFromVector(R.drawable.ic_level_two))
                 "red" -> marker.icon(bitMapFromVector(R.drawable.ic_level_three))
@@ -164,40 +166,40 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         }
 
         if (highest != null)
-        when (highest.key) {
-            "no2" -> {
-                when {
-                    highest.value <= 100.0 -> alterMarker("green", marker)
-                    highest.value in 100.0..200.0 -> alterMarker("orange", marker)
-                    highest.value in 200.0..400.0 -> alterMarker("red", marker)
-                    highest.value >= 400.0 -> alterMarker("purple", marker)
+            when (highest.key) {
+                "no2" -> {
+                    when {
+                        highest.value <= 100.0 -> alterMarker("green", marker)
+                        highest.value in 100.0..200.0 -> alterMarker("orange", marker)
+                        highest.value in 200.0..400.0 -> alterMarker("red", marker)
+                        highest.value >= 400.0 -> alterMarker("purple", marker)
+                    }
+                }
+                "pm10" -> {
+                    when {
+                        highest.value <= 60.0 -> alterMarker("green", marker)
+                        highest.value in 60.0..120.0 -> alterMarker("orange", marker)
+                        highest.value in 120.0..400.0 -> alterMarker("red", marker)
+                        highest.value >= 400.0 -> alterMarker("purple", marker)
+                    }
+                }
+                "pm25" -> {
+                    when {
+                        highest.value <= 30.0 -> alterMarker("green", marker)
+                        highest.value in 30.0..50.0 -> alterMarker("orange", marker)
+                        highest.value in 50.0..150.0 -> alterMarker("red", marker)
+                        highest.value >= 150.0 -> alterMarker("purple", marker)
+                    }
+                }
+                "o3" -> {
+                    when {
+                        highest.value <= 100.0 -> alterMarker("green", marker)
+                        highest.value in 100.0..180.0 -> alterMarker("orange", marker)
+                        highest.value in 180.0..240.0 -> alterMarker("red", marker)
+                        highest.value >= 240.0 -> alterMarker("purple", marker)
+                    }
                 }
             }
-            "pm10" -> {
-                when {
-                    highest.value <= 60.0 -> alterMarker("green", marker)
-                    highest.value in 60.0..120.0 -> alterMarker("orange", marker)
-                    highest.value in 120.0..400.0 -> alterMarker("red", marker)
-                    highest.value >= 400.0 -> alterMarker("purple", marker)
-                }
-            }
-            "pm25" -> {
-                when {
-                    highest.value <= 30.0 -> alterMarker("green", marker)
-                    highest.value in 30.0..50.0 -> alterMarker("orange", marker)
-                    highest.value in 50.0..150.0 -> alterMarker("red", marker)
-                    highest.value >= 150.0 -> alterMarker("purple", marker)
-                }
-            }
-            "o3" -> {
-                when {
-                    highest.value <= 100.0 -> alterMarker("green", marker)
-                    highest.value in 100.0..180.0 -> alterMarker("orange", marker)
-                    highest.value in 180.0..240.0 -> alterMarker("red", marker)
-                    highest.value >= 240.0 -> alterMarker("purple", marker)
-                }
-            }
-        }
     }
 
     // legger til hver stasjon paa kartet - observerer alle stasjoner > oppretter > legger till
@@ -220,7 +222,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                 val verdi = station.verdier[highest?.key]
                 if (verdi != null) weightedData.add(
                     WeightedLatLng(
-                        LatLng(station.latitude,
+                        LatLng(
+                            station.latitude,
                             station.longitude
                         ), verdi
                     )
@@ -262,13 +265,16 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                     val navn = marker_title
                     if (navn == stasjon.name) {
                         // tts-test
-                        if (ttsStatus) { tts!!.speak(
-                            "Opening page $navn",
-                            TextToSpeech.QUEUE_FLUSH,
-                            null,
-                            "")
+                        if (ttsStatus) {
+                            tts!!.speak(
+                                "Opening page $navn",
+                                TextToSpeech.QUEUE_FLUSH,
+                                null,
+                                ""
+                            )
                         }
-                        Toast.makeText(this.context, "Åpner side ...", Toast.LENGTH_SHORT).show() // informerer bruker
+                        Toast.makeText(this.context, "Åpner side ...", Toast.LENGTH_SHORT)
+                            .show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
                         try {
@@ -316,20 +322,20 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     // oppretter en Bitmap fra en vector fil, for å skape Bitmaps / Icons for kartet sine markører
-    private fun bitMapFromVector(vectorResID: Int):BitmapDescriptor {
-        val vectorDrawable= this.context?.let { ContextCompat.getDrawable(it, vectorResID) }
+    private fun bitMapFromVector(vectorResID: Int): BitmapDescriptor {
+        val vectorDrawable = this.context?.let { ContextCompat.getDrawable(it, vectorResID) }
         vectorDrawable!!.setBounds(
             0,
             0,
             vectorDrawable.intrinsicWidth,
             vectorDrawable.intrinsicHeight
         )
-        val bitmap=Bitmap.createBitmap(
+        val bitmap = Bitmap.createBitmap(
             vectorDrawable.intrinsicWidth,
             vectorDrawable.intrinsicHeight,
             Bitmap.Config.ARGB_8888
         )
-        val canvas=Canvas(bitmap)
+        val canvas = Canvas(bitmap)
         vectorDrawable.draw(canvas)
         return BitmapDescriptorFactory.fromBitmap(bitmap)
     }
@@ -342,7 +348,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             root.findNavController().navigate(action)
             true
         }
-        else -> { super.onOptionsItemSelected(item) }
+        else -> {
+            super.onOptionsItemSelected(item)
+        }
     }
 
     // henter stasjon fra search og navigerer til markøren
@@ -352,7 +360,8 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                 if (station.name == svar.toString()) {
                     mMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
-                            LatLng(station.latitude, station.longitude), 15F), 2000, null
+                            LatLng(station.latitude, station.longitude), 15F
+                        ), 2000, null
                     )
                 }
             }
@@ -366,7 +375,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TTS", "Language not supported")
             }
-        } else { Log.e("TTS", "Initialization failed") }
+        } else {
+            Log.e("TTS", "Initialization failed")
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

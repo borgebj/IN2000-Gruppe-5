@@ -6,7 +6,8 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
-import android.widget.*
+import android.widget.ImageButton
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
@@ -25,19 +26,23 @@ class FavoritesFragment : Fragment() {
     private lateinit var viewModel: ViewModel
 
     private lateinit var addBut: ImageButton
-    private lateinit var resetB : ImageButton
+    private lateinit var resetB: ImageButton
     private lateinit var favRecycler: RecyclerView
     private lateinit var favAdapter: StasjonAdapter
 
     private lateinit var root: View
 
     private var favStations: MutableList<Stasjon> = mutableListOf()
-    private lateinit var pref : SharedPreferences// = requireContext().getSharedPreferences("my_pref", MODE_PRIVATE)
-    private lateinit var editor : SharedPreferences.Editor// = pref.edit()
+    private lateinit var pref: SharedPreferences// = requireContext().getSharedPreferences("my_pref", MODE_PRIVATE)
+    private lateinit var editor: SharedPreferences.Editor// = pref.edit()
     private var antKeys = 0 // antall lagrede favorittstasjoner - maks5
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         val root: View = inflater.inflate(R.layout.fragment_favorites, container, false)
         this.root = root
         return root
@@ -79,9 +84,9 @@ class FavoritesFragment : Fragment() {
     }
 
     @SuppressLint("ApplySharedPref")
-    fun setResetBut(root: View){
+    fun setResetBut(root: View) {
 
-        resetB.setOnClickListener{
+        resetB.setOnClickListener {
             editor.clear().commit()
             favStations = mutableListOf()
             favAdapter.notifyDataSetChanged()
@@ -89,27 +94,29 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun refresh(root: View){
+    private fun refresh(root: View) {
         root.findNavController().navigate(
             FavoritesFragmentDirections.actionNavigationFavoritesSelf()
         )
     }
 
-    private fun setSearchFrag(root: View){
+    private fun setSearchFrag(root: View) {
 
         addBut.setOnClickListener {
             tilSearch(root)  // navigere til SearchFragment
-            val msg = "Tøm listen over favorittstasjoner eller slett noen stasjoner for å legge til en ny favoritt."
+            val msg =
+                "Tøm listen over favorittstasjoner eller slett noen stasjoner for å legge til en ny favoritt."
             if (antKeys == 5) Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
         }
     }
 
-    private fun tilSearch(root: View){
-        root.findNavController().navigate(FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
+    private fun tilSearch(root: View) {
+        root.findNavController()
+            .navigate(FavoritesFragmentDirections.actionNavigationFavoritesToNavigationSearch2())
     }
 
     // legger til stasjonene i preference til MutableList stasjoner
-    private fun setFavStations(stasjoner: MutableList<Stasjon>){
+    private fun setFavStations(stasjoner: MutableList<Stasjon>) {
 
         val keys: Map<String, *> = pref.getAll()
         for ((_, value) in keys) {
@@ -117,12 +124,12 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>){
+    private fun addToFavStations(station: String, stasjoner: MutableList<Stasjon>) {
 
-        for (st in stasjoner){
-            if (st.name.equals(station, ignoreCase = true)){ // finner match
+        for (st in stasjoner) {
+            if (st.name.equals(station, ignoreCase = true)) { // finner match
 
-                if (!inFavStations(station)){ // ikke satt til CardView ennaa
+                if (!inFavStations(station)) { // ikke satt til CardView ennaa
                     favStations.add(st)
                     favAdapter.notifyDataSetChanged()
 
@@ -136,7 +143,7 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun inPref(station: String) : Boolean {
+    private fun inPref(station: String): Boolean {
 
         val keys: Map<String, *> = pref.getAll()
         for ((_, value) in keys) {
@@ -145,9 +152,9 @@ class FavoritesFragment : Fragment() {
         return false
     }
 
-    private fun inFavStations(station: String) : Boolean {
+    private fun inFavStations(station: String): Boolean {
 
-        for (st in favStations){
+        for (st in favStations) {
             if (st.name == station) return true
         }
         return false
@@ -155,13 +162,13 @@ class FavoritesFragment : Fragment() {
 
     // legger til en stasjon til preferences
     @SuppressLint("CommitPrefEdits")
-    fun setElem(station: String, key: String){
+    fun setElem(station: String, key: String) {
         editor.putString(key, station)
         editor.commit()
     }
 
     // henter data fra SearchFragment
-    private fun getDataBack(stasjoner: MutableList<Stasjon>){
+    private fun getDataBack(stasjoner: MutableList<Stasjon>) {
 
         val station: String? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation
         if (antKeys != 5) { // kan lagre MAKS FEM favorittstasjoner -- antall elementer som kan legges til kan endres
@@ -169,7 +176,7 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun checkDeleteElem(){
+    private fun checkDeleteElem() {
 
         val args = arguments // station as Stasjon som skal slettes fra pref
         if (args != null) {
@@ -194,14 +201,16 @@ class FavoritesFragment : Fragment() {
         dialogB.setTitle("Hvordan fungerer det?")
             .setIcon(R.drawable.ic_info_green)
             .setMessage(message)
-            .setPositiveButton("Lukk") { _, _ ->}
+            .setPositiveButton("Lukk") { _, _ -> }
         slideShow(command, dialogB)
     }
 
-    private fun slideShow(command: String, dialog: AlertDialog.Builder){
-        val animasjonsDialog : AlertDialog = dialog.create()
-        if (command == "open") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThOpen //animasjon
-        else if (command == "close") animasjonsDialog.window?.attributes?.windowAnimations = R.style.DialogThClose //animasjon
+    private fun slideShow(command: String, dialog: AlertDialog.Builder) {
+        val animasjonsDialog: AlertDialog = dialog.create()
+        if (command == "open") animasjonsDialog.window?.attributes?.windowAnimations =
+            R.style.DialogThOpen //animasjon
+        else if (command == "close") animasjonsDialog.window?.attributes?.windowAnimations =
+            R.style.DialogThClose //animasjon
         return (animasjonsDialog.show())
     }
 

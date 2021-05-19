@@ -21,7 +21,7 @@ import com.karumi.dexter.listener.single.PermissionListener
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navView: BottomNavigationView
-    private lateinit var navController : NavController
+    private lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,8 +30,14 @@ class MainActivity : AppCompatActivity() {
         assignId()
 
         // setter opp navigasjonsbar
-        val appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.navigation_home, R.id.navigation_map, R.id.navigation_favorites, R.id.navigation_settings))
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.navigation_home,
+                R.id.navigation_map,
+                R.id.navigation_favorites,
+                R.id.navigation_settings
+            )
+        )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -54,12 +60,17 @@ class MainActivity : AppCompatActivity() {
             .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
             .withListener(
                 object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse){
-                        Toast.makeText(applicationContext, "Lokasjon tillatt", Toast.LENGTH_SHORT).show()
+                    override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                        Toast.makeText(applicationContext, "Lokasjon tillatt", Toast.LENGTH_SHORT)
+                            .show()
                     }
 
                     override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                        Toast.makeText(applicationContext, "Lokasjon ikke tillatt", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            applicationContext,
+                            "Lokasjon ikke tillatt",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
 
                     override fun onPermissionRationaleShouldBeShown(

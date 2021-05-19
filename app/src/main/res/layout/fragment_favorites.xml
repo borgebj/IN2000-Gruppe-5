@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -32,8 +31,7 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="@+id/add_but"
         app:layout_constraintRight_toRightOf="@+id/add_but"
-        app:layout_constraintTop_toBottomOf="@+id/add_but"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/add_but" />
 
     <ImageButton
         android:id="@+id/reset_but"
@@ -60,8 +58,7 @@
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="@+id/reset_but"
         app:layout_constraintRight_toRightOf="@+id/reset_but"
-        app:layout_constraintTop_toBottomOf="@+id/reset_but"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/reset_but" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favorites_recycler"

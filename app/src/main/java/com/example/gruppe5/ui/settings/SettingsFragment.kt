@@ -38,10 +38,6 @@ class SettingsFragment : Fragment() {
         return root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
     fun assignId(root: View) {
         lokasjonKnapp = root.findViewById(R.id.location_button)
         informasjon = root.findViewById(R.id.informasjon)
@@ -52,14 +48,15 @@ class SettingsFragment : Fragment() {
 
 
     private fun setLocation() {
-        lokasjonKnapp.setOnClickListener{
+        lokasjonKnapp.setOnClickListener {
             startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
         }
     }
 
     private fun setAboutAirquality(root: View) {
         luftkvalitetKnapp.setOnClickListener {
-            root.findNavController().navigate(R.id.action_navigation_settings_to_aboutAirqualityFragment)
+            root.findNavController()
+                .navigate(R.id.action_navigation_settings_to_aboutAirqualityFragment)
         }
     }
 

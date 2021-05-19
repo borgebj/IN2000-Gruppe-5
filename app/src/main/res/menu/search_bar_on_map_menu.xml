@@ -6,7 +6,7 @@
         android:id="@+id/nav_search2"
         android:icon="@drawable/ic_search"
         android:title="@string/soek"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom" />
 
 </menu>
 

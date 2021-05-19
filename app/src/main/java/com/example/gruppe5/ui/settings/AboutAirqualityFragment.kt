@@ -15,13 +15,13 @@ import com.example.gruppe5.R
 
 class AboutAirqualityFragment : Fragment() {
 
-    private lateinit var textView : TextView
+    private lateinit var textView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val root : View = inflater.inflate(R.layout.fragment_about_airquality, container, false)
+        val root: View = inflater.inflate(R.layout.fragment_about_airquality, container, false)
 
         assignId(root)
         setText()
@@ -60,7 +60,12 @@ class AboutAirqualityFragment : Fragment() {
             this@toBulletedList.foldIndexed(0) { index, acc, span ->
                 val end = acc + span.length + if (index != this@toBulletedList.size - 1) 1 else 0
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.P) {
-                    this.setSpan(BulletSpan(40, R.color.teal_700,40), acc, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                    this.setSpan(
+                        BulletSpan(40, R.color.teal_700, 40),
+                        acc,
+                        end,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
                 }
                 end
             }

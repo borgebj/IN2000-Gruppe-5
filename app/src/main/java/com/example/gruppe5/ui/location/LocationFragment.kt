@@ -14,7 +14,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import app.futured.donut.DonutProgressView
 import app.futured.donut.DonutSection
@@ -77,14 +76,10 @@ class LocationFragment : Fragment() {
                 } catch (e: NullPointerException) {
                     e.printStackTrace()
                 }
-            } else Log.d("bundle == null", "HER")
+            } else Log.d("bundle = null", "HER")
         }
         setChart() // oppretter søylediagrammet
         return root
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
     }
 
     fun assignId(root: View) {
