@@ -12,15 +12,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 
 
 class SettingsFragment : Fragment() {
-
-    private lateinit var settingsModel: SettingsViewModel
 
     private lateinit var lokasjonKnapp: Button
     private lateinit var informasjon: TextView
@@ -49,8 +45,6 @@ class SettingsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        settingsModel = ViewModelProvider(this).get(SettingsViewModel::class.java)
-        settingsModel.text.observe(viewLifecycleOwner) {}
     }
 
     fun assignId(root: View) {

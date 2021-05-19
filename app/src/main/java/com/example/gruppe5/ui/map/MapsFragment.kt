@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
+import com.example.gruppe5.ViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.*
@@ -50,9 +51,6 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     // search
     lateinit var adapter : ArrayAdapter<*>
-
-    // lister
-    var markers : MutableList<Marker?> = mutableListOf()
 
 
     private val callback = OnMapReadyCallback { Map ->
@@ -117,10 +115,10 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         CheckGpsStatus()
         if (GpsStatus) {
             Toast.makeText(requireContext(), "Lokasjon på", Toast.LENGTH_SHORT).show()
+            mMap.isMyLocationEnabled = true
         } else {
             Toast.makeText(requireContext(), "Lokasjon av", Toast.LENGTH_SHORT).show()
         }
-        mMap.isMyLocationEnabled = true
         mMap.uiSettings.isZoomControlsEnabled = true
         mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isMyLocationButtonEnabled = true
@@ -135,10 +133,9 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                 station.latitude,
                 station.longitude
             )
-        ).title("[${station.name}]")
+        ).title(station.name)
         checkValues(highest, markerOptions)
         val marker = mMap.addMarker(markerOptions)
-        markers.add(marker)
     }
 
     // sjekker hvilke forurensnings-type det er, deres nivaaer, og kaller hjelpemetode videre
@@ -155,32 +152,40 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         }
 
         if (highest != null)
-            when (highest.key) {
-                "no2" -> {
-                    if (highest.value <= 100.0) alterMarker("green", marker)
-                    else if (highest.value in 100.0..200.0) alterMarker("orange", marker)
-                    else if (highest.value in 200.0..400.0) alterMarker("red", marker)
-                    else if (highest.value >= 400.0) alterMarker("purple", marker)
-                }
-                "pm10" -> {
-                    if (highest.value <= 60.0) alterMarker("green", marker)
-                    else if (highest.value in 60.0..120.0) alterMarker("orange", marker)
-                    else if (highest.value in 120.0..400.0) alterMarker("red", marker)
-                    else if (highest.value >= 400.0) alterMarker("purple", marker)
-                }
-                "pm25" -> {
-                    if (highest.value <= 30.0) alterMarker("green", marker)
-                    else if (highest.value in 30.0..50.0) alterMarker("orange", marker)
-                    else if (highest.value in 50.0..150.0) alterMarker("red", marker)
-                    else if (highest.value >= 150.0) alterMarker("purple", marker)
-                }
-                "o3" -> {
-                    if (highest.value <= 100.0) alterMarker("green", marker)
-                    else if (highest.value in 100.0..180.0) alterMarker("orange", marker)
-                    else if (highest.value in 180.0..240.0) alterMarker("red", marker)
-                    else if (highest.value >= 240.0) alterMarker("purple", marker)
+        when (highest.key) {
+            "no2" -> {
+                when {
+                    highest.value <= 100.0 -> alterMarker("green", marker)
+                    highest.value in 100.0..200.0 -> alterMarker("orange", marker)
+                    highest.value in 200.0..400.0 -> alterMarker("red", marker)
+                    highest.value >= 400.0 -> alterMarker("purple", marker)
                 }
             }
+            "pm10" -> {
+                when {
+                    highest.value <= 60.0 -> alterMarker("green", marker)
+                    highest.value in 60.0..120.0 -> alterMarker("orange", marker)
+                    highest.value in 120.0..400.0 -> alterMarker("red", marker)
+                    highest.value >= 400.0 -> alterMarker("purple", marker)
+                }
+            }
+            "pm25" -> {
+                when {
+                    highest.value <= 30.0 -> alterMarker("green", marker)
+                    highest.value in 30.0..50.0 -> alterMarker("orange", marker)
+                    highest.value in 50.0..150.0 -> alterMarker("red", marker)
+                    highest.value >= 150.0 -> alterMarker("purple", marker)
+                }
+            }
+            "o3" -> {
+                when {
+                    highest.value <= 100.0 -> alterMarker("green", marker)
+                    highest.value in 100.0..180.0 -> alterMarker("orange", marker)
+                    highest.value in 180.0..240.0 -> alterMarker("red", marker)
+                    highest.value >= 240.0 -> alterMarker("purple", marker)
+                }
+            }
+        }
     }
 
     // legger til hver stasjon paa kartet - observerer alle stasjoner > oppretter > legger till
@@ -243,11 +248,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             viewModel.stations.observe(viewLifecycleOwner) { list ->
 
                 for (stasjon in list) {
-                    val navn = marker_title?.substring(
-                        marker_title.indexOf("[") + 1, marker_title.indexOf(
-                            "]"
-                        )
-                    )
+                    val navn = marker_title
                     if (navn == stasjon.name) {
                         // tts-test
                         if (ttsStatus) { tts!!.speak(
@@ -256,8 +257,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                             null,
                             "")
                         }
-                        Toast.makeText(this.context, "Opner side ...", Toast.LENGTH_SHORT)
-                            .show() // informerer bruker
+                        Toast.makeText(this.context, "Opner side ...", Toast.LENGTH_SHORT).show() // informerer bruker
 
                         // venter i (ca) 2 sec for endret (postDelayed for aa vente)
                         try {
@@ -329,43 +329,26 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
             val map = "map"
             val action = MapsFragmentDirections.actionNavigationMapToNavigationSearch(map)
             root.findNavController().navigate(action)
-            Log.d("test", "en")
             true
         }
-        else -> {
-            Log.d("test", "to")
-            super.onOptionsItemSelected(item)
-        }
+        else -> { super.onOptionsItemSelected(item) }
     }
 
     // henter stasjon fra search og navigerer til markøren
     private fun createStationFromSearch() {
-
         viewModel.stations.observe(viewLifecycleOwner, { stations ->
             for (station in stations) {
-                for (marker in markers) {
-                    if (station.name == svar.toString() && marker?.position == LatLng(
-                            station.latitude,
-                            station.longitude
-                        )
-                    ) {
-                        mMap.animateCamera(
-                            CameraUpdateFactory.newLatLngZoom(
-                                LatLng(
-                                    station.latitude,
-                                    station.longitude
-                                ), 15F
-                            ), 2000, null
-                        )
-                        marker.alpha = 1F
-                        //createAndAddMarker(station)
-                    }
+                if (station.name == svar.toString()) {
+                    mMap.animateCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            LatLng(station.latitude, station.longitude), 15F), 2000, null
+                    )
                 }
             }
         })
     }
 
-    // KUN FOR TEST ATM !
+    // Initializer for Text-to-Speech
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             val result = tts!!.setLanguage(Locale.US) // henter språk

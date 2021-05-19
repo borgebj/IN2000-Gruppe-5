@@ -45,12 +45,15 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    // gammel GET_request
     implementation("khttp:khttp:1.0.0") {
         exclude group: 'org.jetbrains.kotlin', module: 'kotlin-reflect'
     }
 
     //core
-    implementation("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation 'com.github.kittinunf.fuel:fuel:2.3.1'
+    implementation 'com.github.kittinunf.fuel:fuel-coroutines:2.3.1'
 
     // for google-maps
     implementation 'com.google.android.gms:play-services-maps:17.0.1'

@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.gruppe5.R
 import com.example.gruppe5.Stasjon
 import com.example.gruppe5.StasjonAdapter
-import com.example.gruppe5.ui.map.ViewModel
+import com.example.gruppe5.ViewModel
 
 
 @Suppress("UsePropertyAccessSyntax")

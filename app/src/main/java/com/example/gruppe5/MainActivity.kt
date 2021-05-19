@@ -21,7 +21,7 @@ import com.karumi.dexter.listener.single.PermissionListener
 class MainActivity : AppCompatActivity() {
 
     lateinit var navView: BottomNavigationView
-    lateinit var navController : NavController
+    lateinit var navController: NavController
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         // setter opp navbar
         val appBarConfiguration = AppBarConfiguration(setOf(
-            R.id.navigation_home, R.id.navigation_map, R.id.navigation_favorites, R.id.navigation_settings))
+                R.id.navigation_home, R.id.navigation_map, R.id.navigation_favorites, R.id.navigation_settings))
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
@@ -50,32 +50,32 @@ class MainActivity : AppCompatActivity() {
 
     private fun checkMyPermission() {
         Dexter.withContext(this)
-            .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-            .withListener(
-                object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse){
-                        Toast.makeText(applicationContext, "Lokasjon tillatt", Toast.LENGTH_SHORT).show()
-                    }
+                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(
+                        object : PermissionListener {
+                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                                Toast.makeText(applicationContext, "Lokasjon tillatt", Toast.LENGTH_SHORT).show()
+                            }
 
-                    override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                        Toast.makeText(applicationContext, "Lokasjon ikke tillatt", Toast.LENGTH_SHORT).show()
+                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                                Toast.makeText(applicationContext, "Lokasjon ikke tillatt", Toast.LENGTH_SHORT).show()
 //                    val intent = Intent()
 //                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
 //                    val uri = Uri.fromParts("package", getPackageName(),"");
 //                    intent.setData(uri);
 //                    startActivity(intent);
 
-                        //checkMyPermission() // TODO
+                                //checkMyPermission() // TODO
 
-                    }
+                            }
 
-                    override fun onPermissionRationaleShouldBeShown(
-                        permission: PermissionRequest?,
-                        token: PermissionToken?
-                    ) {
+                            override fun onPermissionRationaleShouldBeShown(
+                                    permission: PermissionRequest?,
+                                    token: PermissionToken?
+                            ) {
 //                        token?.continuePermissionRequest()
-                    }
-                }).check()
+                            }
+                        }).check()
 
     }
 }
