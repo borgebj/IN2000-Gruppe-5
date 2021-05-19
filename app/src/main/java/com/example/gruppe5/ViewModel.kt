@@ -137,16 +137,16 @@ class ViewModel : ViewModel() {
         var nearest : Stasjon? = null
         var closest = 100000.00F
 
-        // selve requesten - - -  IDK hvordan det fungerer men boom > Børge
+        // selve requesten
         val mLocationRequest = LocationRequest.create().setInterval(60000).setFastestInterval(5000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
         val locationCallback = object : LocationCallback() {}
         fusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.getMainLooper())
 
         if (GpsStatus) {
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+                usingDefault = false
                 for (stasjon in stations) {
                     if (location == null) {
-                        usingDefault = false
                         setDefaultState(stations); break
                     }
                     else {

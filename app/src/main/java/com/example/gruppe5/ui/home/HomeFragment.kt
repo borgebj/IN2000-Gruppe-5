@@ -6,8 +6,6 @@ import android.content.Context
 import android.graphics.Color.parseColor
 import android.location.LocationManager
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -89,9 +87,8 @@ class HomeFragment : Fragment() {
             viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->
                 nearestStation = nearest
                 val highest: Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
-
                 if (highest != null) nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
-                // sjekker om bruker defaultState
+
                 if (viewModel.usingDefault) textInfo.text = "Høyest verdi i Oslo"
                 else textInfo.text = "Nærmeste stasjon"
 
@@ -323,49 +320,57 @@ class HomeFragment : Fragment() {
                 "no2" -> {
                     donutView.cap = 400F
                     numberMax.text = "400"
-                    if (highest.value <= 100.0) changeVisuals("green", "Nitrogendioksid (no2)")
-                    else if (highest.value in 100.0..200.0) changeVisuals(
-                        "orange",
-                        "Nitrogendioksid (no2)"
-                    )
-                    else if (highest.value in 200.0..400.0) changeVisuals(
-                        "red",
-                        "Nitrogendioksid (no2)"
-                    )
-                    else if (highest.value >= 400.0) changeVisuals(
-                        "purple",
-                        "Nitrogendioksid (no2)"
-                    )
+                    when {
+                        highest.value <= 100.0 -> changeVisuals("green", "Nitrogendioksid (no2)")
+                        highest.value in 100.0..200.0 -> changeVisuals(
+                                "orange",
+                                "Nitrogendioksid (no2)"
+                        )
+                        highest.value in 200.0..400.0 -> changeVisuals(
+                                "red",
+                                "Nitrogendioksid (no2)"
+                        )
+                        highest.value >= 400.0 -> changeVisuals(
+                                "purple",
+                                "Nitrogendioksid (no2)"
+                        )
+                    }
                 }
                 "pm10" -> {
                     numberMax.text = "400"
                     donutView.cap = 400F
-                    if (highest.value <= 60.0) changeVisuals("green", "Svevestøv (pm10)")
-                    else if (highest.value in 60.0..120.0) changeVisuals(
-                        "orange",
-                        "Svevestøv (pm10)"
-                    )
-                    else if (highest.value in 120.0..400.0) changeVisuals("red", "Svevestøv (pm10)")
-                    else if (highest.value >= 400.0) changeVisuals("purple", "Svevestøv (pm10)")
+                    when {
+                        highest.value <= 60.0 -> changeVisuals("green", "Svevestøv (pm10)")
+                        highest.value in 60.0..120.0 -> changeVisuals(
+                                "orange",
+                                "Svevestøv (pm10)"
+                        )
+                        highest.value in 120.0..400.0 -> changeVisuals("red", "Svevestøv (pm10)")
+                        highest.value >= 400.0 -> changeVisuals("purple", "Svevestøv (pm10)")
+                    }
                 }
                 "pm25" -> {
                     numberMax.text = "150"
                     donutView.cap = 150F
-                    if (highest.value <= 30.0) changeVisuals("green", "Svevestøv (pm2.5)")
-                    else if (highest.value in 30.0..50.0) changeVisuals(
-                        "orange",
-                        "Svevestøv (pm2.5)"
-                    )
-                    else if (highest.value in 50.0..150.0) changeVisuals("red", "Svevestøv (pm2.5)")
-                    else if (highest.value >= 150.0) changeVisuals("purple", "Svevestøv (pm2.5)")
+                    when {
+                        highest.value <= 30.0 -> changeVisuals("green", "Svevestøv (pm2.5)")
+                        highest.value in 30.0..50.0 -> changeVisuals(
+                                "orange",
+                                "Svevestøv (pm2.5)"
+                        )
+                        highest.value in 50.0..150.0 -> changeVisuals("red", "Svevestøv (pm2.5)")
+                        highest.value >= 150.0 -> changeVisuals("purple", "Svevestøv (pm2.5)")
+                    }
                 }
                 "o3" -> {
                     numberMax.text = "240"
                     donutView.cap = 240F
-                    if (highest.value <= 100.0) changeVisuals("green", "Ozon (o3)")
-                    else if (highest.value in 100.0..180.0) changeVisuals("orange", "Ozon (o3)")
-                    else if (highest.value in 180.0..240.0) changeVisuals("red", "Ozon (o3)")
-                    else if (highest.value >= 240.0) changeVisuals("purple", "Ozon (o3)")
+                    when {
+                        highest.value <= 100.0 -> changeVisuals("green", "Ozon (o3)")
+                        highest.value in 100.0..180.0 -> changeVisuals("orange", "Ozon (o3)")
+                        highest.value in 180.0..240.0 -> changeVisuals("red", "Ozon (o3)")
+                        highest.value >= 240.0 -> changeVisuals("purple", "Ozon (o3)")
+                    }
                 }
             }
         // endrer tekst midt i donut og lager donut
