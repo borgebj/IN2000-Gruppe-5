@@ -6,10 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.coroutines.awaitString
-import com.example.gruppe5.Stasjon
-import com.github.kittinunf.fuel.Fuel
-import com.github.kittinunf.fuel.coroutines.awaitString
-import com.google.android.gms.common.api.Api
 import com.google.android.gms.location.*
 import com.google.gson.Gson
 import kotlinx.coroutines.*
@@ -39,7 +35,7 @@ class ViewModel : ViewModel() {
 
 
     // henter JSON/XML via KHTTP -> til String
-    private suspend fun getData(base: String, del: String): String? {
+    private suspend fun getData(base: String, del: String): String {
         val full = "$base$del"
         return Fuel.get(full).awaitString()
     }
@@ -62,50 +58,48 @@ class ViewModel : ViewModel() {
         suspend fun getValues(stations: MutableList<Stasjon>) {
             for (station in stations) {
                 val valueJson = getData(baseURLMetro, "/?station=${station.eoi}")
-                if (valueJson is String) {
-                    val objekt = JSONObject(valueJson)
+                val objekt = JSONObject(valueJson)
 
-                    // main-data
-                    val data = objekt.getJSONObject("data")
+                // main-data
+                val data = objekt.getJSONObject("data")
 
-                    // gaar gjennom listen med tidspunkter
-                    val timeList = data.getJSONArray("time")
-                    for (i in 0 until timeList.length()) {
-                        val timeObject = timeList.getJSONObject(i)
+                // gaar gjennom listen med tidspunkter
+                val timeList = data.getJSONArray("time")
+                for (i in 0 until timeList.length()) {
+                    val timeObject = timeList.getJSONObject(i)
 
-                        val times = timeObject.get("from").toString().split("T")
-                        val variables = timeObject.getJSONObject("variables")
+                    val times = timeObject.get("from").toString().split("T")
+                    val variables = timeObject.getJSONObject("variables")
 
-                        // for aa sikre at tidspunktet sammenlignet er innenfor denne og neste time
-                        val slit = today[1].split(":")
-                        val timeIsValid: Boolean =
-                            times[1] >= slit[0] && times[1] <= (slit[0].toInt() + 1).toString()
+                    // for aa sikre at tidspunktet sammenlignet er innenfor denne og neste time
+                    val slit = today[1].split(":")
+                    val timeIsValid: Boolean =
+                        times[1] >= slit[0] && times[1] <= (slit[0].toInt() + 1).toString()
 
-                        // sammenligner dato og tidspunkt for aa hente verdier for NAA
-                        if (times[0] == today[0] && timeIsValid) {
-                            val map = HashMap<String, Double>()
-                            map["no2"] = String.format(
-                                "%.2f", variables.getJSONObject("no2_concentration").get(
-                                    "value"
-                                )
-                            ).toDouble()
-                            map["pm10"] = String.format(
-                                "%.2f", variables.getJSONObject("pm10_concentration").get(
-                                    "value"
-                                )
-                            ).toDouble()
-                            map["pm25"] = String.format(
-                                "%.2f", variables.getJSONObject("pm25_concentration").get(
-                                    "value"
-                                )
-                            ).toDouble()
-                            map["o3"] = String.format(
-                                "%.2f", variables.getJSONObject("o3_concentration").get(
-                                    "value"
-                                )
-                            ).toDouble()
-                            station.verdier = map
-                        }
+                    // sammenligner dato og tidspunkt for aa hente verdier for NAA
+                    if (times[0] == today[0] && timeIsValid) {
+                        val map = HashMap<String, Double>()
+                        map["no2"] = String.format(
+                            "%.2f", variables.getJSONObject("no2_concentration").get(
+                                "value"
+                            )
+                        ).toDouble()
+                        map["pm10"] = String.format(
+                            "%.2f", variables.getJSONObject("pm10_concentration").get(
+                                "value"
+                            )
+                        ).toDouble()
+                        map["pm25"] = String.format(
+                            "%.2f", variables.getJSONObject("pm25_concentration").get(
+                                "value"
+                            )
+                        ).toDouble()
+                        map["o3"] = String.format(
+                            "%.2f", variables.getJSONObject("o3_concentration").get(
+                                "value"
+                            )
+                        ).toDouble()
+                        station.verdier = map
                     }
                 }
             }

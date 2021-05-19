@@ -7,6 +7,6 @@
         android:icon="@drawable/ic_search"
         android:title="@string/soek"
         app:actionViewClass="android.widget.SearchView"
-        app:showAsAction="ifRoom|withText"/>
+        app:showAsAction="ifRoom|withText" />
 
 </menu>

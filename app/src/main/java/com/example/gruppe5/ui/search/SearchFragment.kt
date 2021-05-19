@@ -13,14 +13,14 @@ import com.example.gruppe5.R
 class SearchFragment : Fragment() {
 
     lateinit var textView: TextView
-    lateinit var adapter : ArrayAdapter<*>
-    private lateinit var listView : ListView //liste over stasjoner
+    lateinit var adapter: ArrayAdapter<*>
+    private lateinit var listView: ListView //liste over stasjoner
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val root : View = inflater.inflate(R.layout.search_fragment, container, false)
+        val root: View = inflater.inflate(R.layout.search_fragment, container, false)
 
         assignId(root)
         setHasOptionsMenu(true)
@@ -45,7 +45,7 @@ class SearchFragment : Fragment() {
         inflater.inflate(R.menu.search_bar_menu, menu)
         val search = menu.findItem(R.id.nav_search)
         val searchView = search?.actionView as SearchView
-        searchView.queryHint= "Søk på en stasjon"
+        searchView.queryHint = "Søk på en stasjon"
         searchView.imeOptions = EditorInfo.IME_FLAG_NO_FULLSCREEN
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -63,8 +63,8 @@ class SearchFragment : Fragment() {
     }
 
     // returnerer valgt stasjon(String) til Map/Favorite
-    private fun setOnListView(root: View){
-        listView.onItemClickListener = AdapterView.OnItemClickListener{ parent, _, position, _ ->
+    private fun setOnListView(root: View) {
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, _, position, _ ->
 
             val station = parent?.getItemAtPosition(position).toString()
             closeKeyboard(listView)
@@ -74,18 +74,18 @@ class SearchFragment : Fragment() {
             if (arg != null) { //fra Map
                 val action =
                     SearchFragmentDirections.actionNavigationSearchToNavigationMap(station)
-                    root.findNavController().navigate(action)
+                root.findNavController().navigate(action)
             } else { //fra Favorite
                 val action =
                     SearchFragmentDirections.actionNavigationSearchToNavigationFavorites(station)
-                    root.findNavController().navigate(action)
+                root.findNavController().navigate(action)
             }
 
         }
         listView.emptyView = root.findViewById(R.id.empty_text_view)
     }
 
-    private fun closeKeyboard(e: View){
+    private fun closeKeyboard(e: View) {
         val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(e.windowToken, 0)
     }

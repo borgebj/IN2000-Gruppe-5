@@ -2,13 +2,16 @@
 
 
 <resources>
+
     <style name="Divider">
-        <item name="android:background">@color/black</item> //you can give your color here. that will change all divider color in your app.
+        <item name="android:background">@color/black</item>
+        //you can give your color here. that will change all divider color in your app.
     </style>
 
     <style name="Divider.Horizontal" parent="Divider">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">2dp</item> // You can change thickness here.
+        <item name="android:layout_height">2dp</item>
+        // You can change thickness here.
 
     </style>
 
@@ -18,7 +21,7 @@
     </style>
 
 
-<!--animasjon for alertdialogs-->
+    <!--animasjon for alertdialogs-->
     <style name="DialogThNext">
         <item name="android:windowEnterAnimation">@transition/slide_left</item>
         <item name="android:windowExitAnimation">@transition/slide_right</item>
@@ -53,7 +56,6 @@
     <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
     </style>
     -->
-
 
 
 </resources>
