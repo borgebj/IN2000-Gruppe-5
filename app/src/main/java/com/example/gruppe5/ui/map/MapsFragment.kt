@@ -2,7 +2,6 @@ package com.example.gruppe5.ui.map
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.LocationManager

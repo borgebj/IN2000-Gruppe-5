@@ -165,6 +165,7 @@ class ViewModel : ViewModel() {
                             nearest = stasjon
                         }
                     }
+                    // om android ikke finner nærmeste lokasjon, bruk heller defaulstate (failswitch for nearest)
                     if (nearest != null) nearestStation.postValue(nearest)
                     else {
                         usingDefault = true
@@ -172,6 +173,7 @@ class ViewModel : ViewModel() {
                 }
             }
         }
+        // om bruk av GPS ikke er tillatt, bruk defaultstate (høyeste i Oslo)
         else {
             usingDefault = true
             setDefaultState(stations) }
