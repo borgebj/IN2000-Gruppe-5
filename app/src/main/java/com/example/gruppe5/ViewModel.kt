@@ -3,7 +3,6 @@ package com.example.gruppe5
 import android.annotation.SuppressLint
 import android.location.Location
 import android.os.Looper
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.github.kittinunf.fuel.Fuel
@@ -165,7 +164,11 @@ class ViewModel : ViewModel() {
                             closest = distance
                             nearest = stasjon
                         }
-                    }; nearestStation.postValue(nearest)
+                    }
+                    if (nearest != null) nearestStation.postValue(nearest)
+                    else {
+                        usingDefault = true
+                        setDefaultState(stations) }
                 }
             }
         }
