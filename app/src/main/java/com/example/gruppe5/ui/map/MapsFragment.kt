@@ -2,6 +2,7 @@ package com.example.gruppe5.ui.map
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.location.LocationManager
@@ -38,6 +39,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     private lateinit var mMap: GoogleMap
     private lateinit var root: View
     private lateinit var switch: SwitchCompat
+    private lateinit var ttsSwitch: SwitchCompat
 
     // maps stuff
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -46,7 +48,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     private var svar: String? = null // svar fra search-fragment
     private var tts: TextToSpeech? = null
-    private var ttsStatus = true
+    private var ttsStatus = false
 
     // search
     private lateinit var adapter: ArrayAdapter<*>
@@ -98,6 +100,7 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
     fun assignId(root: View) {
         switch = root.findViewById(R.id.heatmap_Switch)
+        ttsSwitch = root.findViewById(R.id.tts_switch)
         adapter = ArrayAdapter(
             root.context, android.R.layout.simple_list_item_1, resources.getStringArray(
                 R.array.search_bar_strings
@@ -306,6 +309,10 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
                     addMarkers()
                 }, 250)
             }
+        }
+        ttsSwitch.setOnCheckedChangeListener {_, isChecked ->
+            if (isChecked) ttsStatus = true
+            else if (!isChecked) ttsStatus = false
         }
     }
 

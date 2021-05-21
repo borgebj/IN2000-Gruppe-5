@@ -40,6 +40,14 @@
     <androidx.appcompat.widget.SwitchCompat
         android:id="@+id/heatmap_Switch"
         android:text="@string/heatmap"
+        android:layout_marginTop="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/tts_switch"
+        android:text="Text-to-Speech"
         android:layout_marginStart="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
