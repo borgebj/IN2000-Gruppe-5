@@ -142,13 +142,11 @@ class ViewModel : ViewModel() {
         fusedLocationClient.requestLocationUpdates(mLocationRequest, locationCallback, Looper.getMainLooper())
 
         if (GpsStatus) {
+            usingDefault = false
             fusedLocationClient.lastLocation.addOnSuccessListener { location ->
                 for (stasjon in stations) {
-                    if (location == null) {
-                        setDefaultState(stations); break
-                    }
+                    if (location == null) setDefaultState(stations);
                     else {
-                        usingDefault = false
                         // oppretter Location-objekter
                         val myLocation = Location("")
                         myLocation.latitude = location.latitude
