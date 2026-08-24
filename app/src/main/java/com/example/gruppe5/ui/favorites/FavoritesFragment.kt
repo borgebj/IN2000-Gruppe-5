@@ -58,10 +58,10 @@ class FavoritesFragment : Fragment() {
         setSearchFrag(root)
 
         viewModel.stations.observe(viewLifecycleOwner, {
+            favStations.clear()
             setFavStations(it)
-            getDataBack(it)
+            handleArgs(it)
         })
-        checkDeleteElem()
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -87,6 +87,7 @@ class FavoritesFragment : Fragment() {
         resetB.setOnClickListener {
             editor.clear().commit()
             favStations = mutableListOf()
+            antKeys = 0
             favAdapter.notifyDataSetChanged()
             refresh(root)
         }
@@ -134,7 +135,7 @@ class FavoritesFragment : Fragment() {
 
                     if (!inPref(station)) { // ikke satt til pref ennaa = ny favorittby
                         setElem(station, station)
-                        antKeys++
+                        antKeys = pref.all.size
                     }
                 }
                 break
@@ -167,33 +168,42 @@ class FavoritesFragment : Fragment() {
         editor.commit()
     }
 
-    // henter data fra SearchFragment
-    private fun getDataBack(stasjoner: MutableList<Stasjon>) {
+    // Håndterer både add og delete via favorite_station argumentet
+    private fun handleArgs(stasjoner: MutableList<Stasjon>) {
+        val args = FavoritesFragmentArgs.fromBundle(requireArguments())
+        val stationName: String? = args.favoriteStation
+        if (stationName.isNullOrEmpty()) return
 
-        val station: String? = FavoritesFragmentArgs.fromBundle(requireArguments()).favoriteStation
-        if (antKeys != 5) { // kan lagre MAKS FEM favorittstasjoner -- antall elementer som kan legges til kan endres
-            if (station != null && !inFavStations(station)) addToFavStations(station, stasjoner)
-        }
-    }
-
-    // sjekk om noen stasjon skal slettes
-    private fun checkDeleteElem() {
-
-        val args = arguments // station as Stasjon som skal slettes fra pref
-        if (args != null) {
-            val delete: Stasjon? = args.getParcelable("station") as Stasjon?
-            val keys: Map<String, *> = pref.getAll()
+        if (inPref(stationName)) {
+            // Slett hvis den finnes
+            val keys = pref.all
             for ((key, value) in keys) {
-                if (delete?.name == value) {
-                    editor.remove(key)
-                    editor.commit()
-                    antKeys--
-                    favStations.remove(delete)
+                if (value == stationName) {
+                    editor.remove(key).commit()
+                    antKeys = pref.all.size
+
+                    val iterator = favStations.iterator()
+                    while (iterator.hasNext()) {
+                        if (iterator.next().name.equals(stationName, ignoreCase = true)) {
+                            iterator.remove()
+                            break
+                        }
+                    }
                     favAdapter.notifyDataSetChanged()
                     break
                 }
             }
+        } else if (antKeys < 5) {
+            // Legg til hvis den ikke finnes og vi har plass
+            addToFavStations(stationName, stasjoner)
+        } else {
+            val msg = "Maksimum 5 favoritter tillatt. Slett en for å legge til en ny."
+            Toast.makeText(context, msg, Toast.LENGTH_LONG).show()
         }
+        // Null ut argumentet så det ikke trigges igjen på f.eks. rotasjon
+        val newArgs = Bundle(requireArguments())
+        newArgs.putString("favorite_station", null)
+        arguments = newArgs
     }
 
     //infoknapp

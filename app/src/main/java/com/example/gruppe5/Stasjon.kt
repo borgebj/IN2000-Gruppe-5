@@ -12,14 +12,17 @@ data class Stasjon(
         alternate = ["station"]
     ) // hvis navn ikke finnes, velger den station - for NILU api
     var name: String,
-    val eoi: String, // felles
-    val height: Double,
-    val longitude: Double, // felles
-    val latitude: Double, // felles
-    val grunnkrets: Grunnkets,
-    val delomrade: Delomrade,
-    val kommune: Kommune,
-    var verdier: HashMap<String, Double>
+    @SerializedName("eoi")
+    val eoi: String?, // felles
+    val height: Double?,
+    val longitude: Double?, // felles
+    val latitude: Double?, // felles
+    val areacode: String? = null,
+    val path: String? = null,
+    val grunnkrets: Grunnkets? = null,
+    val delomrade: Delomrade? = null,
+    val kommune: Kommune? = null,
+    var verdier: HashMap<String, Double>? = HashMap()
 ) : Parcelable,
     Serializable // key:type : value:verdi -> (o3, pm10, pm25, no2)
 {
@@ -32,7 +35,7 @@ data class Stasjon(
 // indre-objekter / klasser
 data class Grunnkets(
     val name: String,
-    val areacode: Int
+    val areacode: String
 ) : Parcelable {
     override fun toString(): String {
         return "Grunnkrets:[$areacode]$name"
@@ -42,7 +45,7 @@ data class Grunnkets(
 @Parcelize
 data class Delomrade(
     val name: String,
-    val areacode: Int
+    val areacode: String
 ) : Parcelable {
     override fun toString(): String {
         return "Delomrade:[$areacode]$name"
@@ -52,7 +55,7 @@ data class Delomrade(
 @Parcelize
 data class Kommune(
     val name: String,
-    val areacode: Int
+    val areacode: String
 ) : Parcelable {
     override fun toString(): String {
         return "Kommune:[$areacode]$name"

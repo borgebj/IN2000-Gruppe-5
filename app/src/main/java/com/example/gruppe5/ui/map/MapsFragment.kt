@@ -131,11 +131,13 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     }
 
     private fun createAndAddMarker(station: Stasjon) {
-        val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
+        val lat = station.latitude ?: return
+        val lng = station.longitude ?: return
+        val highest: Map.Entry<String, Double>? = station.verdier?.maxByOrNull { it.value }
         val markerOptions: MarkerOptions = MarkerOptions().position(
             LatLng(
-                station.latitude,
-                station.longitude
+                lat,
+                lng
             )
         ).title(station.name)
         checkValues(highest, markerOptions)
@@ -195,8 +197,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
     // legger til hver stasjon paa kartet - observerer alle stasjoner > oppretter > legger till
     private fun addMarkers() {
         viewModel.stations.observe(viewLifecycleOwner, { stations ->
-            for (station in stations) {
-                createAndAddMarker(station)
+            if (::mMap.isInitialized) {
+                mMap.clear()
+                for (station in stations) {
+                    createAndAddMarker(station)
+                }
             }
         })
     }
@@ -208,13 +213,15 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
 
             // lager LatLng og WeightedLatLng av hver stasjon for heatmap
             for (station in stasjoner) {
-                val highest: Map.Entry<String, Double>? = station.verdier.maxByOrNull { it.value }
-                val verdi = station.verdier[highest?.key]
+                val lat = station.latitude ?: continue
+                val lng = station.longitude ?: continue
+                val highest: Map.Entry<String, Double>? = station.verdier?.maxByOrNull { it.value }
+                val verdi = station.verdier?.get(highest?.key)
                 if (verdi != null) weightedData.add(
                     WeightedLatLng(
                         LatLng(
-                            station.latitude,
-                            station.longitude
+                            lat,
+                            lng
                         ), verdi
                     )
                 )
@@ -249,38 +256,36 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         // onclick til infovindu, aapner location-fragment
         mMap.setOnInfoWindowClickListener { marker ->
             val marker_title: String? = marker.title
-            viewModel.stations.observe(viewLifecycleOwner) { list ->
+            val stations = viewModel.stations.value ?: return@setOnInfoWindowClickListener
 
-                for (stasjon in list) {
-                    val navn = marker_title
-                    if (navn == stasjon.name) {
-                        // tts-test
-                        if (ttsStatus) {
-                            tts!!.speak(
-                                "Opening page $navn",
-                                TextToSpeech.QUEUE_FLUSH,
-                                null,
-                                ""
-                            )
-                        }
-                        Toast.makeText(this.context, "Åpner side ...", Toast.LENGTH_SHORT)
-                            .show() // informerer bruker
-
-                        // venter i (ca) 2 sec for endret (postDelayed for aa vente)
-                        try {
-                            root.postDelayed({
-                                val action =
-                                    MapsFragmentDirections.actionNavigationMapToNavigationLocation(
-                                        stasjon
-                                    )
-                                root.findNavController().navigate(action)
-                            }, 1500)
-                        } catch (e: Exception) { // denne kastes om man prøver å navigere til et annet fragment mens den venter
-                            e.printStackTrace()
-                        }
-
-                        marker.showInfoWindow()
+            for (stasjon in stations) {
+                if (marker_title == stasjon.name) {
+                    // tts-test
+                    if (ttsStatus) {
+                        tts!!.speak(
+                            "Opening page $marker_title",
+                            TextToSpeech.QUEUE_FLUSH,
+                            null,
+                            ""
+                        )
                     }
+                    Toast.makeText(this.context, "Åpner side ...", Toast.LENGTH_SHORT)
+                        .show() // informerer bruker
+
+                    // venter i (ca) 2 sec for endret (postDelayed for aa vente)
+                    try {
+                        root.postDelayed({
+                            val action =
+                                MapsFragmentDirections.actionNavigationMapToNavigationLocation(
+                                    stasjon
+                                )
+                            root.findNavController().navigate(action)
+                        }, 1500)
+                    } catch (e: Exception) { // denne kastes om man prøver å navigere til et annet fragment mens den venter
+                        e.printStackTrace()
+                    }
+
+                    marker.showInfoWindow()
                 }
             }
         }
@@ -352,9 +357,11 @@ class MapsFragment : Fragment(), TextToSpeech.OnInitListener {
         viewModel.stations.observe(viewLifecycleOwner, { stations ->
             for (station in stations) {
                 if (station.name == svar.toString()) {
+                    val lat = station.latitude ?: continue
+                    val lng = station.longitude ?: continue
                     mMap.animateCamera(
                         CameraUpdateFactory.newLatLngZoom(
-                            LatLng(station.latitude, station.longitude), 15F
+                            LatLng(lat, lng), 15F
                         ), 2000, null
                     )
                 }

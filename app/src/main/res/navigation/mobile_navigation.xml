@@ -24,8 +24,8 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_location"
             app:destination="@id/navigation_location"
-            app:enterAnim="@anim/fragment_fade_enter"
-            app:exitAnim="@anim/fragment_fade_exit" />
+            app:enterAnim="@android:anim/slide_in_left"
+            app:popEnterAnim="@android:anim/slide_in_left" />
     </fragment>
 
     <fragment

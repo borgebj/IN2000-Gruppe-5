@@ -50,30 +50,27 @@ class LocationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val root: View = inflater.inflate(R.layout.fragment_location, container, false)
-        val stasjon: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
+        val stasjonArg: Stasjon? = LocationFragmentArgs.fromBundle(requireArguments()).station
         assignId(root)
         setOnClickers(root)
 
-        //henter stasjon fra map fragmentet, og setter den til instansvariabelen.
-        if (stasjon != null) {
-            this.stasjon = stasjon
-            if (stasjon.name.length > 8) stasjonNavn.textSize = 28F
-            setAqiInformer(stasjon.verdier)
-            stasjonNavn.text = stasjon.name
-        }
-        //henter stasjon fra favorite fragmentet, og setter den til instansvariabelen.
-        else {
-            val args = arguments
-            if (args != null) {
-                try {
-                    val myStasjon: Stasjon? = args.getParcelable("location") as Stasjon?
-                    this.stasjon = myStasjon!!
-                    if (this.stasjon.name.length > 8) stasjonNavn.textSize = 28F
-                    setAqiInformer(myStasjon.verdier)
-                    stasjonNavn.text = myStasjon.name
-                } catch (e: NullPointerException) {
-                    e.printStackTrace()
-                }
+        if (stasjonArg != null) {
+            this.stasjon = stasjonArg
+            if (stasjonArg.name.length > 8) stasjonNavn.textSize = 28F
+            setAqiInformer(stasjonArg.verdier)
+            stasjonNavn.text = stasjonArg.name
+        } else {
+            // Fallback for manual bundles if needed
+            val manualStasjon = arguments?.getParcelable<Stasjon>("station") ?: arguments?.getParcelable<Stasjon>("location")
+            if (manualStasjon != null) {
+                this.stasjon = manualStasjon
+                if (manualStasjon.name.length > 8) stasjonNavn.textSize = 28F
+                setAqiInformer(manualStasjon.verdier)
+                stasjonNavn.text = manualStasjon.name
+            } else {
+                // If no station is found, we can't show anything. 
+                // In a real app, we might finish() or show an error.
+                return root
             }
         }
         setChart() // oppretter søylediagrammet
@@ -105,9 +102,9 @@ class LocationFragment : Fragment() {
 
     //setter views etter nivåene fra aqiet
     @SuppressLint("SetTextI18n")
-    private fun setAqiInformer(map: Map<String, Double>) {
+    private fun setAqiInformer(map: Map<String, Double>?) {
         val highest: Map.Entry<String, Double>? =
-                map.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
+                map?.maxByOrNull { it.value } //finner den høyeste verdien blant verdiene.
         var donutColor = "#808080"
 
         @SuppressLint("SetTextI18n") //ignorerer advarsel på strings
@@ -250,10 +247,10 @@ class LocationFragment : Fragment() {
     //metoden setter opp søylenes nivå, og farger.
     private fun setValues() {
         //egen metode kalles, slik at prosenten og dangertlevelet for hver type settes. Dangerlevelet lagres i variabelen, som sendes med som parameter når fargene settes i bunnen av denne metoden.
-        val pm10lvl = calculateDangerLevel(stasjon.verdier["pm10"], "pm10")
-        val pm25lvl = calculateDangerLevel(stasjon.verdier["pm25"], "pm25")
-        val no2lvl = calculateDangerLevel(stasjon.verdier["no2"], "no2")
-        val o3lvl = calculateDangerLevel(stasjon.verdier["o3"], "o3")
+        val pm10lvl = calculateDangerLevel(stasjon.verdier?.get("pm10"), "pm10")
+        val pm25lvl = calculateDangerLevel(stasjon.verdier?.get("pm25"), "pm25")
+        val no2lvl = calculateDangerLevel(stasjon.verdier?.get("no2"), "no2")
+        val o3lvl = calculateDangerLevel(stasjon.verdier?.get("o3"), "o3")
 
         //her settes verdiene fra apiet i søylene.
         val entries = ArrayList<BarEntry>()
@@ -377,7 +374,7 @@ class LocationFragment : Fragment() {
                 )
             }  //tilbake-knapp
         //verdiene settes inn i lista i dialogen. ved trykk på de ulike, kalles egen metode: "DisplayTypeFact". Denne åpner et nytt dialogvindu, med fakta for den valgte typen.
-        val values = stasjon.verdier.keys.toTypedArray()
+        val values = stasjon.verdier?.keys?.toTypedArray() ?: emptyArray()
         dialog.setItems(values) { _, which ->
             when (which) {
                 0 -> {

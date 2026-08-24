@@ -8,7 +8,7 @@
     <string name="title_settings">Innstillinger</string>
 
     <!-- google maps key -->
-    <string name="google_maps_key">AIzaSyCf95oxW7tH8IQayHgOiYrqhjHUqd-9iIM</string>
+    <string name="google_maps_key">REMOVED_FOR_SECURITY</string>
 
     <string-array name="spinner">
         <item>no2</item>

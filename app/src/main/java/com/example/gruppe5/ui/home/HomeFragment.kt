@@ -86,20 +86,27 @@ class HomeFragment : Fragment() {
 
     @SuppressLint("SetTextI18n", "MissingPermission")
     private fun getHomepageStation() {
-        viewModel.stations.observe(viewLifecycleOwner, { stasjoner ->
+        viewModel.stations.observe(viewLifecycleOwner) { stasjoner ->
             viewModel.findNearestStation(fusedLocationClient, stasjoner, gpsStatus)
-            viewModel.nearestStation.observe(viewLifecycleOwner, { nearest ->
-                nearestStation = nearest
-                val highest: Map.Entry<String, Double>? = nearest.verdier.maxByOrNull { it.value }
-                if (highest != null) nearest.verdier[highest.key]?.let { setAqiInformer(nearest.verdier) }
+        }
+        viewModel.nearestStation.observe(viewLifecycleOwner) { nearest ->
+            nearestStation = nearest
+            val currentVerdier = nearest?.verdier
+            if (currentVerdier != null && currentVerdier.isNotEmpty()) {
+                val highest = currentVerdier.maxByOrNull { it.value }
+                if (highest != null) {
+                    setAqiInformer(currentVerdier)
+                }
+            }
 
-                if (viewModel.usingDefault) textInfo.text = "Høyest verdi i Oslo"
-                else textInfo.text = "Nærmeste stasjon"
+            if (viewModel.usingDefault) textInfo.text = "Høyest verdi i Oslo"
+            else textInfo.text = "Nærmeste stasjon"
 
+            if (nearest != null) {
                 if (nearest.name.length > 8) textView.textSize = 28F // sjekker lengden på navnet
                 textView.text = nearest.name
-            })
-        })
+            }
+        }
     }
 
     private fun setOnClickers(root: View) {
@@ -265,9 +272,18 @@ class HomeFragment : Fragment() {
     //endregion
 
     @SuppressLint("SetTextI18n")
-    private fun setAqiInformer(map: Map<String, Double>) {
-        val highest: Map.Entry<String, Double>? = map.maxByOrNull { it.value }
+    private fun setAqiInformer(map: Map<String, Double>?) {
+        val highest: Map.Entry<String, Double>? = map?.maxByOrNull { it.value }
         var donutColor = "#808080"
+
+        if (highest == null) {
+            aqiLevel.text = "Henter data..."
+            aqiType.text = ""
+            aqiSentence.text = ""
+            aqiSmiley.setBackgroundResource(0)
+            donutView.submitData(emptyList())
+            return
+        }
 
         // endrer diverse visuelt, blant annet textview for å fortelle om luften er bra eller ikke, endre farger og ikoner
         fun changeVisuals(level: String, type: String) {

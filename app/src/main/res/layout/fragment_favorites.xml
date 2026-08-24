@@ -13,14 +13,14 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginEnd="40dp"
+        android:layout_marginTop="20dp"
         android:background="@color/cardview_light_background"
         android:gravity="center"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_add"
         android:tint="@color/teal_700"
-        app:layout_constraintBottom_toBottomOf="@+id/reset_but"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/reset_but" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/leggTilText"
@@ -44,8 +44,6 @@
         android:scaleType="fitCenter"
         android:src="@drawable/ic_reset"
         android:tint="@color/teal_700"
-        app:layout_constraintLeft_toRightOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/add_but"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

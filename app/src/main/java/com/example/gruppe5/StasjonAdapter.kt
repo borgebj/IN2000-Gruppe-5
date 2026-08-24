@@ -35,24 +35,18 @@ class StasjonAdapter(private val liste: MutableList<Stasjon>) :
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder.textEn.text = liste[position].name
-        viewHolder.textTo.text = "Kommune: ${liste[position].kommune.name}"
+        viewHolder.textTo.text = "Kommune: ${liste[position].kommune?.name ?: "Ukjent"}"
 
-        viewHolder.itemView.setOnClickListener { //
-            val fragment = LocationFragment()
+        viewHolder.itemView.setOnClickListener {
             val bundle = Bundle()
-            bundle.putParcelable("location", liste[position])
-            fragment.arguments = bundle
+            bundle.putParcelable("station", liste[position])
 
             Navigation.findNavController(it).navigate(R.id.navigation_location, bundle)
         }
 
         viewHolder.star.setOnClickListener {
-
-            val fragment = FavoritesFragment()
             val bundle = Bundle()
-            bundle.putParcelable("station", liste[position])
-            fragment.arguments = bundle
-
+            bundle.putString("favorite_station", liste[position].name)
             Navigation.findNavController(it).navigate(R.id.navigation_favorites, bundle)
         }
     }
